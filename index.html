@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>SabzPay Wallet</title>
+<title>Easypaisa Wallet</title>
 <style>
   /* Layout: single phone-frame wallet; screens swap in one column, fixed bottom nav */
   :root{
@@ -341,7 +341,7 @@
       </div>
     </div>
     <div class="gut">
-      <div class="h2">More with SabzPay</div>
+      <div class="h2">More with Easypaisa</div>
       <div class="grid">
         <button class="srv" onclick="openSheet()"><svg class="ico" viewBox="0 0 24 24"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg><span class="cap">Send Money</span></button>
         <button class="srv" onclick="go('bill')"><svg class="ico" viewBox="0 0 24 24"><path d="M6 2h9l5 5v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/><path d="M13 7l-2 4h3l-2 4"/></svg><span class="cap">Bill Payment</span></button>
@@ -357,7 +357,7 @@
       <div class="h2">Stories</div>
     </div>
     <div class="stories">
-      <div class="story"><div class="inner">Rs. 90 cashback on your SabzPay account</div></div>
+      <div class="story"><div class="inner">Rs. 90 cashback on your Easypaisa account</div></div>
       <div class="story"><div class="inner">your zong package comes with a cashback</div></div>
       <div class="story"><div class="inner">mega week, now for Rs. 50 less</div></div>
       <div class="story"><div class="inner">refer a friend &amp; earn rewards</div></div>
@@ -366,7 +366,7 @@
 
   <!-- SEND : STEP 1 pick receiver -->
   <section class="screen" id="send">
-    <div class="subhead gut"><button class="back" onclick="go('home')">‹</button><h2 id="sendTitle">SabzPay Transfer</h2></div>
+    <div class="subhead gut"><button class="back" onclick="go('home')">‹</button><h2 id="sendTitle">Easypaisa Transfer</h2></div>
     <div class="gut">
       <div class="favlbl"><b>My Favourites</b><a onclick="toast('See all — demo')">See All</a></div>
       <div class="favs" id="favRow"></div>
@@ -583,7 +583,7 @@
     <div class="rsep"></div>
     <div class="rrow"><span>Transaction ID</span><b id="rcpId">#0000000000</b></div>
     <div class="rrow"><span>Date &amp; Time</span><b id="rcpDate">—</b></div>
-    <div class="rrow"><span>Funding Source</span><b id="rcpSrc">SabzPay Account</b></div>
+    <div class="rrow"><span>Funding Source</span><b id="rcpSrc">Easypaisa Account</b></div>
     <div class="rsep"></div>
     <div class="rtitle" id="rcpPartyLbl">Sent to</div>
     <div class="rrow"><span id="rcpNameLbl">Name</span><b id="rcpName">—</b></div>
@@ -598,7 +598,7 @@
     <div class="rrow"><span>Fee</span><b style="color:var(--good)">Rs. 0.00</b></div>
     <div class="rsep"></div>
     <div class="rrow"><span class="totlbl">Total Amount</span><b class="num totval" id="rcpTotal">Rs. 0</b></div>
-    <div class="paidvia">Paid via SabzPay · demo</div>
+    <div class="paidvia">Paid via Easypaisa · demo</div>
     <button class="go" onclick="closeFullReceipt()">Done</button>
     <button class="ghost" onclick="closeSuccess()">Back to Home</button>
   </div>
@@ -608,7 +608,7 @@
   var balance = 5000000, tx = [], hidden = false;
   var DATA_VER = 6;
 
-  function save(){try{localStorage.setItem('sabzpay',JSON.stringify({v:DATA_VER,balance:balance,tx:tx}));}catch(e){}}
+  function save(){try{localStorage.setItem('Easypaisa,JSON.stringify({v:DATA_VER,balance:balance,tx:tx}));}catch(e){}}
   function load(){try{var d=JSON.parse(localStorage.getItem('sabzpay'));if(d&&d.v===DATA_VER){balance=d.balance;tx=d.tx||[];}}catch(e){}}
   function seed(){function at(h,m){var d=new Date();d.setHours(h,m,0,0);return d.getTime();}tx=[
     {dir:'in',title:'Qr Payment -',sub:'QR Payment',amt:200,icon:'',time:at(14,39)},
