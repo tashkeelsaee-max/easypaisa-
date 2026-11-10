@@ -1,0 +1,20 @@
+{
+  "id": "sabzpay-wallet",
+  "name": "SabzPay Wallet",
+  "short_name": "SabzPay",
+  "description": "Practice / learning digital wallet demo app.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#19b24b",
+  "theme_color": "#19b24b",
+  "categories": ["finance", "education"],
+  "prefer_related_applications": false,
+  "launch_handler": { "client_mode": "navigate-existing" },
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
