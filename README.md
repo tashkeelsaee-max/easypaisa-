@@ -1,4 +1,4 @@
-# SabzPay Wallet (Demo)
+# Easypaisa Wallet 
 
 Ek **practice / learning** mobile-wallet UI jo EasyPaisa-style dashboard ki tarah banaya gaya hai.
 Pura app ek single `index.html` file mein hai — koi build, koi dependency, koi server nahi chahiye.
@@ -28,7 +28,7 @@ Bas `index.html` ko browser mein khol lein — ya GitHub Pages par host kar dein
 ```bash
 git init
 git add index.html README.md
-git commit -m "SabzPay wallet demo"
+git commit -m "Easypaisa wallet"
 git branch -M main
 git remote add origin https://github.com/<username>/<repo>.git
 git push -u origin main
