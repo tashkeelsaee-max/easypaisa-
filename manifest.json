@@ -1,6 +1,6 @@
 {
-  "name": "SabzPay Wallet",
-  "short_name": "SabzPay",
+  "name": "Easypaisa Wallet",
+  "short_name": "Easypaisa",
   "description": "Practice / learning digital wallet demo app.",
   "start_url": "./",
   "scope": "./",
