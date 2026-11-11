@@ -374,7 +374,7 @@
 
   <!-- SEND : STEP 1 pick receiver -->
   <section class="screen" id="send">
-    <div class="subhead gut"><button class="back" onclick="go('home')">‹</button><h2 id="sendTitle">SabzPay Transfer</h2></div>
+    <div class="subhead gut"><button class="back" onclick="go('home')">‹</button><h2 id="sendTitle">Easypaisa Transfer</h2></div>
     <div class="gut">
       <div class="favlbl"><b>My Favourites</b><a onclick="toast('See all — demo')">See All</a></div>
       <div class="favs" id="favRow"></div>
@@ -416,7 +416,7 @@
       <div class="card">
         <div class="rrow"><span>To</span><b id="cf_name">—</b></div>
         <div class="rrow"><span id="cf_numlbl">Mobile Number</span><b id="cf_num">—</b></div>
-        <div class="rrow"><span>Funding Source</span><b id="cf_src">SabzPay Account</b></div>
+        <div class="rrow"><span>Funding Source</span><b id="cf_src">Easypaisa Account</b></div>
         <div class="rrow"><span>Fee</span><b style="color:var(--good)">Rs. 0</b></div>
         <div class="rrow" id="cf_noterow" hidden><span>Note</span><b id="cf_note">—</b></div>
         <div class="rsep"></div>
@@ -552,7 +552,7 @@
   <div class="sheet" onclick="event.stopPropagation()">
     <h3>Send Money</h3>
     <div class="mgrid">
-      <button class="mopt" onclick="pickMethod('SabzPay')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg>SabzPay</button>
+      <button class="mopt" onclick="pickMethod('Easypaisa)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg>SabzPay</button>
       <button class="mopt" onclick="pickMethod('Bank')"><svg viewBox="0 0 24 24"><path d="M3 10l9-6 9 6"/><path d="M5 10v9h14v-9"/><path d="M9 19v-5h6v5"/></svg>Bank</button>
       <button class="mopt" onclick="pickMethod('Wallet')"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M16 12h3"/></svg>Wallet</button>
       <button class="mopt" onclick="pickMethod('Raast')"><svg viewBox="0 0 24 24"><path d="M4 21h16"/><path d="M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/></svg>Raast</button>
@@ -616,7 +616,7 @@
   var balance = 5000000, tx = [], hidden = false;
   var DATA_VER = 6;
 
-  function save(){try{localStorage.setItem('sabzpay',JSON.stringify({v:DATA_VER,balance:balance,tx:tx}));}catch(e){}}
+  function save(){try{localStorage.setItem('Easypaisa,JSON.stringify({v:DATA_VER,balance:balance,tx:tx}));}catch(e){}}
   function load(){try{var d=JSON.parse(localStorage.getItem('sabzpay'));if(d&&d.v===DATA_VER){balance=d.balance;tx=d.tx||[];}}catch(e){}}
   function seed(){function at(h,m){var d=new Date();d.setHours(h,m,0,0);return d.getTime();}tx=[
     {dir:'in',title:'Qr Payment -',sub:'QR Payment',amt:200,icon:'',time:at(14,39)},
