@@ -351,7 +351,7 @@
       <div class="acct">
         <div class="coins">🪙</div><div class="upgrade">Upgrade</div>
         <div class="name">Easypaisa Account ⌄</div><div class="zen">👑 Zen</div>
-        <div class="balrow"><div class="bal num" id="balText">Rs. 10,000,000.00</div><button class="plus" onclick="go('addmoney')">+</button></div>
+        <div class="balrow"><div class="bal num" id="balText">Rs. 5,000,000.00</div><button class="plus" onclick="go('addmoney')">+</button></div>
         <div class="hide" onclick="toggleBal()"><span id="hideLbl">Hide Balance</span> <span id="hideEye">🚫</span></div>
       </div>
       <div class="borrow" onclick="toast('Borrow demo mein available nahi')">
@@ -537,10 +537,10 @@
       <button class="editbtn" onclick="toast('Edit profile — demo')">Edit Profile</button>
     </div>
     <div class="gut">
-      <div class="profav" id="profAv">TA</div>
-      <h2 class="profname" id="profName">Tashkeel Ahmad</h2>
-      <div class="profmeta" id="profNum">03239099954</div>
-      <div class="profmeta" id="profEmail">tashkeelsaee@gmail.com</div>
+      <div class="profav" id="profAv">MT</div>
+      <h2 class="profname" id="profName">Mrs Tashkeel Saee</h2>
+      <div class="profmeta" id="profNum">03445488142</div>
+      <div class="profmeta" id="profEmail">Mrstashkeelsaee@gmail.com</div>
       <div class="profsep"></div>
       <div class="menu">
         <button id="maccBtn" onclick="toggleMacc()"><span class="mi"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>My Account<span class="ch" id="maccCh">⌄</span></button>
@@ -587,10 +587,10 @@
 <section class="screen active" id="login">
   <div class="gut">
     <div class="logo">💚</div><h1>Easypaisa</h1><p class="tag">Aapka digital wallet</p>
-    <div class="field"><label>MOBILE NUMBER</label><input id="loginNum" inputmode="numeric" placeholder="03XX-XXXXXXX" value="0323-9099954"></div>
+    <div class="field"><label>MOBILE NUMBER</label><input id="loginNum" inputmode="numeric" placeholder="03XX-XXXXXXX" value="0344-5488142"></div>
     <div class="field"><label>PIN</label><input id="loginPin" type="password" inputmode="numeric" placeholder="4-digit PIN" maxlength="4" value="0000"></div>
     <button class="btn-primary" onclick="login()">Login</button>
-    <p class="hint">Koi bhi number aur 4-digit PIN daalein<br>(ye demo hai — pehle se bhara hua hai)</p>
+    <p class="hint">Sirf registered numbers se login mumkin hai<br>(kisi bhi 4-digit PIN ke saath)</p>
   </div>
 </section>
 
@@ -658,8 +658,8 @@
 </div>
 
 <script>
-  var balance = 10000000, tx = [], hidden = false;
-  var DATA_VER = 7;
+  var balance = 5000000, tx = [], hidden = false;
+  var DATA_VER = 8;
 
   function acctKey(){return 'Easypaisa_'+ME_NUM;}
   function save(){try{localStorage.setItem(acctKey(),JSON.stringify({v:DATA_VER,balance:balance,tx:tx,name:ME_NAME,email:ME_EMAIL}));localStorage.setItem('easypaisa_last',ME_NUM);}catch(e){}}
@@ -724,14 +724,18 @@
     document.getElementById(id).classList.add('active');
     document.getElementById('nav-home').classList.toggle('on',id==='home');window.scrollTo(0,0);}
 
-  var ME_NAME='Tashkeel Ahmad',ME_NUM='03239099954',ME_EMAIL='tashkeelsaee@gmail.com';
-  // Ready demo accounts: har number ka apna naam aur starting balance (PIN koi bhi 4-digit)
+  var ME_NAME='Mrs Tashkeel Saee',ME_NUM='03445488142',ME_EMAIL='Mrstashkeelsaee@gmail.com';
+  // Sirf in registered numbers se login hoga (PIN koi bhi 4-digit)
   var ACCOUNTS={
+    '03445488142':{name:'Mrs Tashkeel Saee',email:'Mrstashkeelsaee@gmail.com',balance:5000000},
     '03239099954':{name:'Tashkeel Ahmad',email:'tashkeelsaee@gmail.com',balance:10000000},
     '03001234501':{name:'Nasir Jamal',email:'nasir.jamal@easypaisa',balance:52000},
     '03211234502':{name:'Sheikh Bilal Nawaz',email:'bilal.nawaz@easypaisa',balance:18500},
     '03331234503':{name:'Shazaib Gillani',email:'shazaib.g@easypaisa',balance:7300},
-    '03451234504':{name:'Noman Hamza',email:'noman.hamza@easypaisa',balance:134000}
+    '03451234504':{name:'Noman Hamza',email:'noman.hamza@easypaisa',balance:134000},
+    '03011234505':{name:'Ayesha Bibi',email:'ayesha.bibi@easypaisa',balance:45000},
+    '03451122334':{name:'Fatima Ali',email:'fatima.ali@easypaisa',balance:29500},
+    '03125556677':{name:'Hamza Tariq',email:'hamza.tariq@easypaisa',balance:88000}
   };
   function applyProfile(){
     var ini=initials(ME_NAME)||'U';
@@ -746,11 +750,12 @@
     var pin=document.getElementById('loginPin').value.trim();
     if(num.length<11){toast('Sahi mobile number daalein');return;}
     if(pin.length<4){toast('4-digit PIN daalein');return;}
-    ME_NUM=num;
     var acc=ACCOUNTS[num];
-    ME_NAME=acc?acc.name:('User '+num.slice(-4));
-    ME_EMAIL=acc?acc.email:(num+'@easypaisa');
-    if(!loadAccount()){ balance=acc?acc.balance:10000000; seed(); }
+    if(!acc){toast('Ye number allowed nahi hai — sirf registered numbers se login karein');return;}
+    ME_NUM=num;
+    ME_NAME=acc.name;
+    ME_EMAIL=acc.email;
+    if(!loadAccount()){ balance=acc.balance; seed(); }
     applyProfile();refresh();
     document.getElementById('login').classList.remove('active');document.getElementById('appRoot').hidden=false;go('home');}
   function logout(){save();document.getElementById('appRoot').hidden=true;document.getElementById('login').classList.add('active');var pn=document.getElementById('loginPin');if(pn)pn.value='';window.scrollTo(0,0);}
@@ -769,8 +774,8 @@
   function setErr(id,m){document.getElementById(id).textContent=m;}
   function reset(ids){ids.forEach(function(i){document.getElementById(i).value='';});}
 
-  var CONTACTS={'03001234501':'Nasir Jamal','03211234502':'Sheikh Bilal Nawaz','03331234503':'Shazaib Gillani','03451234504':'Noman Hamza','03011234505':'Ayesha Bibi','03451122334':'Fatima Ali'};
-  var FAVS=['03001234501','03211234502','03331234503','03451234504','03011234505'];
+  var CONTACTS={'03445488142':'Mrs Tashkeel Saee','03001234501':'Nasir Jamal','03211234502':'Sheikh Bilal Nawaz','03331234503':'Shazaib Gillani','03451234504':'Noman Hamza','03011234505':'Ayesha Bibi','03451122334':'Fatima Ali','03125556677':'Hamza Tariq','03239099954':'Tashkeel Ahmad'};
+  var FAVS=['03445488142','03001234501','03211234502','03331234503','03451234504'];
   var BANKS=['Allied Bank (ABL)','Askari Bank','Bank Alfalah','Bank AL Habib','BankIslami Pakistan','Bank of Khyber','Bank of Punjab (BOP)','Dubai Islamic Bank','Faysal Bank','First Women Bank','Habib Bank (HBL)','Habib Metropolitan Bank','JS Bank','MCB Bank','MCB Islamic Bank','Meezan Bank','National Bank of Pakistan (NBP)','Samba Bank','Silkbank','Sindh Bank','Soneri Bank','Standard Chartered Pakistan','Summit Bank','United Bank (UBL)','Al Baraka Bank','Zarai Taraqiati Bank (ZTBL)','SME Bank','First Microfinance Bank','Khushhali Microfinance Bank','Mobilink Microfinance Bank (JazzCash)','Telenor Microfinance Bank (Easypaisa)','U Microfinance Bank','NRSP Microfinance Bank','FINCA Microfinance Bank','Apna Microfinance Bank','Citibank','Deutsche Bank','Bank of China','ICBC Pakistan'];
   var sendMode='mobile',curName='',curNum='',transferMethod='wallet',curPurpose='';
   function numLbl(){return (transferMethod==='Wallet'||isBankMethod())?'Account Number':'Mobile Number';}
