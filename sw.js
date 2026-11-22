@@ -1,4 +1,4 @@
-var CACHE = 'sabzpay-v2';
+var CACHE = 'Easypaisa-v2';
 var ASSETS = ['./', './index.html', './manifest.json'];
 
 self.addEventListener('install', function (e) {
