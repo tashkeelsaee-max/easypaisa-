@@ -13,7 +13,6 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <style>
-  /* Layout: single phone-frame wallet; screens swap in one column, fixed bottom nav */
   :root{
     --brand:#19b24b;--brand-deep:#0f8f3a;
     --card-g1:#bdeecb;--card-g2:#8fe0a8;
@@ -55,7 +54,6 @@
   [hidden]{display:none!important}
   .ico{width:26px;height:26px;stroke:var(--brand);stroke-width:1.9;fill:none;stroke-linecap:round;stroke-linejoin:round}
 
-  /* Home top */
   .htop{display:flex;align-items:center;justify-content:space-between;padding-top:16px;gap:12px}
   .htop .me{display:flex;align-items:center;gap:12px;min-width:0}
   .avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(145deg,var(--brand),var(--brand-deep));
@@ -70,7 +68,6 @@
   .search input{border:none;outline:none;background:none;color:var(--fg);font-size:15px;width:100%}
   .search input::placeholder{color:var(--muted)}
 
-  /* Cards carousel */
   .carousel{display:flex;gap:14px;margin-top:20px;overflow-x:auto;scroll-snap-type:x mandatory;
     padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:18px;padding-bottom:4px;scrollbar-width:none}
   .carousel::-webkit-scrollbar{display:none}
@@ -91,7 +88,6 @@
   .borrow .big{font-size:30px;font-weight:800;line-height:1.1}
   .borrow p{font-size:14px;font-weight:600;opacity:.8;margin-top:6px}
 
-  /* Services grid */
   .h2{font-size:21px;font-weight:700;margin:26px 0 14px}
   .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
   .srv{background:var(--surface);border-radius:16px;box-shadow:var(--shadow);aspect-ratio:1/.92;
@@ -104,14 +100,12 @@
   .dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}
   .dots i.on{background:var(--brand);width:22px;border-radius:5px}
 
-  /* Stories */
   .stories{display:flex;gap:14px;margin-top:16px;overflow-x:auto;scrollbar-width:none;
     padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:18px}
   .stories::-webkit-scrollbar{display:none}
   .story{flex:none;width:118px;height:118px;border-radius:50%;padding:4px;background:linear-gradient(145deg,var(--brand),var(--brand-deep));display:grid;place-items:center}
   .story .inner{width:100%;height:100%;border-radius:50%;background:linear-gradient(160deg,#148a3b,#0c6b2c);display:grid;place-items:center;text-align:center;color:#eafff0;font-size:12px;font-weight:600;padding:12px;border:3px solid var(--bg)}
 
-  /* Sub-screens */
   .subhead{background:var(--brand);color:#fff;padding-top:calc(env(safe-area-inset-top,0px) + 14px);padding-bottom:18px;display:flex;align-items:center;gap:14px;border-radius:0 0 22px 22px}
   .back{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:22px;flex:none}
   .subhead h2{font-size:19px;font-weight:700}
@@ -135,7 +129,6 @@
   :root[data-theme="dark"] .bill-grid button.sel,:root:not([data-theme="light"]) .bill-grid button.sel{background:#16291d}
   .bill-grid .bg-ico{font-size:24px}
 
-  /* Transactions */
   .txlist{display:flex;flex-direction:column;gap:8px;margin-top:18px}
   .tx{display:flex;align-items:center;gap:12px;background:var(--surface);padding:13px 14px;border-radius:14px;box-shadow:var(--shadow)}
   .tx-ico{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:18px;flex:none}
@@ -148,7 +141,6 @@
   .tx .amt{font-weight:700;font-size:14px;white-space:nowrap}
   .amt.plus{color:var(--good)} .amt.minus{color:var(--danger)}
   .empty{text-align:center;color:var(--muted);padding:40px 20px;font-size:13px}
-  /* easypaisa-style history */
   .histtop{display:flex;align-items:center;gap:12px;padding-top:calc(env(safe-area-inset-top,0px) + 14px);padding-bottom:6px}
   .hback{width:40px;height:40px;flex:none;border:1px solid var(--line);border-radius:12px;display:grid;place-items:center;font-size:22px;color:var(--fg);background:var(--surface)}
   .hsearch{flex:1;min-width:0;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:30px;padding:10px 16px}
@@ -171,11 +163,9 @@
   .htx-amt{font-weight:700;font-size:15px;white-space:nowrap}
   .htx-amt.pos{color:var(--good)} .htx-amt.neg{color:var(--danger)}
 
-  /* Toast */
   .toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%) translateY(20px);opacity:0;background:var(--fg);color:var(--bg);padding:12px 20px;border-radius:30px;font-size:13px;font-weight:600;z-index:80;transition:all .3s;pointer-events:none;max-width:90%;text-align:center}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-  /* Send sheet + transfer */
   .sheet-back{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:65;display:none;align-items:flex-end;justify-content:center}
   .sheet-back.show{display:flex;animation:fade .2s}
   .sheet{background:var(--surface);width:100%;max-width:460px;border-radius:24px 24px 0 0;padding:20px 18px calc(24px + env(safe-area-inset-bottom,0px));animation:up .25s ease}
@@ -225,7 +215,7 @@
   .acctsub{color:var(--muted);font-size:15px}.acctsub b{color:var(--fg)}
   .acctlogo{width:60px;height:60px;border-radius:50%;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;font-weight:800;color:var(--brand);flex:none;margin-top:10px}
   .walsep{height:1px;background:var(--line);margin:14px 0 0}
-  /* profile */
+
   .profhead{position:relative;height:150px;background:linear-gradient(150deg,var(--brand-deep),var(--brand));border-radius:0 0 24px 24px;padding-top:env(safe-area-inset-top,0px)}
   .profhead .back{background:rgba(255,255,255,.2);color:#fff}
   .editbtn{position:absolute;right:18px;top:calc(env(safe-area-inset-top,0px) + 14px);border:1.5px solid rgba(255,255,255,.7);color:#fff;border-radius:20px;padding:8px 16px;font-size:13px;font-weight:600}
@@ -247,7 +237,7 @@
   .submenu button::before{content:"";position:absolute;left:-22px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:var(--surface);border:1.5px solid var(--muted)}
   .proffoot{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px;padding-bottom:10px}
   .proffoot .lang b{color:var(--brand)}
-  /* keep tinted surfaces light in light mode (fixes dark leak on hosts that don't pin a theme) */
+
   @media (prefers-color-scheme:light){
     :root:not([data-theme="dark"]) .tx-in{background:#e8f8ee}
     :root:not([data-theme="dark"]) .tx-out{background:#fdecea}
@@ -259,7 +249,6 @@
     :root:not([data-theme="dark"]) .seg button.on{background:#c9efd5;color:#0f5a2b}
   }
 
-  /* ===== Receipt ===== */
   .success{position:fixed;inset:0;background:var(--bg);z-index:70;display:none;align-items:center;justify-content:center;overflow-y:auto;padding:24px}
   .success.show{display:flex;animation:fade .3s}
   .receipt{background:var(--surface);border-radius:26px;width:100%;max-width:400px;padding:30px 24px;box-shadow:var(--shadow);text-align:center;margin:auto}
@@ -275,14 +264,11 @@
   .rrow span{color:var(--muted);font-size:14px;flex:none}
   .rrow b{font-weight:700;font-size:15px;text-align:right;word-break:break-word}
   .rtitle{font-weight:700;font-size:16px;text-align:left;margin-bottom:2px}
-  .demobadge{background:#fff3d6;color:#8a5a00;font-size:11px;font-weight:700;letter-spacing:.3px;border-radius:20px;padding:6px 12px;display:inline-block;margin:0 auto 14px}
-  :root[data-theme="dark"] .demobadge,:root:not([data-theme="light"]) .demobadge{background:#3a2e10;color:#ffcf6b}
   .totlbl{font-weight:700;color:var(--fg);font-size:16px}
   .totval{font-size:16px}
   .paidvia{text-align:center;color:var(--muted);font-size:12px;margin-top:16px}
   .receipt .go{margin-top:24px}
   .ghost{width:100%;padding:13px;margin-top:10px;border-radius:14px;background:none;color:var(--brand);font-weight:700;font-size:15px}
-  /* success summary */
   .summary{width:100%;max-width:400px;margin:auto;text-align:center;display:flex;flex-direction:column;align-items:center;padding:10px}
   .sumamt{font-size:34px;font-weight:800;margin-top:28px}
   .sumsub{color:var(--muted);font-size:15px;margin-top:4px}
@@ -294,7 +280,7 @@
   .sumback{flex:1;max-width:220px;padding:14px;border:1.5px solid var(--brand);border-radius:30px;color:var(--brand);font-weight:700;font-size:15px;background:none}
   .sumic{width:52px;height:52px;flex:none;border:1.5px solid var(--brand);border-radius:50%;display:grid;place-items:center;background:none}
   .sumic svg{width:22px;height:22px;stroke:var(--brand);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
-  /* scanner */
+
   #scanner{position:fixed;inset:0;background:#000;z-index:55}
   #scanner.active{display:block}
   #camFeed{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#111}
@@ -310,13 +296,11 @@
   .scanhint{color:#fff;font-size:14px;margin-top:22px;text-shadow:0 1px 4px rgba(0,0,0,.6);text-align:center;padding:0 24px}
   .scanmanual{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 32px);padding:13px 26px;border-radius:30px;background:#fff;color:var(--brand-deep,#0f8f3a);font-weight:700;font-size:15px}
 
-  /* Bottom nav */
   .nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--surface);border-top:1px solid var(--line);display:flex;max-width:460px;margin:0 auto;padding-bottom:env(safe-area-inset-bottom,0px)}
   .nav button{flex:1;padding:12px 4px 10px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:600;color:var(--muted)}
   .nav button svg{width:24px;height:24px;stroke:var(--muted);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
   .nav button.on{color:var(--brand)} .nav button.on svg{stroke:var(--brand)}
 
-  /* Login */
   #login.active{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(160deg,var(--brand-deep),var(--brand));color:#fff;padding-block:40px}
   #login .logo{width:76px;height:76px;border-radius:22px;background:#fff;display:grid;place-items:center;margin:0 auto 18px;box-shadow:0 10px 30px rgba(0,0,0,.2);font-size:40px}
   #login h1{text-align:center;font-size:30px}
@@ -328,7 +312,6 @@
   .field input:focus{border-color:#fff}
   .btn-primary{width:100%;padding:15px;border-radius:12px;background:#fff;color:var(--brand-deep);font-weight:700;font-size:16px;margin-top:8px}
   .hint{text-align:center;font-size:12px;opacity:.85;margin-top:18px;line-height:1.6}
-  .demo-note{margin-top:26px;text-align:center;font-size:11px;opacity:.7;border-top:1px solid rgba(255,255,255,.2);padding-top:14px}
 </style>
 </head>
 <body>
@@ -339,7 +322,7 @@
   <section class="screen active" id="home">
     <div class="gut">
       <div class="htop">
-        <div class="me" onclick="go('profile')" style="cursor:pointer"><div class="avatar" id="avatarInit">T</div><div class="hey">Hey There 👋</div></div>
+        <div class="me" onclick="go('profile')" style="cursor:pointer"><div class="avatar" id="avatarInit">M</div><div class="hey">Hey There 👋</div></div>
         <div class="acts">
           <svg class="bell" viewBox="0 0 24 24" onclick="toast('Koi nayi notification nahi')"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
           <svg class="lg" viewBox="0 0 24 24" onclick="logout()"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
@@ -590,7 +573,7 @@
     <div class="field"><label>MOBILE NUMBER</label><input id="loginNum" inputmode="numeric" placeholder="03XX-XXXXXXX" value="0344-5488142"></div>
     <div class="field"><label>PIN</label><input id="loginPin" type="password" inputmode="numeric" placeholder="4-digit PIN" maxlength="4" value="0000"></div>
     <button class="btn-primary" onclick="login()">Login</button>
-    <p class="hint">Sirf registered numbers se login mumkin hai<br>(kisi bhi 4-digit PIN ke saath)</p>
+    <p class="hint">Har account sirf 1 device par lock hoga<br>(kisi bhi 4-digit PIN ke saath)</p>
   </div>
 </section>
 
@@ -609,8 +592,6 @@
 
 <div class="toast" id="toast"></div>
 
-<!-- RECEIPT -->
-<!-- SUCCESS SUMMARY -->
 <div class="success" id="success">
   <div class="summary">
     <div class="coin"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
@@ -627,7 +608,6 @@
   </div>
 </div>
 
-<!-- DETAILED RECEIPT -->
 <div class="success" id="receipt">
   <div class="receipt">
     <div class="coin"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
@@ -659,10 +639,32 @@
 
 <script>
   var balance = 5000000, tx = [], hidden = false;
-  var DATA_VER = 8;
+  var DATA_VER = 9;
+
+  function getDeviceId(){
+    var id = null;
+    try{
+      id = localStorage.getItem('Easypaisa_device_id');
+      if(!id){
+        id = 'dev_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,10);
+        localStorage.setItem('Easypaisa_device_id', id);
+      }
+    }catch(e){
+      id = 'session_only_device';
+    }
+    return id;
+  }
+
+  function getBoundDevice(num){
+    try{ return localStorage.getItem('Easypaisa_bound_' + num) || null; }catch(e){ return null; }
+  }
+
+  function bindDeviceToNumber(num){
+    try{ localStorage.setItem('Easypaisa_bound_' + num, getDeviceId()); }catch(e){}
+  }
 
   function acctKey(){return 'Easypaisa_'+ME_NUM;}
-  function save(){try{localStorage.setItem(acctKey(),JSON.stringify({v:DATA_VER,balance:balance,tx:tx,name:ME_NAME,email:ME_EMAIL}));localStorage.setItem('easypaisa_last',ME_NUM);}catch(e){}}
+  function save(){try{localStorage.setItem(acctKey(),JSON.stringify({v:DATA_VER,balance:balance,tx:tx,name:ME_NAME,email:ME_EMAIL,boundDevice:getBoundDevice(ME_NUM)}));localStorage.setItem('easypaisa_last',ME_NUM);}catch(e){}}
   function loadAccount(){try{var d=JSON.parse(localStorage.getItem(acctKey()));if(d&&d.v===DATA_VER){balance=d.balance;tx=d.tx||[];if(d.name)ME_NAME=d.name;if(d.email)ME_EMAIL=d.email;return true;}}catch(e){}return false;}
   function seed(){function at(h,m){var d=new Date();d.setHours(h,m,0,0);return d.getTime();}tx=[
     {dir:'in',title:'Qr Payment -',sub:'QR Payment',amt:200,icon:'',time:at(14,39)},
@@ -725,7 +727,7 @@
     document.getElementById('nav-home').classList.toggle('on',id==='home');window.scrollTo(0,0);}
 
   var ME_NAME='Mrs Tashkeel Saee',ME_NUM='03445488142',ME_EMAIL='Mrstashkeelsaee@gmail.com';
-  // Sirf in registered numbers se login hoga (PIN koi bhi 4-digit)
+  // Sirf is list mein jo numbers hain unhi se login hoga; har number 1 hi device par lock rahega
   var ACCOUNTS={
     '03445488142':{name:'Mrs Tashkeel Saee',email:'Mrstashkeelsaee@gmail.com',balance:5000000},
     '03239099954':{name:'Tashkeel Ahmad',email:'tashkeelsaee@gmail.com',balance:10000000},
@@ -737,6 +739,7 @@
     '03451122334':{name:'Fatima Ali',email:'fatima.ali@easypaisa',balance:29500},
     '03125556677':{name:'Hamza Tariq',email:'hamza.tariq@easypaisa',balance:88000}
   };
+
   function applyProfile(){
     var ini=initials(ME_NAME)||'U';
     var a=document.getElementById('avatarInit');if(a)a.textContent=ini.charAt(0)||'U';
@@ -745,6 +748,7 @@
     var pnum=document.getElementById('profNum');if(pnum)pnum.textContent=ME_NUM;
     var pe=document.getElementById('profEmail');if(pe)pe.textContent=ME_EMAIL;
   }
+
   function login(){
     var num=document.getElementById('loginNum').value.replace(/[^0-9]/g,'');
     var pin=document.getElementById('loginPin').value.trim();
@@ -752,12 +756,25 @@
     if(pin.length<4){toast('4-digit PIN daalein');return;}
     var acc=ACCOUNTS[num];
     if(!acc){toast('Ye number allowed nahi hai — sirf registered numbers se login karein');return;}
+
+    var currentDev = getDeviceId();
+    var boundDev = getBoundDevice(num);
+    if(boundDev && boundDev !== currentDev){
+      toast('Ye number pehle hi kisi aur device par active hai — 2 jagah login allowed nahi');
+      return;
+    }
+    if(!boundDev){
+      bindDeviceToNumber(num);
+    }
+
     ME_NUM=num;
     ME_NAME=acc.name;
     ME_EMAIL=acc.email;
     if(!loadAccount()){ balance=acc.balance; seed(); }
     applyProfile();refresh();
-    document.getElementById('login').classList.remove('active');document.getElementById('appRoot').hidden=false;go('home');}
+    document.getElementById('login').classList.remove('active');document.getElementById('appRoot').hidden=false;go('home');
+  }
+
   function logout(){save();document.getElementById('appRoot').hidden=true;document.getElementById('login').classList.add('active');var pn=document.getElementById('loginPin');if(pn)pn.value='';window.scrollTo(0,0);}
   function toggleBal(){hidden=!hidden;renderBal();}
   function toggleMacc(){var s=document.getElementById('maccSub'),b=document.getElementById('maccBtn');s.hidden=!s.hidden;b.classList.toggle('open',!s.hidden);}
@@ -765,7 +782,7 @@
   function openScanner(){go('scanner');startCamera();}
   function startCamera(){var hint=document.getElementById('scanHint');hint.textContent='QR code ko frame ke andar rakhein';
     if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){hint.textContent='Is browser mein camera support nahi. Neeche se number se bhejein.';return;}
-    navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false}).then(function(s){camStream=s;var v=document.getElementById('camFeed');v.srcObject=s;v.play&&v.play();}).catch(function(err){hint.textContent='Camera open nahi hua — permission allow karein, ya neeche se number se bhejein.';});}
+    navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false}).then(function(s){camStream=s;var v=document.getElementById('camFeed');v.srcObject=s;v.play&&v.play();}).catch(function(){hint.textContent='Camera open nahi hua — permission allow karein, ya neeche se number se bhejein.';});}
   function stopCamera(){if(camStream){camStream.getTracks().forEach(function(t){t.stop();});camStream=null;}var v=document.getElementById('camFeed');if(v)v.srcObject=null;}
   function closeScanner(){stopCamera();go('home');}
 
@@ -894,14 +911,12 @@
 
   function maskNum(n){n=(n||'').replace(/\s/g,'');if(n.length<=6)return n;return n.slice(0,2)+'*'.repeat(Math.max(4,n.length-6))+n.slice(-4);}
   function showReceipt(o){
-    // summary screen
     document.getElementById('sumAmt').textContent=fmt(o.amount);
     document.getElementById('sumSub').textContent='Successfully '+(o.partyLabel||'Sent to');
     document.getElementById('sumAv').textContent=initials(o.name||'');
     document.getElementById('sumName').textContent=o.name||'—';
     var sn=document.getElementById('sumNum');
     if(o.number){sn.hidden=false;sn.textContent=maskNum(o.number);}else sn.hidden=true;
-    // detailed receipt
     document.getElementById('rcpTitle').textContent=o.title||'Transaction Successful';
     document.getElementById('rcpSub').textContent=o.sub||'';
     document.getElementById('rcpId').textContent=o.txid||('#'+Math.floor(1000000000+Math.random()*9000000000));
