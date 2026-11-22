@@ -463,7 +463,7 @@
       <div class="card">
         <div class="rrow"><span>To</span><b id="cf_name">—</b></div>
         <div class="rrow"><span id="cf_numlbl">Mobile Number</span><b id="cf_num">—</b></div>
-        <div class="rrow"><span>Funding Source</span><b id="cf_src">SabzPay Account</b></div>
+        <div class="rrow"><span>Funding Source</span><b id="cf_src">Easypaisa Account</b></div>
         <div class="rrow"><span>Fee</span><b style="color:var(--good)">Rs. 0</b></div>
         <div class="rrow" id="cf_noterow" hidden><span>Note</span><b id="cf_note">—</b></div>
         <div class="rsep"></div>
@@ -621,7 +621,7 @@
     <div class="sumnum num" id="sumNum">—</div>
     <div class="sumbtns">
       <button class="sumback" onclick="closeSuccess()">Back to home</button>
-      <button class="sumic" onclick="toast('Share — demo')" aria-label="Share"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
+      <button class="sumic" onclick="toast('Share')" aria-label="Share"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
       <button class="sumic" onclick="openFullReceipt()" aria-label="Receipt"><svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></button>
     </div>
   </div>
@@ -749,7 +749,7 @@
     ME_NUM=num;
     var acc=ACCOUNTS[num];
     ME_NAME=acc?acc.name:('User '+num.slice(-4));
-    ME_EMAIL=acc?acc.email:(num+'@sabzpay');
+    ME_EMAIL=acc?acc.email:(num+'@easypaisa);
     if(!loadAccount()){ balance=acc?acc.balance:10000000; seed(); }
     applyProfile();refresh();
     document.getElementById('login').classList.remove('active');document.getElementById('appRoot').hidden=false;go('home');}
