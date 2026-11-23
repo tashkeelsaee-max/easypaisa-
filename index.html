@@ -57,7 +57,8 @@
   .htop{display:flex;align-items:center;justify-content:space-between;padding-top:16px;gap:12px}
   .htop .me{display:flex;align-items:center;gap:12px;min-width:0}
   .avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(145deg,var(--brand),var(--brand-deep));
-    display:grid;place-items:center;color:#fff;font-weight:700;font-size:18px;flex:none}
+    display:grid;place-items:center;color:#fff;font-weight:700;font-size:18px;flex:none;overflow:hidden;position:relative}
+  .avatar img{width:100%;height:100%;object-fit:cover;display:block}
   .hey{font-size:22px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .htop .acts{display:flex;gap:16px;align-items:center;flex:none}
   .htop .acts svg{width:26px;height:26px;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
@@ -110,7 +111,6 @@
   .back{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:22px;flex:none}
   .subhead h2{font-size:19px;font-weight:700}
 
-  /* Clean light/surface headers matching screenshots */
   .cleanhead{padding-top:calc(env(safe-area-inset-top,0px) + 14px);padding-bottom:10px;background:var(--bg)}
   .cback{width:40px;height:40px;border-radius:12px;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;font-size:22px;color:var(--fg)}
   .amttop{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-top:14px}
@@ -133,7 +133,6 @@
   .nextpill.ready{background:var(--brand)}
   .chips.center{justify-content:center}
 
-  /* Confirm Transaction screen matching Image 2 */
   .cfth1{font-size:28px;font-weight:800;margin-top:14px;margin-bottom:18px;color:var(--fg)}
   .cfsec-lbl{font-size:14px;font-weight:600;color:var(--fg);margin-bottom:8px;margin-top:14px}
   .cfcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:0 2px 10px rgba(0,0,0,.03)}
@@ -249,17 +248,21 @@
   .acctlogo{width:60px;height:60px;border-radius:50%;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;font-weight:800;color:var(--brand);flex:none;margin-top:10px}
   .walsep{height:1px;background:var(--line);margin:14px 0 0}
 
-  .profhead{position:relative;height:150px;background:linear-gradient(150deg,var(--brand-deep),var(--brand));border-radius:0 0 24px 24px;padding-top:env(safe-area-inset-top,0px)}
-  .profhead .back{background:rgba(255,255,255,.2);color:#fff}
-  .editbtn{position:absolute;right:18px;top:calc(env(safe-area-inset-top,0px) + 14px);border:1.5px solid rgba(255,255,255,.7);color:#fff;border-radius:20px;padding:8px 16px;font-size:13px;font-weight:600}
-  .profav{width:92px;height:92px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:32px;font-weight:800;border:4px solid var(--surface);margin:-46px 0 0 4px;box-shadow:var(--shadow)}
-  .profname{font-size:22px;font-weight:800;margin-top:14px;letter-spacing:.3px}
-  .profmeta{color:var(--muted);font-size:14px;margin-top:2px}
-  .profsep{height:1px;background:var(--line);margin:18px 0}
+  /* Profile Screen matching Image 4 */
+  .profhead{position:relative;height:156px;background:radial-gradient(circle at 82% 25%,#6be38f 0%,#22b852 45%,#128c3a 100%);border-radius:0 0 24px 24px;padding-top:env(safe-area-inset-top,0px);overflow:hidden}
+  .profhead::after{content:"";position:absolute;right:-35px;top:12px;width:210px;height:140px;border-radius:50%;border:14px solid rgba(255,255,255,.12);pointer-events:none}
+  .profhead .cback{position:absolute;left:18px;top:calc(env(safe-area-inset-top,0px) + 14px);z-index:2}
+  .editbtn{position:absolute;right:18px;top:calc(env(safe-area-inset-top,0px) + 16px);z-index:2;border:1.5px solid rgba(255,255,255,.85);color:#fff;border-radius:20px;padding:7px 18px;font-size:14px;font-weight:600;background:rgba(255,255,255,.08)}
+  .profav{width:96px;height:96px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:32px;font-weight:800;border:4px solid var(--surface);margin:-48px 0 0 2px;box-shadow:var(--shadow);overflow:hidden;position:relative;z-index:2}
+  .profav img{width:100%;height:100%;object-fit:cover;display:block}
+  .profname{font-size:21px;font-weight:700;margin-top:14px;letter-spacing:.3px;text-transform:uppercase;color:var(--fg)}
+  .profmeta{color:#4f5e56;font-size:15px;margin-top:3px}
+  :root[data-theme="dark"] .profmeta,:root:not([data-theme="light"]) .profmeta{color:var(--muted)}
+  .profsep{height:1px;background:var(--line);margin:20px 0}
   .menu{display:flex;flex-direction:column}
-  .menu button{display:flex;align-items:center;gap:14px;padding:15px 2px;font-size:16px;font-weight:600;color:var(--fg);text-align:left}
+  .menu button{display:flex;align-items:center;gap:14px;padding:15px 2px;font-size:16px;font-weight:500;color:var(--fg);text-align:left}
   .menu .mi{width:30px;height:30px;flex:none;display:grid;place-items:center}
-  .menu .mi svg{width:24px;height:24px;stroke:var(--brand);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .menu .mi svg{width:24px;height:24px;stroke:var(--brand);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
   .menu .ch{margin-left:auto;color:var(--muted);font-size:18px;transition:transform .2s}
   .menu button.open{color:var(--brand)}
   .menu button.open .mi svg{stroke:var(--brand)}
@@ -269,7 +272,24 @@
   .submenu button{position:relative;padding:12px 2px;font-size:15px;font-weight:500;color:var(--fg);display:block;text-align:left;width:100%}
   .submenu button::before{content:"";position:absolute;left:-22px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:var(--surface);border:1.5px solid var(--muted)}
   .proffoot{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px;padding-bottom:10px}
-  .proffoot .lang b{color:var(--brand)}
+  .proffoot .lang b{color:var(--brand);font-weight:700}
+
+  /* Edit Your Information Screen matching Image 5 */
+  .edth1{font-size:28px;font-weight:800;margin-top:16px;color:var(--fg)}
+  .edtav-wrap{position:relative;width:104px;height:104px;margin:28px auto 34px}
+  .edtav{width:104px;height:104px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:34px;font-weight:800;overflow:hidden;box-shadow:var(--shadow)}
+  .edtav img{width:100%;height:100%;object-fit:cover;display:block}
+  .edtcambadge{position:absolute;right:0;bottom:2px;width:32px;height:32px;border-radius:50%;background:#1e2622;color:#fff;border:2px solid var(--surface);display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+  .edtcambadge svg{width:15px;height:15px;stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .edtlbl{font-size:15px;font-weight:600;color:var(--fg);margin-bottom:8px}
+  .edtinput{width:100%;padding:14px 16px;border-radius:12px;border:1px solid #d5dcd8;background:var(--surface);color:var(--fg);font-size:16px;outline:none}
+  .edtinput::placeholder{color:#9ca8a2}
+  .edtinput:focus{border-color:var(--brand)}
+  .orline{display:flex;align-items:center;gap:14px;color:var(--muted);font-size:13px;font-weight:600;margin:24px 0}
+  .orline::before,.orline::after{content:"";flex:1;height:1px;background:var(--line)}
+  .gbtn{width:100%;padding:14px 16px;border-radius:12px;border:1px solid #d5dcd8;background:var(--surface);color:var(--fg);font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:12px}
+  .gbtn:active{background:#f2f6f4}
+  .saveprof-btn{width:100%;padding:15px;border-radius:30px;background:var(--brand);color:#fff;font-size:16px;font-weight:700;margin-top:26px;box-shadow:var(--shadow)}
 
   @media (prefers-color-scheme:light){
     :root:not([data-theme="dark"]) .bill-grid button.sel{background:#e8f8ee}
@@ -280,7 +300,6 @@
     :root:not([data-theme="dark"]) .seg button.on{background:#c9efd5;color:#0f5a2b}
   }
 
-  /* Success & Detailed Receipt matching Image 3 */
   .success{position:fixed;inset:0;background:linear-gradient(180deg,#e6f5ec 0%,#d7efe1 55%,#cde9da 100%);z-index:70;display:none;align-items:center;justify-content:center;overflow-y:auto;padding:24px}
   :root[data-theme="dark"] .success,:root:not([data-theme="light"]) .success{background:var(--bg)}
   .success.show{display:flex;animation:fade .3s}
@@ -457,7 +476,7 @@
     </div>
   </section>
 
-  <!-- SEND : STEP 2 Enter Amount (Image 1) -->
+  <!-- SEND : STEP 2 Enter Amount -->
   <section class="screen" id="sendAmt">
     <div class="cleanhead gut">
       <button class="cback" onclick="go('send')">‹</button>
@@ -484,7 +503,7 @@
     </div>
   </section>
 
-  <!-- SEND : STEP 3 Confirm Transaction (Image 2) -->
+  <!-- SEND : STEP 3 Confirm Transaction -->
   <section class="screen" id="sendConfirm">
     <div class="cleanhead gut">
       <button class="cback" onclick="go('sendAmt')">‹</button>
@@ -596,16 +615,16 @@
     </div>
   </section>
 
-  <!-- PROFILE -->
+  <!-- PROFILE SCREEN (Image 4) -->
   <section class="screen" id="profile">
     <div class="profhead">
-      <button class="back" onclick="go('home')" style="position:absolute;left:18px;top:calc(env(safe-area-inset-top,0px) + 14px)">‹</button>
-      <button class="editbtn" onclick="toast('Edit profile — demo')">Edit Profile</button>
+      <button class="cback" onclick="go('home')">‹</button>
+      <button class="editbtn" type="button" onclick="openEditProfile()">Edit Profile</button>
     </div>
     <div class="gut">
       <div class="profav" id="profAv">MT</div>
-      <h2 class="profname" id="profName">Mrs Tashkeel Saee</h2>
-      <div class="profmeta" id="profNum">03445488142</div>
+      <h2 class="profname" id="profName">MRS TASHKEEL SAEE</h2>
+      <div class="profmeta num" id="profNum">03445488142</div>
       <div class="profmeta" id="profEmail">Mrstashkeelsaee@gmail.com</div>
       <div class="profsep"></div>
       <div class="menu">
@@ -625,7 +644,41 @@
         <button onclick="toast('More')"><span class="mi"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg></span>More<span class="ch">⌄</span></button>
       </div>
       <div class="profsep"></div>
-      <div class="proffoot"><span>Version V.1.0.0 · </span><span class="lang"><b>English</b> | اردو</span></div>
+      <div class="proffoot"><span>Version V.2.10.11</span><span class="lang"><b>English</b> | اردو</span></div>
+    </div>
+  </section>
+
+  <!-- EDIT YOUR INFORMATION SCREEN (Image 5) -->
+  <section class="screen" id="editProfile">
+    <div class="cleanhead gut">
+      <button class="cback" onclick="go('profile')">‹</button>
+      <h1 class="edth1">Edit Your Information</h1>
+    </div>
+    <div class="gut">
+      <input type="file" id="photoFileInput" accept="image/*" hidden onchange="onPhotoPicked(event)">
+      <div class="edtav-wrap" onclick="pickDevicePhoto()" style="cursor:pointer" title="Mobile se picture chunein">
+        <div class="edtav" id="edtAv">MT</div>
+        <div class="edtcambadge">
+          <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+        </div>
+      </div>
+
+      <div class="edtlbl">Email Address</div>
+      <input class="edtinput" id="edtEmail" type="email" placeholder="abc@mail.com">
+
+      <div class="orline">OR</div>
+
+      <button class="gbtn" type="button" onclick="continueWithGoogle()">
+        <svg width="20" height="20" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.6v3h3.9c2.3-2.1 3.5-5.2 3.5-8.8z"/>
+          <path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3c-1.1.7-2.5 1.2-4.1 1.2-3.2 0-5.9-2.1-6.8-5H1.2v3.1C3.2 21.3 7.3 24 12 24z"/>
+          <path fill="#FBBC05" d="M5.2 14.3c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3V6.6H1.2C.4 8.2 0 10.1 0 12s.4 3.8 1.2 5.4l4-3.1z"/>
+          <path fill="#EA4335" d="M12 4.8c1.8 0 3.4.6 4.6 1.8l3.5-3.5C18 1.2 15.2 0 12 0 7.3 0 3.2 2.7 1.2 6.6l4 3.1c.9-2.9 3.6-4.9 6.8-4.9z"/>
+        </svg>
+        Continue with Google
+      </button>
+
+      <button class="saveprof-btn" type="button" onclick="saveProfileEdits()">Save Changes</button>
     </div>
   </section>
 
@@ -675,7 +728,6 @@
 
 <div class="toast" id="toast"></div>
 
-<!-- SUCCESS SUMMARY (Image 3) -->
 <div class="success" id="success">
   <div class="summary">
     <div class="coin"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
@@ -692,7 +744,6 @@
   </div>
 </div>
 
-<!-- DETAILED RECEIPT -->
 <div class="success" id="receipt">
   <div class="receipt">
     <div class="coin"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
@@ -724,7 +775,9 @@
 
 <script>
   var balance = 5000000, tx = [], hidden = false;
-  var DATA_VER = 10;
+  var DATA_VER = 11;
+
+  var ME_NAME='Mrs Tashkeel Saee',ME_NUM='03445488142',ME_EMAIL='Mrstashkeelsaee@gmail.com',ME_PHOTO='';
 
   function getDeviceId(){
     var id = null;
@@ -747,10 +800,29 @@
   }
 
   function acctKey(){return 'Easypaisa_'+ME_NUM;}
-  function save(){try{localStorage.setItem(acctKey(),JSON.stringify({v:DATA_VER,balance:balance,tx:tx,name:ME_NAME,email:ME_EMAIL,boundDevice:getBoundDevice(ME_NUM)}));localStorage.setItem('easypaisa_last',ME_NUM);}catch(e){}}
-  function loadAccount(){try{var d=JSON.parse(localStorage.getItem(acctKey()));if(d&&d.v===DATA_VER){balance=d.balance;tx=d.tx||[];if(d.name)ME_NAME=d.name;if(d.email)ME_EMAIL=d.email;return true;}}catch(e){}return false;}
+  function save(){
+    try{
+      localStorage.setItem(acctKey(),JSON.stringify({
+        v:DATA_VER,balance:balance,tx:tx,name:ME_NAME,email:ME_EMAIL,photo:ME_PHOTO,boundDevice:getBoundDevice(ME_NUM)
+      }));
+      localStorage.setItem('easypaisa_last',ME_NUM);
+    }catch(e){}
+  }
+  function loadAccount(){
+    try{
+      var d=JSON.parse(localStorage.getItem(acctKey()));
+      if(d&&d.v===DATA_VER){
+        balance=d.balance;
+        tx=d.tx||[];
+        if(d.name)ME_NAME=d.name;
+        if(d.email)ME_EMAIL=d.email;
+        ME_PHOTO=d.photo||'';
+        return true;
+      }
+    }catch(e){}
+    return false;
+  }
 
-  // Purani default transactions ka time pichlay waqt ka rakha hai taake jo aap send karein woh hamesha sab se upar aaye
   function seed(){
     var base = Date.now() - 86400000;
     function at(h,m){var d=new Date(base);d.setHours(h,m,0,0);return d.getTime();}
@@ -822,7 +894,6 @@
     document.getElementById(id).classList.add('active');
     document.getElementById('nav-home').classList.toggle('on',id==='home');window.scrollTo(0,0);}
 
-  var ME_NAME='Mrs Tashkeel Saee',ME_NUM='03445488142',ME_EMAIL='Mrstashkeelsaee@gmail.com';
   var ACCOUNTS={
     '03445488142':{name:'Mrs Tashkeel Saee',email:'Mrstashkeelsaee@gmail.com',balance:5000000},
     '03239099954':{name:'Tashkeel Ahmad',email:'tashkeelsaee@gmail.com',balance:10000000},
@@ -835,13 +906,77 @@
     '03125556677':{name:'Hamza Tariq',email:'hamza.tariq@easypaisa',balance:88000}
   };
 
+  function setAvatarBox(el, photoSrc, iniText){
+    if(!el)return;
+    if(photoSrc){
+      el.innerHTML='<img src="'+photoSrc+'" alt="Profile">';
+    }else{
+      el.textContent=iniText||'U';
+    }
+  }
+
   function applyProfile(){
     var ini=initials(ME_NAME)||'U';
-    var a=document.getElementById('avatarInit');if(a)a.textContent=ini.charAt(0)||'U';
-    var pa=document.getElementById('profAv');if(pa)pa.textContent=ini;
-    var pn=document.getElementById('profName');if(pn)pn.textContent=ME_NAME;
+    setAvatarBox(document.getElementById('avatarInit'), ME_PHOTO, ini.charAt(0)||'U');
+    setAvatarBox(document.getElementById('profAv'), ME_PHOTO, ini);
+    setAvatarBox(document.getElementById('edtAv'), ME_PHOTO, ini);
+    var pn=document.getElementById('profName');if(pn)pn.textContent=ME_NAME.toUpperCase();
     var pnum=document.getElementById('profNum');if(pnum)pnum.textContent=ME_NUM;
     var pe=document.getElementById('profEmail');if(pe)pe.textContent=ME_EMAIL;
+  }
+
+  function openEditProfile(){
+    var em=document.getElementById('edtEmail');
+    if(em)em.value=ME_EMAIL||'';
+    applyProfile();
+    go('editProfile');
+  }
+
+  function pickDevicePhoto(){
+    var inp=document.getElementById('photoFileInput');
+    if(inp)inp.click();
+  }
+
+  function onPhotoPicked(ev){
+    var file=ev.target.files&&ev.target.files[0];
+    if(!file)return;
+    var reader=new FileReader();
+    reader.onload=function(e){
+      var img=new Image();
+      img.onload=function(){
+        var canvas=document.createElement('canvas');
+        var maxSide=420;
+        var w=img.width, h=img.height;
+        if(w>h){if(w>maxSide){h=Math.round(h*maxSide/w);w=maxSide;}}
+        else{if(h>maxSide){w=Math.round(w*maxSide/h);h=maxSide;}}
+        canvas.width=w; canvas.height=h;
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
+        ME_PHOTO=canvas.toDataURL('image/jpeg',0.82);
+        applyProfile();
+        save();
+        toast('Photo update ho gayi');
+      };
+      img.src=e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function continueWithGoogle(){
+    var gEmail='tashkeel.google@gmail.com';
+    document.getElementById('edtEmail').value=gEmail;
+    ME_EMAIL=gEmail;
+    applyProfile();
+    save();
+    toast('Google email set ho gaya');
+  }
+
+  function saveProfileEdits(){
+    var newEmail=(document.getElementById('edtEmail').value||'').trim();
+    if(newEmail)ME_EMAIL=newEmail;
+    applyProfile();
+    save();
+    toast('Information save ho gayi');
+    go('profile');
   }
 
   function login(){
@@ -865,6 +1000,7 @@
     ME_NUM=num;
     ME_NAME=acc.name;
     ME_EMAIL=acc.email;
+    ME_PHOTO='';
     if(!loadAccount()){ balance=acc.balance; seed(); }
     applyProfile();refresh();
     document.getElementById('login').classList.remove('active');document.getElementById('appRoot').hidden=false;go('home');
