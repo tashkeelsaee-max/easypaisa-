@@ -831,6 +831,11 @@
   var EP_LOGO_SVG='<svg viewBox="0 0 200 200" width="100%" height="100%" aria-hidden="true"><path fill="#26242f" fill-rule="evenodd" d="M35 104C35 58 72 26 122 26c37 0 60 19 60 44 0 28-29 44-76 44H66c3 11 14 17 31 17 18 0 34-6 48-15l12 18c-18 12-39 18-62 18-37 0-60-18-60-42zm43-17h26c24 0 39-7 39-19 0-11-11-18-27-18-22 0-35 14-38 37z"/><path fill="#25a84b" d="M18 118c16 34 52 54 94 54 37 0 65-14 78-36l-22-13c-10 16-31 25-56 25-33 0-62-16-75-42l-22 11z"/></svg>';
   function mountEpLogos(){
     document.querySelectorAll('[data-ep-logo]').forEach(function(el){el.innerHTML=EP_LOGO_SVG;});
+    updateEpLogosVisibility();
+  }
+  function updateEpLogosVisibility(){
+    var show = (transferMethod === 'Easypaisa');
+    document.querySelectorAll('[data-ep-logo]').forEach(function(el){el.hidden = !show;});
   }
 
   var balance = 5000000, tx = [], hidden = false;
@@ -1085,7 +1090,7 @@
   var CONTACTS={'03445488142':'Mrs Tashkeel Saee','03239099954':'Tashkeel Ahmad','03001234501':'Muhammad Ibrahim','03211234502':'Shabana Bibi','03331234503':'Chouhdry Tayyab Ali','03451234504':'Abu Baker','03011234505':'Ayesha Bibi','03451122334':'Fatima Ali','03125556677':'Hamza Tariq','03424439436':'Tayyab Malik'};
   var FAVS=['03001234501','03211234502','03331234503','03451234504','03239099954'];
   var BANKS=['Allied Bank (ABL)','Askari Bank','Bank Alfalah','Bank AL Habib','BankIslami Pakistan','Bank of Khyber','Bank of Punjab (BOP)','Dubai Islamic Bank','Faysal Bank','First Women Bank','Habib Bank (HBL)','Habib Metropolitan Bank','JS Bank','MCB Bank','MCB Islamic Bank','Meezan Bank','National Bank of Pakistan (NBP)','Samba Bank','Silkbank','Sindh Bank','Soneri Bank','Standard Chartered Pakistan','Summit Bank','United Bank (UBL)','Al Baraka Bank','Zarai Taraqiati Bank (ZTBL)','SME Bank','First Microfinance Bank','Khushhali Microfinance Bank','Mobilink Microfinance Bank (JazzCash)','Telenor Microfinance Bank (Easypaisa)','U Microfinance Bank','NRSP Microfinance Bank','FINCA Microfinance Bank','Apna Microfinance Bank','Citibank','Deutsche Bank','Bank of China','ICBC Pakistan'];
-  var sendMode='mobile',curName='',curNum='',transferMethod='wallet',curPurpose='',cfFav=false;
+  var sendMode='mobile',curName='',curNum='',transferMethod='Easypaisa',curPurpose='',cfFav=false;
   function numLbl(){return (transferMethod==='Wallet'||isBankMethod())?'Account Number':'Account Number';}
   function initials(n){var p=(n||'').trim().split(/\s+/);return (((p[0]||'')[0]||'')+((p[1]||'')[0]||'')).toUpperCase();}
   function setEpTab(t){
@@ -1124,7 +1129,7 @@
     var list=WALLETS.filter(function(w){return w.toLowerCase().indexOf(q)>-1;});
     if(!list.length){el.innerHTML='<div class="empty">Koi wallet nahi mila.</div>';return;}
     el.innerHTML=list.map(function(w){return '<button class="wrow" onclick="selectWallet(\''+w.replace(/'/g,"")+'\')"><span class="wav">'+initials(w)+'</span>'+w+'<span class="ch">›</span></button>';}).join('');}
-  function selectWallet(name){transferMethod='Wallet';selectedWallet=name;
+  function selectWallet(name){transferMethod='Wallet';selectedWallet=name;updateEpLogosVisibility();
     document.getElementById('waWallet').textContent=name;
     document.getElementById('waLogo').textContent=initials(name);
     document.getElementById('wa_num').value='';document.getElementById('wa_err').textContent='';
@@ -1139,7 +1144,7 @@
     setErr('wa_err','');var digits=acc.replace(/[^0-9]/g,'');
     curNum=acc;curName=CONTACTS[digits]||'Account Holder';curPurpose=document.getElementById('wa_purpose').value;
     openAmountScreen();}
-  function pickFav2(n){transferMethod='Wallet';selectedWallet='Wallet';resetSend();
+  function pickFav2(n){transferMethod='Wallet';selectedWallet='Wallet';updateEpLogosVisibility();resetSend();
     document.getElementById('bankWrap').hidden=true;setMode('mobile');
     document.getElementById('sendTitle').textContent='Wallet Transfer';go('send');
     document.getElementById('s_num').value=n;resolveRecv();}
@@ -1147,7 +1152,7 @@
   function closeSheet(){document.getElementById('sheet').classList.remove('show');}
   function isBankMethod(){return transferMethod==='Bank'||transferMethod==='Raast';}
   function fundSrc(){if(transferMethod==='Wallet'&&selectedWallet&&selectedWallet!=='Wallet')return selectedWallet;return isBankMethod()?document.getElementById('bankSel').value:'easypaisa Account';}
-  function pickMethod(m){transferMethod=m;selectedWallet='';closeSheet();
+  function pickMethod(m){transferMethod=m;selectedWallet='';updateEpLogosVisibility();closeSheet();
     if(m==='Wallet'){resetSend();renderFavs2();var ws=document.getElementById('wSearch');if(ws)ws.value='';renderWalletList();go('walletPick');return;}
     resetSend();
     var isBank=(m==='Bank'||m==='Raast');document.getElementById('bankWrap').hidden=!isBank;setMode(isBank?'account':'mobile');
@@ -1155,6 +1160,7 @@
     if(m==='CNIC')document.getElementById('s_num').placeholder='Enter CNIC Number';go('send');}
 
   function openAmountScreen(){
+    updateEpLogosVisibility();
     document.getElementById('amPayTo').textContent = curName;
     renderBal();
     var inp = document.getElementById('s_amt');
@@ -1185,6 +1191,7 @@
 
   function goConfirm(){var amt=val('s_amt');
     if(amt<1)return setErr('am_err','Amount daalein');if(amt>balance)return setErr('am_err','Balance kaafi nahi hai');setErr('am_err','');
+    updateEpLogosVisibility();
     cfFav = false;
     document.getElementById('cfFavRow').classList.remove('on');
     document.getElementById('cfFavBox').textContent = '';
@@ -1230,6 +1237,7 @@
     t.rcpt=o;showReceipt(o);reset(['a_amt']);}
 
   function showReceipt(o){
+    updateEpLogosVisibility();
     document.getElementById('sumAmt').textContent=fmt(o.amount);
     document.getElementById('sumSub').textContent='Successfully '+(o.partyLabel||'Sent to');
     document.getElementById('sumName').textContent=o.name||'—';
