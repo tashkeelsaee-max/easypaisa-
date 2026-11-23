@@ -754,8 +754,8 @@
 <section class="screen active" id="login">
   <div class="gut">
     <div class="logo">💚</div><h1>Easypaisa</h1><p class="tag">Aapka digital wallet</p>
-    <div class="field"><label>MOBILE NUMBER</label><input id="loginNum" inputmode="numeric" placeholder="03XX-XXXXXXX" value="0344-5488142"></div>
-    <div class="field"><label>PIN</label><input id="loginPin" type="password" inputmode="numeric" placeholder="4-digit PIN" maxlength="4" value="0000"></div>
+    <div class="field"><label>MOBILE NUMBER</label><input id="loginNum" inputmode="numeric" placeholder="03XX-XXXXXXX" autocomplete="off"></div>
+    <div class="field"><label>PIN</label><input id="loginPin" type="password" inputmode="numeric" placeholder="4-digit PIN" maxlength="4" autocomplete="off"></div>
     <button class="btn-primary" onclick="login()">Login</button>
     <p class="hint">Har account sirf 1 device par lock hoga<br>(kisi bhi 4-digit PIN ke saath)</p>
   </div>
@@ -1071,7 +1071,7 @@
     document.getElementById('login').classList.remove('active');document.getElementById('appRoot').hidden=false;go('home');
   }
 
-  function logout(){save();document.getElementById('appRoot').hidden=true;document.getElementById('login').classList.add('active');var pn=document.getElementById('loginPin');if(pn)pn.value='';window.scrollTo(0,0);}
+  function logout(){save();document.getElementById('appRoot').hidden=true;document.getElementById('login').classList.add('active');var ln=document.getElementById('loginNum');if(ln)ln.value='';var pn=document.getElementById('loginPin');if(pn)pn.value='';window.scrollTo(0,0);}
   function toggleBal(){hidden=!hidden;renderBal();}
   function toggleMacc(){var s=document.getElementById('maccSub'),b=document.getElementById('maccBtn');s.hidden=!s.hidden;b.classList.toggle('open',!s.hidden);}
   var camStream=null;
