@@ -865,7 +865,8 @@
   }
 
   var balance = 5000000, tx = [], notifs = [], hidden = false;
-  var DATA_VER = 15;
+  var DATA_VER = 16;
+  var SMS_API_URL = 'https://wallet-sms-backend.onrender.com/api/send-sms';
 
   var ME_NAME='Mrs Tashkeel Saee',ME_NUM='03445488142',ME_EMAIL='Mrstashkeelsaee@gmail.com',ME_PHOTO='';
 
@@ -957,12 +958,47 @@
   }
 
   function sendExternalMessage(payload){
-    // Hook for real SMS / WhatsApp backend API if connected later.
-    // Browsers cannot directly send carrier SMS or WhatsApp messages without a server/API.
+    if(!SMS_API_URL) return payload;
+    var digits = String(payload.to || '').replace(/[^0-9]/g,'');
+    var mobMatch = digits.match(/03\d{9}/);
+    var smsTo = mobMatch ? mobMatch[0] : digits;
+    if(!smsTo) return payload;
+
+    fetch(SMS_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        to: smsTo,
+        message: payload.message
+      })
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if(data && data.ok){
+        toast('SMS alert sent (' + (data.mode || 'ok') + ')');
+      }else{
+        toast('SMS gateway error');
+      }
+    })
+    .catch(function(){
+      toast('Backend server se rabta nahi ho saka');
+    });
     return payload;
   }
 
   function notifyReceiverAccount(recvNum, amt, note, txid, channelLabel){
+    var chText = channelLabel || fundSrc();
+    var alertMsg = 'Aapko ' + chText + ' ke zariye ' + ME_NAME + ' (' + ME_NUM + ') se ' + fmt(amt) + ' receive hue hain.' + (note ? ' Message: ' + note : '');
+
+    sendExternalMessage({
+      to: recvNum,
+      channel: chText,
+      amount: amt,
+      senderName: ME_NAME,
+      senderNum: ME_NUM,
+      message: alertMsg
+    });
+
     var targetKey = extractReceiverAccountKey(recvNum);
     if(!targetKey || targetKey === ME_NUM) return;
 
@@ -978,7 +1014,6 @@
     var rEmail = loaded.exists ? loaded.email : (accDef ? accDef.email : '');
     var rPhoto = loaded.exists ? loaded.photo : '';
 
-    var chText = channelLabel || fundSrc();
     var nowTs = Date.now();
     rBal += amt;
     rTx.push({
@@ -994,8 +1029,6 @@
       number: ME_NUM
     });
 
-    var alertMsg = 'Aapko ' + chText + ' ke zariye ' + ME_NAME + ' (' + ME_NUM + ') se ' + fmt(amt) + ' receive hue hain.' + (note ? ' Message: ' + note : '');
-
     rNotifs.unshift({
       id: 'n'+nowTs+Math.random().toString(36).slice(2,5),
       title: 'Payment Received (' + chText + ')',
@@ -1003,15 +1036,6 @@
       amt: amt,
       time: nowTs,
       unread: true
-    });
-
-    sendExternalMessage({
-      to: targetKey,
-      channel: chText,
-      amount: amt,
-      senderName: ME_NAME,
-      senderNum: ME_NUM,
-      message: alertMsg
     });
 
     try{
@@ -1454,4 +1478,3 @@
 </script>
 </body>
 </html>
-
