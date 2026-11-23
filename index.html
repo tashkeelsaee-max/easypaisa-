@@ -154,7 +154,7 @@
   .amttop h1{font-size:28px;font-weight:800;line-height:1.15;color:var(--fg)}
   .amttop .payto{color:var(--muted);font-size:15px;margin-top:4px}
   .amttop .payto b{color:var(--fg);font-weight:600}
-  .epbadge{width:42px;height:42px;border-radius:50%;border:2px solid var(--brand);color:var(--brand);display:grid;place-items:center;font-weight:900;font-size:20px;flex:none;background:var(--surface);font-style:italic}
+  .epbadge{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);color:var(--fg);display:grid;place-items:center;flex:none;background:#fff;overflow:hidden;padding:6px}
   .amtcenter{text-align:center;margin:46px 0 18px}
   .amtcenter .cur{font-size:24px;font-weight:700;color:#66706b;vertical-align:top;margin-right:4px}
   .amtcenter input{border:none;outline:none;background:none;color:#66706b;font-size:64px;font-weight:700;text-align:center;width:100%;max-width:280px;font-variant-numeric:tabular-nums}
@@ -175,7 +175,7 @@
   .cfcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:0 2px 10px rgba(0,0,0,.03)}
   .cf-from{display:flex;align-items:center;justify-content:space-between;gap:12px}
   .cf-from-l{display:flex;align-items:center;gap:12px}
-  .cf-epico{width:38px;height:38px;border-radius:10px;background:linear-gradient(145deg,#25c459,#0e8c38);color:#fff;display:grid;place-items:center;font-weight:900;font-size:20px;font-style:italic;flex:none}
+  .cf-epico{width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;flex:none;padding:5px;overflow:hidden}
   .cf-from b{display:block;font-size:16px;font-weight:700}
   .cf-from small{color:var(--muted);font-size:13px}
   .cf-chg{color:var(--brand);font-size:15px;font-weight:600}
@@ -332,7 +332,7 @@
     :root:not([data-theme="dark"]) .fav .av{background:#e8f8ee}
     :root:not([data-theme="dark"]) .recvcard{background:#e8f8ee}
     :root:not([data-theme="dark"]) .seg{background:#eef2f0}
-    :root:not([data-theme="dark"]) .seg button.on{background:#c9efd5;color:#0f5a2b}
+    :root:not([data-theme="light"]) .seg button.on{background:#c9efd5;color:#0f5a2b}
   }
 
   .success{position:fixed;inset:0;background:linear-gradient(180deg,#e9f7ef 0%,#def3e7 50%,#d3ede0 100%);z-index:70;display:none;align-items:center;justify-content:center;overflow-y:auto;padding:20px 16px}
@@ -365,7 +365,7 @@
   .summary{width:100%;max-width:400px;margin:auto;text-align:center;display:flex;flex-direction:column;align-items:center;padding:16px 10px}
   .sumamt{font-size:38px;font-weight:800;margin-top:24px;color:var(--fg)}
   .sumsub{color:#5d6e65;font-size:15px;margin-top:4px}
-  .sumav{width:64px;height:64px;border-radius:50%;border:2px solid var(--brand);background:var(--surface);color:var(--brand);display:grid;place-items:center;font-size:26px;font-weight:900;font-style:italic;margin:28px 0 14px}
+  .sumav{width:68px;height:68px;border-radius:50%;border:1.5px solid var(--line);background:#fff;display:grid;place-items:center;margin:28px 0 14px;padding:10px;overflow:hidden}
   .sumname{font-size:21px;font-weight:700;letter-spacing:.2px;color:var(--fg)}
   .sumnum{color:#5d6e65;font-size:15px;margin-top:4px;letter-spacing:.5px}
   .sumbtns{display:flex;align-items:center;gap:14px;margin-top:44px;width:100%;justify-content:center}
@@ -533,7 +533,7 @@
           <h1>Enter Amount</h1>
           <div class="payto">Pay To: <b id="amPayTo">—</b></div>
         </div>
-        <div class="epbadge">e</div>
+        <div class="epbadge" data-ep-logo></div>
       </div>
     </div>
     <div class="gut">
@@ -562,7 +562,7 @@
       <div class="cfcard">
         <div class="cf-from">
           <div class="cf-from-l">
-            <div class="cf-epico">e</div>
+            <div class="cf-epico" data-ep-logo></div>
             <div>
               <b id="cf_src">Easypaisa Wallet</b>
               <small class="num" id="cf_bal">Balance: Rs. 0.00</small>
@@ -576,7 +576,7 @@
       <div class="cfcard">
         <div class="cf-to">
           <div class="cf-to-l">
-            <div class="epbadge">e</div>
+            <div class="epbadge" data-ep-logo></div>
             <div>
               <b id="cf_name">—</b>
               <small class="num" id="cf_num">—</small>
@@ -781,7 +781,7 @@
     <div class="coin"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
     <div class="sumamt num" id="sumAmt">Rs. 0.00</div>
     <div class="sumsub" id="sumSub">Successfully Sent to</div>
-    <div class="sumav">e</div>
+    <div class="sumav" data-ep-logo></div>
     <div class="sumname" id="sumName">—</div>
     <div class="sumnum num" id="sumNum">—</div>
     <div class="sumbtns">
@@ -828,6 +828,11 @@
 </div>
 
 <script>
+  var EP_LOGO_SVG='<svg viewBox="0 0 200 200" width="100%" height="100%" aria-hidden="true"><path fill="#26242f" fill-rule="evenodd" d="M35 104C35 58 72 26 122 26c37 0 60 19 60 44 0 28-29 44-76 44H66c3 11 14 17 31 17 18 0 34-6 48-15l12 18c-18 12-39 18-62 18-37 0-60-18-60-42zm43-17h26c24 0 39-7 39-19 0-11-11-18-27-18-22 0-35 14-38 37z"/><path fill="#25a84b" d="M18 118c16 34 52 54 94 54 37 0 65-14 78-36l-22-13c-10 16-31 25-56 25-33 0-62-16-75-42l-22 11z"/></svg>';
+  function mountEpLogos(){
+    document.querySelectorAll('[data-ep-logo]').forEach(function(el){el.innerHTML=EP_LOGO_SVG;});
+  }
+
   var balance = 5000000, tx = [], hidden = false;
   var DATA_VER = 13;
 
@@ -1260,7 +1265,7 @@
 
   var tt;function toast(m){var e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){e.classList.remove('show');},2200);}
 
-  renderFavs();renderBanks();setMode('mobile');
+  mountEpLogos();renderFavs();renderBanks();setMode('mobile');
   if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}
 </script>
 </body>
