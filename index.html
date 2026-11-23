@@ -757,7 +757,7 @@
     <div class="field"><label>MOBILE NUMBER</label><input id="loginNum" inputmode="numeric" placeholder="03XX-XXXXXXX" autocomplete="off"></div>
     <div class="field"><label>PIN</label><input id="loginPin" type="password" inputmode="numeric" placeholder="4-digit PIN" maxlength="4" autocomplete="off"></div>
     <button class="btn-primary" onclick="login()">Login</button>
-    <p class="hint">Har account sirf 1 device par lock hoga<br>(kisi bhi 4-digit PIN ke saath)</p>
+    <p class="hint">Har number ka apna alag password hai<br>(sahi password likhne par hi open hoga)</p>
   </div>
 </section>
 
@@ -959,16 +959,16 @@
     document.getElementById('nav-home').classList.toggle('on',id==='home');window.scrollTo(0,0);}
 
   var ACCOUNTS={
-    '03445488142':{name:'Mrs Tashkeel Saee',email:'Mrstashkeelsaee@gmail.com',balance:5000000},
-    '03239099954':{name:'Tashkeel Ahmad',email:'tashkeelsaee@gmail.com',balance:10000000},
-    '03001234501':{name:'Nasir Jamal',email:'nasir.jamal@easypaisa',balance:52000},
-    '03211234502':{name:'Sheikh Bilal Nawaz',email:'bilal.nawaz@easypaisa',balance:18500},
-    '03331234503':{name:'Shazaib Gillani',email:'shazaib.g@easypaisa',balance:7300},
-    '03451234504':{name:'Noman Hamza',email:'noman.hamza@easypaisa',balance:134000},
-    '03011234505':{name:'Ayesha Bibi',email:'ayesha.bibi@easypaisa',balance:45000},
-    '03451122334':{name:'Fatima Ali',email:'fatima.ali@easypaisa',balance:29500},
-    '03125556677':{name:'Hamza Tariq',email:'hamza.tariq@easypaisa',balance:88000},
-    '03424439436':{name:'Tayyab Malik',email:'tayabmalik786@gmail.com',balance:5000000}
+    '03445488142':{name:'Mrs Tashkeel Saee',email:'Mrstashkeelsaee@gmail.com',pin:'1122',balance:5000000},
+    '03239099954':{name:'Tashkeel Ahmad',email:'tashkeelsaee@gmail.com',pin:'2233',balance:10000000},
+    '03001234501':{name:'Nasir Jamal',email:'nasir.jamal@easypaisa',pin:'3344',balance:52000},
+    '03211234502':{name:'Sheikh Bilal Nawaz',email:'bilal.nawaz@easypaisa',pin:'4455',balance:18500},
+    '03331234503':{name:'Shazaib Gillani',email:'shazaib.g@easypaisa',pin:'5566',balance:7300},
+    '03451234504':{name:'Noman Hamza',email:'noman.hamza@easypaisa',pin:'6677',balance:134000},
+    '03011234505':{name:'Ayesha Bibi',email:'ayesha.bibi@easypaisa',pin:'7788',balance:45000},
+    '03451122334':{name:'Fatima Ali',email:'fatima.ali@easypaisa',pin:'8899',balance:29500},
+    '03125556677':{name:'Hamza Tariq',email:'hamza.tariq@easypaisa',pin:'9900',balance:88000},
+    '03424439436':{name:'Tayyab Malik',email:'tayabmalik786@gmail.com',pin:'1589',balance:5000000}
   };
 
   function setAvatarBox(el, photoSrc, iniText){
@@ -1048,9 +1048,10 @@
     var num=document.getElementById('loginNum').value.replace(/[^0-9]/g,'');
     var pin=document.getElementById('loginPin').value.trim();
     if(num.length<11){toast('Sahi mobile number daalein');return;}
-    if(pin.length<4){toast('4-digit PIN daalein');return;}
+    if(pin.length<4){toast('4-digit password daalein');return;}
     var acc=ACCOUNTS[num];
     if(!acc){toast('Ye number allowed nahi hai — sirf registered numbers se login karein');return;}
+    if(pin!==acc.pin){toast('Galat password hai — sahi password daalein');return;}
 
     var currentDev = getDeviceId();
     var boundDev = getBoundDevice(num);
