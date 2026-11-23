@@ -256,6 +256,74 @@
   .htx-amt{font-weight:700;font-size:15px;white-space:nowrap}
   .htx-amt.pos{color:var(--good)} .htx-amt.neg{color:var(--danger)}
 
+  /* Top 3737 SMS Banner (stays on screen for 1 minute) */
+  .sms3737-banner{
+    position:fixed;
+    top:calc(env(safe-area-inset-top,0px) + 10px);
+    left:50%;
+    transform:translateX(-50%) translateY(-140%);
+    width:calc(100% - 24px);
+    max-width:436px;
+    background:#101713;
+    color:#f3faf5;
+    border:1.5px solid #2fcf64;
+    border-radius:18px;
+    padding:13px 14px;
+    box-shadow:0 14px 36px rgba(0,0,0,.45);
+    z-index:95;
+    opacity:0;
+    transition:transform .28s cubic-bezier(.22,1,.36,1), opacity .25s ease;
+    pointer-events:none;
+  }
+  .sms3737-banner.show{
+    transform:translateX(-50%) translateY(0);
+    opacity:1;
+    pointer-events:auto;
+  }
+  .sms3737-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:6px;
+  }
+  .sms3737-sender{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    font-size:14px;
+    font-weight:800;
+    color:#58ea86;
+    letter-spacing:.3px;
+  }
+  .sms3737-tag{
+    background:rgba(47,207,100,.16);
+    color:#9cf5b7;
+    font-size:10px;
+    font-weight:700;
+    padding:2px 8px;
+    border-radius:99px;
+  }
+  .sms3737-meta{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:11px;
+    color:#9fb2a7;
+  }
+  .sms3737-x{
+    width:24px;height:24px;border-radius:50%;
+    background:rgba(255,255,255,.1);color:#fff;
+    display:grid;place-items:center;font-size:13px;line-height:1;
+  }
+  .sms3737-body{
+    font-size:12.5px;
+    line-height:1.45;
+    color:#eef7f1;
+    white-space:pre-line;
+    word-break:break-word;
+  }
+
   .toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%) translateY(20px);opacity:0;background:var(--fg);color:var(--bg);padding:12px 20px;border-radius:30px;font-size:13px;font-weight:600;z-index:80;transition:all .3s;pointer-events:none;max-width:90%;text-align:center}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
@@ -422,6 +490,21 @@
 </style>
 </head>
 <body>
+
+<!-- Top 3737 SMS Pop-up Banner (stays visible for 60 seconds) -->
+<div class="sms3737-banner" id="sms3737Banner" onclick="hideSms3737()">
+  <div class="sms3737-top">
+    <div class="sms3737-sender">
+      <span>3737</span>
+      <span class="sms3737-tag">easypaisa SMS</span>
+    </div>
+    <div class="sms3737-meta">
+      <span class="num" id="sms3737Timer">60s</span>
+      <button class="sms3737-x" type="button" onclick="event.stopPropagation();hideSms3737()" aria-label="Close SMS">✕</button>
+    </div>
+  </div>
+  <div class="sms3737-body" id="sms3737Body"></div>
+</div>
 
 <div class="app" id="appRoot" hidden>
 
@@ -883,6 +966,46 @@
     '03424439436':{name:'Tayyab Malik',email:'tayabmalik786@gmail.com',pin:'1589',balance:5000000}
   };
 
+  var sms3737Timer = null;
+  var sms3737Interval = null;
+
+  function showSms3737(text){
+    var banner = document.getElementById('sms3737Banner');
+    var body = document.getElementById('sms3737Body');
+    var timerEl = document.getElementById('sms3737Timer');
+    if(!banner || !body) return;
+
+    clearTimeout(sms3737Timer);
+    clearInterval(sms3737Interval);
+
+    body.textContent = text;
+    var left = 60;
+    if(timerEl) timerEl.textContent = left + 's';
+
+    banner.classList.add('show');
+
+    sms3737Interval = setInterval(function(){
+      left -= 1;
+      if(left <= 0){
+        clearInterval(sms3737Interval);
+        if(timerEl) timerEl.textContent = '0s';
+      }else if(timerEl){
+        timerEl.textContent = left + 's';
+      }
+    }, 1000);
+
+    sms3737Timer = setTimeout(function(){
+      hideSms3737();
+    }, 60000);
+  }
+
+  function hideSms3737(){
+    clearTimeout(sms3737Timer);
+    clearInterval(sms3737Interval);
+    var banner = document.getElementById('sms3737Banner');
+    if(banner) banner.classList.remove('show');
+  }
+
   function getDeviceId(){
     var id = null;
     try{
@@ -973,16 +1096,7 @@
       })
     })
     .then(function(r){ return r.json(); })
-    .then(function(data){
-      if(data && data.ok){
-        toast('SMS alert sent (' + (data.mode || 'ok') + ')');
-      }else{
-        toast('SMS gateway error');
-      }
-    })
-    .catch(function(){
-      toast('Backend server se rabta nahi ho saka');
-    });
+    .catch(function(){});
     return payload;
   }
 
@@ -1401,6 +1515,16 @@
     setErr('cf_err','');
     go('sendConfirm');}
 
+  function build3737SendSms(amt, name, num, channelName, txid, note, remBal){
+    var lines = [
+      'easypaisa: ' + fmt(amt) + ' sent to ' + name + ' (' + num + ') via ' + channelName + '.',
+      'TID: ' + txid + ' | Fee: Rs. 0.00',
+      'New Bal: ' + fmt(remBal)
+    ];
+    if(note) lines.push('Msg: ' + note);
+    return lines.join('\n');
+  }
+
   function doSend(){var amt=val('s_amt');
     if(amt<1)return setErr('cf_err','Amount daalein');if(amt>balance)return setErr('cf_err','Balance kaafi nahi hai');
     setErr('cf_err','');
@@ -1410,6 +1534,7 @@
     var channelName = fundSrc();
     var t=addTx('out','Sent via '+channelName+' to '+curName,curNum+(note?' · '+note:''),amt,'💸');t.name=curName;t.number=curNum;
     notifyReceiverAccount(curNum, amt, note, t.txid, channelName);
+    showSms3737(build3737SendSms(amt, curName, curNum, channelName, t.txid, note, balance));
     var o={txid:t.txid,date:rcptDate(t.time),sub:'Your '+channelName+' payment has been made',amount:amt,source:channelName,partyLabel:'Sent to',nameLabel:'Name',name:curName,numLabel:numLbl(),number:curNum,note:note};
     t.rcpt=o;showReceipt(o);}
 
