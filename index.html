@@ -111,6 +111,43 @@
   .back{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:22px;flex:none}
   .subhead h2{font-size:19px;font-weight:700}
 
+  /* Photo-matched #send screen styles */
+  #send{background:#e9f4ee;min-height:100%}
+  :root[data-theme="dark"] #send,:root:not([data-theme="light"]) #send{background:var(--bg)}
+  .ep-toprow{display:flex;align-items:center;justify-content:space-between;padding-top:calc(env(safe-area-inset-top,0px) + 14px)}
+  .ep-back{width:40px;height:40px;border-radius:12px;background:#dcebe3;color:#17241d;display:grid;place-items:center;font-size:22px}
+  :root[data-theme="dark"] .ep-back,:root:not([data-theme="light"]) .ep-back{background:var(--surface);color:var(--fg)}
+  .ep-help{background:#dcebe3;color:#27382e;font-size:12px;font-weight:600;padding:6px 14px;border-radius:10px}
+  :root[data-theme="dark"] .ep-help,:root:not([data-theme="light"]) .ep-help{background:var(--surface);color:var(--muted)}
+  .ep-title{font-size:25px;font-weight:700;color:#17241d;margin-top:16px;letter-spacing:-.2px}
+  :root[data-theme="dark"] .ep-title,:root:not([data-theme="light"]) .ep-title{color:var(--fg)}
+  .ep-tabs{display:grid;grid-template-columns:1fr 1fr;margin-top:18px;border-bottom:1px solid #d4e3da}
+  :root[data-theme="dark"] .ep-tabs,:root:not([data-theme="light"]) .ep-tabs{border-bottom-color:var(--line)}
+  .ep-tab{padding:11px 8px;font-size:14.5px;font-weight:600;color:#66756d;position:relative;text-align:center}
+  .ep-tab.on{color:#159442}
+  .ep-tab.on::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2.5px;background:#19b24b;border-radius:2px}
+  .ep-favhdr{display:flex;justify-content:space-between;align-items:center;margin:20px 0 12px}
+  .ep-favhdr b{font-size:13.5px;font-weight:700;color:#233329}
+  :root[data-theme="dark"] .ep-favhdr b,:root:not([data-theme="light"]) .ep-favhdr b{color:var(--fg)}
+  .ep-favhdr a{font-size:13px;font-weight:600;color:#159442;cursor:pointer}
+  .ep-favs{display:flex;gap:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
+  .ep-favs::-webkit-scrollbar{display:none}
+  .ep-fav{flex:none;width:64px;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;font-weight:500;color:#2b3b32;text-align:center}
+  :root[data-theme="dark"] .ep-fav,:root:not([data-theme="light"]) .ep-fav{color:var(--fg)}
+  .ep-fav .av{width:54px;height:54px;border-radius:50%;background:#d8ebe0;color:#159442;display:grid;place-items:center;font-weight:700;font-size:15px;border:2px solid transparent}
+  :root[data-theme="dark"] .ep-fav .av,:root:not([data-theme="light"]) .ep-fav .av{background:var(--surface)}
+  .ep-fav.sel .av{border-color:#19b24b}
+  .ep-fav small{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.25;width:64px}
+  .ep-seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:20px}
+  .ep-seg button{padding:11px 10px;border-radius:10px;font-size:13.5px;font-weight:600;color:#2a3a31;background:transparent;display:flex;align-items:center;justify-content:center;gap:7px}
+  :root[data-theme="dark"] .ep-seg button,:root:not([data-theme="light"]) .ep-seg button{color:var(--fg)}
+  .ep-seg button.on{background:#cdebd9;color:#14873c}
+  :root[data-theme="dark"] .ep-seg button.on,:root:not([data-theme="light"]) .ep-seg button.on{background:#193d26;color:var(--brand)}
+  .ep-inwrap{display:flex;align-items:center;gap:12px;background:#f4f9f6;border:1px solid #d5e4db;border-radius:28px;padding:13px 18px;margin-top:16px}
+  :root[data-theme="dark"] .ep-inwrap,:root:not([data-theme="light"]) .ep-inwrap{background:var(--surface);border-color:var(--line)}
+  .ep-inwrap input{border:none;outline:none;background:none;color:var(--fg);font-size:15px;width:100%}
+  .ep-inwrap input::placeholder{color:#8c9c93}
+
   .cleanhead{padding-top:calc(env(safe-area-inset-top,0px) + 14px);padding-bottom:10px;background:var(--bg)}
   .cback{width:40px;height:40px;border-radius:12px;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;font-size:22px;color:var(--fg)}
   .amttop{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-top:14px}
@@ -298,7 +335,6 @@
     :root:not([data-theme="dark"]) .seg button.on{background:#c9efd5;color:#0f5a2b}
   }
 
-  /* Success Summary & Receipt matching attached photo */
   .success{position:fixed;inset:0;background:linear-gradient(180deg,#e9f7ef 0%,#def3e7 50%,#d3ede0 100%);z-index:70;display:none;align-items:center;justify-content:center;overflow-y:auto;padding:20px 16px}
   :root[data-theme="dark"] .success,:root:not([data-theme="light"]) .success{background:var(--bg)}
   .success.show{display:flex;animation:fade .3s}
@@ -421,20 +457,31 @@
     </div>
   </section>
 
-  <!-- SEND : STEP 1 pick receiver -->
+  <!-- SEND : STEP 1 pick receiver (matched to reference photo) -->
   <section class="screen" id="send">
-    <div class="subhead gut"><button class="back" onclick="go('home')">‹</button><h2 id="sendTitle">Easypaisa Transfer</h2></div>
     <div class="gut">
-      <div class="favlbl"><b>My Favourites</b><a onclick="toast('See all — demo')">See All</a></div>
-      <div class="favs" id="favRow"></div>
-      <div class="seg">
-        <button id="segMob" class="on" onclick="setMode('mobile')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg> Mobile No.</button>
-        <button id="segAcc" onclick="setMode('account')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg> Account No.</button>
+      <div class="ep-toprow">
+        <button class="ep-back" type="button" onclick="go('home')">‹</button>
+        <button class="ep-help" type="button" onclick="toast('Easypaisa Transfer Help')">Help</button>
+      </div>
+      <h2 class="ep-title" id="sendTitle">easypaisa Transfer</h2>
+      <div class="ep-tabs">
+        <button class="ep-tab on" id="epTabSend" type="button" onclick="setEpTab('send')">Send Money</button>
+        <button class="ep-tab" id="epTabHist" type="button" onclick="setEpTab('history')">History</button>
+      </div>
+      <div class="ep-favhdr"><b>My Easypaisa Favourites</b><a onclick="toast('See all — demo')">See All</a></div>
+      <div class="ep-favs" id="favRow"></div>
+      <div class="ep-seg">
+        <button id="segMob" class="on" type="button" onclick="setMode('mobile')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg> Mobile No.</button>
+        <button id="segAcc" type="button" onclick="setMode('account')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg> Digital Account No.</button>
       </div>
       <div class="f" id="bankWrap" hidden style="margin-top:14px"><label>Select Bank</label><select id="bankSel"></select></div>
-      <div class="rsearch"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input id="s_num" inputmode="numeric" placeholder="Enter or Select Receiver Number" maxlength="12" oninput="resolveRecv()"></div>
+      <div class="ep-inwrap">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6c7b73" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+        <input id="s_num" inputmode="numeric" placeholder="Enter or Select Receiver Number" maxlength="12" oninput="resolveRecv()" onkeydown="if(event.key==='Enter'&&!document.getElementById('btnNext').disabled)goAmount()">
+      </div>
       <div class="recvcard" id="recvCard" hidden><div class="av" id="recvAv">?</div><div><b id="recvName">—</b><small id="recvNum">—</small></div></div>
-      <div class="f" id="recvNameWrap" hidden style="margin-top:14px"><label>Receiver Name</label><input id="s_name" placeholder="Is number ka naam likhein" oninput="checkNext()"></div>
+      <div class="f" id="recvNameWrap" hidden style="margin-top:14px"><label>Receiver Name</label><input id="s_name" placeholder="Is number ka naam likhein" oninput="checkNext()" onkeydown="if(event.key==='Enter'&&!document.getElementById('btnNext').disabled)goAmount()"></div>
       <div class="err" id="s_err"></div>
       <button class="go" id="btnNext" onclick="goAmount()" disabled>Proceed</button>
     </div>
@@ -729,7 +776,6 @@
 
 <div class="toast" id="toast"></div>
 
-<!-- SUMMARY SCREEN SHOWN FIRST AFTER PAYMENT -->
 <div class="success" id="success">
   <div class="summary">
     <div class="coin"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
@@ -746,7 +792,6 @@
   </div>
 </div>
 
-<!-- DETAILED RECEIPT SCREEN OPENED WHEN CLICKING RECEIPT ICON -->
 <div class="success" id="receipt">
   <div class="receipt">
     <div class="coin"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
@@ -1032,19 +1077,26 @@
   function setErr(id,m){document.getElementById(id).textContent=m;}
   function reset(ids){ids.forEach(function(i){document.getElementById(i).value='';});}
 
-  var CONTACTS={'03445488142':'Mrs Tashkeel Saee','03239099954':'Tashkeel Ahmad','03001234501':'Nasir Jamal','03211234502':'Sheikh Bilal Nawaz','03331234503':'Shazaib Gillani','03451234504':'Noman Hamza','03011234505':'Ayesha Bibi','03451122334':'Fatima Ali','03125556677':'Hamza Tariq','03424439436':'Tayyab Malik'};
-  var FAVS=['03239099954','03445488142','03001234501','03211234502','03331234503'];
+  var CONTACTS={'03445488142':'Mrs Tashkeel Saee','03239099954':'Tashkeel Ahmad','03001234501':'Muhammad Ibrahim','03211234502':'Shabana Bibi','03331234503':'Chouhdry Tayyab Ali','03451234504':'Abu Baker','03011234505':'Ayesha Bibi','03451122334':'Fatima Ali','03125556677':'Hamza Tariq','03424439436':'Tayyab Malik'};
+  var FAVS=['03001234501','03211234502','03331234503','03451234504','03239099954'];
   var BANKS=['Allied Bank (ABL)','Askari Bank','Bank Alfalah','Bank AL Habib','BankIslami Pakistan','Bank of Khyber','Bank of Punjab (BOP)','Dubai Islamic Bank','Faysal Bank','First Women Bank','Habib Bank (HBL)','Habib Metropolitan Bank','JS Bank','MCB Bank','MCB Islamic Bank','Meezan Bank','National Bank of Pakistan (NBP)','Samba Bank','Silkbank','Sindh Bank','Soneri Bank','Standard Chartered Pakistan','Summit Bank','United Bank (UBL)','Al Baraka Bank','Zarai Taraqiati Bank (ZTBL)','SME Bank','First Microfinance Bank','Khushhali Microfinance Bank','Mobilink Microfinance Bank (JazzCash)','Telenor Microfinance Bank (Easypaisa)','U Microfinance Bank','NRSP Microfinance Bank','FINCA Microfinance Bank','Apna Microfinance Bank','Citibank','Deutsche Bank','Bank of China','ICBC Pakistan'];
   var sendMode='mobile',curName='',curNum='',transferMethod='wallet',curPurpose='',cfFav=false;
   function numLbl(){return (transferMethod==='Wallet'||isBankMethod())?'Account Number':'Account Number';}
   function initials(n){var p=(n||'').trim().split(/\s+/);return (((p[0]||'')[0]||'')+((p[1]||'')[0]||'')).toUpperCase();}
-  function renderFavs(){var r=document.getElementById('favRow');if(!r)return;r.innerHTML=FAVS.map(function(n){var nm=CONTACTS[n];return '<button class="fav" data-n="'+n+'" onclick="pickFav(\''+n+'\')"><span class="av">'+initials(nm)+'</span><small>'+nm+'</small></button>';}).join('');}
+  function setEpTab(t){
+    var isH = t==='history';
+    var sBtn=document.getElementById('epTabSend'), hBtn=document.getElementById('epTabHist');
+    if(sBtn)sBtn.classList.toggle('on',!isH);
+    if(hBtn)hBtn.classList.toggle('on',isH);
+    if(isH)go('history');
+  }
+  function renderFavs(){var r=document.getElementById('favRow');if(!r)return;r.innerHTML=FAVS.map(function(n){var nm=CONTACTS[n];return '<button class="ep-fav" type="button" data-n="'+n+'" onclick="pickFav(\''+n+'\')"><span class="av">'+initials(nm)+'</span><small>'+nm+'</small></button>';}).join('');}
   function renderBanks(){var s=document.getElementById('bankSel');if(!s)return;s.innerHTML=BANKS.map(function(b){return '<option>'+b+'</option>';}).join('');}
   function pickFav(n){document.getElementById('s_num').value=n;resolveRecv();}
-  function setMode(m){sendMode=m;document.getElementById('segMob').classList.toggle('on',m==='mobile');document.getElementById('segAcc').classList.toggle('on',m==='account');document.getElementById('s_num').placeholder=m==='mobile'?'Enter or Select Receiver Number':'Enter Account Number';resolveRecv();}
+  function setMode(m){sendMode=m;document.getElementById('segMob').classList.toggle('on',m==='mobile');document.getElementById('segAcc').classList.toggle('on',m==='account');document.getElementById('s_num').placeholder=m==='mobile'?'Enter or Select Receiver Number':'Enter Digital Account Number';resolveRecv();}
   function receiverReady(){var raw=document.getElementById('s_num').value.replace(/[^0-9]/g,'');if(raw.length<11)return false;if(CONTACTS[raw])return true;return document.getElementById('s_name').value.trim().length>1;}
   function resolveRecv(){var raw=document.getElementById('s_num').value.replace(/[^0-9]/g,'');var card=document.getElementById('recvCard'),nw=document.getElementById('recvNameWrap');
-    document.querySelectorAll('#favRow .fav').forEach(function(f){f.classList.toggle('sel',f.dataset.n===raw);});
+    document.querySelectorAll('#favRow .ep-fav').forEach(function(f){f.classList.toggle('sel',f.dataset.n===raw);});
     if(raw.length<11){card.hidden=true;nw.hidden=true;curName='';curNum='';}
     else{curNum=raw;
       if(CONTACTS[raw]){curName=CONTACTS[raw];document.getElementById('recvAv').textContent=initials(curName);document.getElementById('recvName').textContent=curName;document.getElementById('recvNum').textContent=raw;card.hidden=false;nw.hidden=true;}
@@ -1055,7 +1107,9 @@
     var nt=document.getElementById('s_note');if(nt)nt.value='';var mb=document.getElementById('msgBox');if(mb)mb.hidden=true;
     var nb=document.getElementById('btnAmtNext');if(nb)nb.classList.remove('ready');
     document.getElementById('recvCard').hidden=true;document.getElementById('recvNameWrap').hidden=true;
-    setErr('s_err','');document.getElementById('btnNext').disabled=true;document.querySelectorAll('#favRow .fav').forEach(function(f){f.classList.remove('sel');});}
+    setErr('s_err','');document.getElementById('btnNext').disabled=true;document.querySelectorAll('#favRow .ep-fav').forEach(function(f){f.classList.remove('sel');});
+    var sBtn=document.getElementById('epTabSend'),hBtn=document.getElementById('epTabHist');
+    if(sBtn)sBtn.classList.add('on');if(hBtn)hBtn.classList.remove('on');}
 
   var WALLETS=['ABHI Microfinance Bank','Alfa Pay','CMpay','Digitt','Finja','FirstPay','HBL Konnect','JazzCash','KEENU','NayaPay','SadaPay','U Microfinance','UPaisa','Zindigi'];
   var selectedWallet='';
@@ -1092,7 +1146,7 @@
     if(m==='Wallet'){resetSend();renderFavs2();var ws=document.getElementById('wSearch');if(ws)ws.value='';renderWalletList();go('walletPick');return;}
     resetSend();
     var isBank=(m==='Bank'||m==='Raast');document.getElementById('bankWrap').hidden=!isBank;setMode(isBank?'account':'mobile');
-    document.getElementById('sendTitle').textContent=isBank?(m+' Transfer'):'Easypaisa Transfer';
+    document.getElementById('sendTitle').textContent=isBank?(m+' Transfer'):'easypaisa Transfer';
     if(m==='CNIC')document.getElementById('s_num').placeholder='Enter CNIC Number';go('send');}
 
   function openAmountScreen(){
