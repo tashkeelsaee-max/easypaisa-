@@ -248,7 +248,6 @@
   .acctlogo{width:60px;height:60px;border-radius:50%;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;font-weight:800;color:var(--brand);flex:none;margin-top:10px}
   .walsep{height:1px;background:var(--line);margin:14px 0 0}
 
-  /* Profile Screen matching Image 4 */
   .profhead{position:relative;height:156px;background:radial-gradient(circle at 82% 25%,#6be38f 0%,#22b852 45%,#128c3a 100%);border-radius:0 0 24px 24px;padding-top:env(safe-area-inset-top,0px);overflow:hidden}
   .profhead::after{content:"";position:absolute;right:-35px;top:12px;width:210px;height:140px;border-radius:50%;border:14px solid rgba(255,255,255,.12);pointer-events:none}
   .profhead .cback{position:absolute;left:18px;top:calc(env(safe-area-inset-top,0px) + 14px);z-index:2}
@@ -274,7 +273,6 @@
   .proffoot{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px;padding-bottom:10px}
   .proffoot .lang b{color:var(--brand);font-weight:700}
 
-  /* Edit Your Information Screen matching Image 5 */
   .edth1{font-size:28px;font-weight:800;margin-top:16px;color:var(--fg)}
   .edtav-wrap{position:relative;width:104px;height:104px;margin:28px auto 34px}
   .edtav{width:104px;height:104px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-size:34px;font-weight:800;overflow:hidden;box-shadow:var(--shadow)}
@@ -300,31 +298,34 @@
     :root:not([data-theme="dark"]) .seg button.on{background:#c9efd5;color:#0f5a2b}
   }
 
-  .success{position:fixed;inset:0;background:linear-gradient(180deg,#e6f5ec 0%,#d7efe1 55%,#cde9da 100%);z-index:70;display:none;align-items:center;justify-content:center;overflow-y:auto;padding:24px}
+  /* Success & Receipt matching Image 6 */
+  .success{position:fixed;inset:0;background:linear-gradient(180deg,#e9f7ef 0%,#def3e7 50%,#d3ede0 100%);z-index:70;display:none;align-items:center;justify-content:center;overflow-y:auto;padding:20px 16px}
   :root[data-theme="dark"] .success,:root:not([data-theme="light"]) .success{background:var(--bg)}
   .success.show{display:flex;animation:fade .3s}
-  .receipt{background:var(--surface);border-radius:26px;width:100%;max-width:400px;padding:30px 24px;box-shadow:var(--shadow);text-align:center;margin:auto}
-  .coin{width:116px;height:116px;margin:0 auto 20px;border-radius:50%;position:relative;
+  .receipt{background:linear-gradient(180deg,#f5fbf7 0%,#eef8f2 100%);border-radius:26px;width:100%;max-width:410px;padding:28px 22px 24px;box-shadow:0 12px 32px rgba(15,85,42,.12);text-align:center;margin:auto;color:var(--fg)}
+  :root[data-theme="dark"] .receipt,:root:not([data-theme="light"]) .receipt{background:var(--surface)}
+  .coin{width:84px;height:84px;margin:0 auto 14px;border-radius:50%;position:relative;
     background:radial-gradient(circle at 35% 28%,#ffe99e,#e0b14d 58%,#b8842e);
-    display:grid;place-items:center;box-shadow:0 14px 28px rgba(184,132,46,.32),inset 0 -6px 12px rgba(0,0,0,.16);animation:pop .4s ease}
-  .coin::before{content:"";position:absolute;inset:-10px;border-radius:50%;
-    background:repeating-conic-gradient(from -4deg,rgba(25,178,75,.55) 0deg 3deg,transparent 3deg 45deg);
-    -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 10px),#000 calc(100% - 9px));
-    mask:radial-gradient(farthest-side,transparent calc(100% - 10px),#000 calc(100% - 9px))}
+    display:grid;place-items:center;box-shadow:0 10px 22px rgba(184,132,46,.28),inset 0 -5px 10px rgba(0,0,0,.16);animation:pop .4s ease}
   @keyframes pop{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1)}}
-  .coin svg{width:54px;height:54px;stroke:#16a33f;stroke-width:4.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
-  .receipt h2{font-size:24px;margin-bottom:4px}
-  .receipt .sub{color:var(--muted);font-size:15px}
-  .rsep{height:1px;background:var(--line);margin:20px 0}
-  .rrow{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:9px 0;text-align:left}
-  .rrow span{color:var(--muted);font-size:14px;flex:none}
-  .rrow b{font-weight:700;font-size:15px;text-align:right;word-break:break-word}
-  .rtitle{font-weight:700;font-size:16px;text-align:left;margin-bottom:2px}
-  .totlbl{font-weight:700;color:var(--fg);font-size:16px}
-  .totval{font-size:16px}
-  .paidvia{text-align:center;color:var(--muted);font-size:12px;margin-top:16px}
-  .receipt .go{margin-top:24px}
-  .ghost{width:100%;padding:13px;margin-top:10px;border-radius:14px;background:none;color:var(--brand);font-weight:700;font-size:15px}
+  .coin svg{width:40px;height:40px;stroke:#16a33f;stroke-width:4.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .receipt h2{font-size:22px;font-weight:700;margin-bottom:3px;color:var(--fg)}
+  .receipt .sub{color:#5d6e65;font-size:13.5px}
+  .rcp-sec-gap{height:14px}
+  .rrow{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:6px 0;text-align:left}
+  .rrow span{color:#5d6e65;font-size:13.5px;flex:none}
+  .rrow b{font-weight:600;font-size:14px;text-align:right;word-break:break-word;color:var(--fg)}
+  .rtitle{font-weight:700;font-size:14.5px;text-align:left;padding-top:12px;padding-bottom:4px;color:var(--fg)}
+  .rtotrow{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:14px 0 6px;text-align:left}
+  .totlbl{font-weight:700;color:var(--fg);font-size:15.5px}
+  .totval{font-size:16px;font-weight:800;color:var(--fg)}
+  .paidvia{text-align:center;color:#4f5e56;font-size:12px;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:5px}
+  .paidvia .epword{color:#158e3d;font-weight:800;font-size:14px;letter-spacing:-.3px}
+  .rcp-bot{display:flex;align-items:center;gap:12px;margin-top:22px;justify-content:center}
+  .rcp-back{flex:1;max-width:225px;padding:12px 18px;border:1.5px solid #22b852;border-radius:30px;color:#128c3a;font-weight:600;font-size:15px;background:transparent}
+  .rcp-ic{width:46px;height:46px;flex:none;border:1.5px solid #22b852;border-radius:50%;display:grid;place-items:center;background:transparent}
+  .rcp-ic svg{width:20px;height:20px;stroke:#128c3a;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
   .summary{width:100%;max-width:400px;margin:auto;text-align:center;display:flex;flex-direction:column;align-items:center;padding:10px}
   .sumamt{font-size:36px;font-weight:800;margin-top:26px;color:var(--fg)}
   .sumsub{color:var(--muted);font-size:16px;margin-top:4px}
@@ -615,7 +616,7 @@
     </div>
   </section>
 
-  <!-- PROFILE SCREEN (Image 4) -->
+  <!-- PROFILE SCREEN -->
   <section class="screen" id="profile">
     <div class="profhead">
       <button class="cback" onclick="go('home')">‹</button>
@@ -648,7 +649,7 @@
     </div>
   </section>
 
-  <!-- EDIT YOUR INFORMATION SCREEN (Image 5) -->
+  <!-- EDIT YOUR INFORMATION SCREEN -->
   <section class="screen" id="editProfile">
     <div class="cleanhead gut">
       <button class="cback" onclick="go('profile')">‹</button>
@@ -744,38 +745,45 @@
   </div>
 </div>
 
+<!-- DETAILED RECEIPT MATCHING IMAGE 6 -->
 <div class="success" id="receipt">
   <div class="receipt">
     <div class="coin"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
     <h2 id="rcpTitle">Transaction Successful</h2>
-    <p class="sub" id="rcpSub">You have sent money.</p>
-    <div class="rsep"></div>
-    <div class="rrow"><span>Transaction ID</span><b id="rcpId">#0000000000</b></div>
-    <div class="rrow"><span>Date &amp; Time</span><b id="rcpDate">—</b></div>
-    <div class="rrow"><span>Funding Source</span><b id="rcpSrc">Easypaisa Account</b></div>
-    <div class="rsep"></div>
+    <p class="sub" id="rcpSub">Your easypaisa payment has been made</p>
+
+    <div class="rcp-sec-gap"></div>
+    <div class="rrow"><span>Transaction ID</span><b class="num" id="rcpId">#0000000000</b></div>
+    <div class="rrow"><span>Date &amp; Time</span><b class="num" id="rcpDate">—</b></div>
+    <div class="rrow"><span>Funding Source</span><b id="rcpSrc">easypaisa Account</b></div>
+
     <div class="rtitle" id="rcpPartyLbl">Sent to</div>
     <div class="rrow"><span id="rcpNameLbl">Name</span><b id="rcpName">—</b></div>
-    <div class="rrow" id="rcpNumRow"><span id="rcpNumLbl">Mobile Number</span><b id="rcpNum">—</b></div>
-    <div class="rsep"></div>
-    <div class="rtitle">Sent by</div>
+    <div class="rrow" id="rcpNumRow"><span id="rcpNumLbl">Account Number</span><b class="num" id="rcpNum">—</b></div>
+
+    <div class="rtitle" id="rcpByLbl">Paid by</div>
     <div class="rrow"><span>Name</span><b id="rcpByName">—</b></div>
-    <div class="rrow"><span>Mobile Number</span><b id="rcpByNum">—</b></div>
-    <div class="rsep"></div>
+    <div class="rrow"><span>Account Number</span><b class="num" id="rcpByNum">—</b></div>
+
     <div class="rtitle">Charges</div>
-    <div class="rrow"><span>Amount</span><b id="rcpAmt">Rs. 0</b></div>
-    <div class="rrow"><span>Fee</span><b style="color:var(--good)">Rs. 0.00</b></div>
-    <div class="rsep"></div>
-    <div class="rrow"><span class="totlbl">Total Amount</span><b class="num totval" id="rcpTotal">Rs. 0</b></div>
-    <div class="paidvia">Paid via Easypaisa · Real</div>
-    <button class="go" onclick="closeFullReceipt()">Done</button>
-    <button class="ghost" onclick="closeSuccess()">Back to Home</button>
+    <div class="rrow"><span>Amount</span><b class="num" id="rcpAmt">Rs. 0.00</b></div>
+    <div class="rrow"><span>Fee</span><b class="num" id="rcpFee">Rs. 0.00</b></div>
+
+    <div class="rtotrow"><span class="totlbl">Total Amount</span><b class="num totval" id="rcpTotal">Rs. 0.00</b></div>
+
+    <div class="paidvia">Paid via <span class="epword">easypaisa</span></div>
+
+    <div class="rcp-bot">
+      <button class="rcp-back" type="button" onclick="closeSuccess()">Back</button>
+      <button class="rcp-ic" type="button" onclick="toast('Share receipt')" aria-label="Share"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
+      <button class="rcp-ic" type="button" onclick="toast('Receipt downloaded')" aria-label="Download"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 11l5 5 5-5"/><path d="M5 21h14"/></svg></button>
+    </div>
   </div>
 </div>
 
 <script>
   var balance = 5000000, tx = [], hidden = false;
-  var DATA_VER = 11;
+  var DATA_VER = 12;
 
   var ME_NAME='Mrs Tashkeel Saee',ME_NUM='03445488142',ME_EMAIL='Mrstashkeelsaee@gmail.com',ME_PHOTO='';
 
@@ -872,7 +880,7 @@
     if(t.rcpt){showReceipt(t.rcpt);return;}
     var inc=t.dir==='in';
     var nm=t.name||(t.title.indexOf(' - ')>-1?t.title.split(' - ').slice(1).join(' - '):t.title.replace(/^Sent to /,''))||'Merchant';
-    showReceipt({txid:t.txid,date:rcptDate(t.time),sub:inc?'You have received money.':'You have sent money.',amount:t.amt,source:'Easypaisa Account',partyLabel:inc?'Received from':'Sent to',nameLabel:'Name',name:nm,numLabel:'Mobile Number',number:t.number||''});}
+    showReceipt({txid:t.txid,date:rcptDate(t.time),sub:inc?'You have received money.':'Your easypaisa payment has been made',amount:t.amt,source:'easypaisa Account',partyLabel:inc?'Received from':'Sent to',nameLabel:'Name',name:nm,numLabel:'Account Number',number:t.number||''});}
   function renderHistory(){var a=document.getElementById('allTx');if(!a)return;
     var q=(document.getElementById('txSearch')&&document.getElementById('txSearch').value||'').toLowerCase().trim();
     var list=tx.slice().sort(function(a,b){return b.time-a.time;});
@@ -1026,7 +1034,7 @@
   var FAVS=['03239099954','03445488142','03001234501','03211234502','03331234503'];
   var BANKS=['Allied Bank (ABL)','Askari Bank','Bank Alfalah','Bank AL Habib','BankIslami Pakistan','Bank of Khyber','Bank of Punjab (BOP)','Dubai Islamic Bank','Faysal Bank','First Women Bank','Habib Bank (HBL)','Habib Metropolitan Bank','JS Bank','MCB Bank','MCB Islamic Bank','Meezan Bank','National Bank of Pakistan (NBP)','Samba Bank','Silkbank','Sindh Bank','Soneri Bank','Standard Chartered Pakistan','Summit Bank','United Bank (UBL)','Al Baraka Bank','Zarai Taraqiati Bank (ZTBL)','SME Bank','First Microfinance Bank','Khushhali Microfinance Bank','Mobilink Microfinance Bank (JazzCash)','Telenor Microfinance Bank (Easypaisa)','U Microfinance Bank','NRSP Microfinance Bank','FINCA Microfinance Bank','Apna Microfinance Bank','Citibank','Deutsche Bank','Bank of China','ICBC Pakistan'];
   var sendMode='mobile',curName='',curNum='',transferMethod='wallet',curPurpose='',cfFav=false;
-  function numLbl(){return (transferMethod==='Wallet'||isBankMethod())?'Account Number':'Mobile Number';}
+  function numLbl(){return (transferMethod==='Wallet'||isBankMethod())?'Account Number':'Account Number';}
   function initials(n){var p=(n||'').trim().split(/\s+/);return (((p[0]||'')[0]||'')+((p[1]||'')[0]||'')).toUpperCase();}
   function renderFavs(){var r=document.getElementById('favRow');if(!r)return;r.innerHTML=FAVS.map(function(n){var nm=CONTACTS[n];return '<button class="fav" data-n="'+n+'" onclick="pickFav(\''+n+'\')"><span class="av">'+initials(nm)+'</span><small>'+nm+'</small></button>';}).join('');}
   function renderBanks(){var s=document.getElementById('bankSel');if(!s)return;s.innerHTML=BANKS.map(function(b){return '<option>'+b+'</option>';}).join('');}
@@ -1077,7 +1085,7 @@
   function openSheet(){document.getElementById('sheet').classList.add('show');}
   function closeSheet(){document.getElementById('sheet').classList.remove('show');}
   function isBankMethod(){return transferMethod==='Bank'||transferMethod==='Raast';}
-  function fundSrc(){if(transferMethod==='Wallet'&&selectedWallet&&selectedWallet!=='Wallet')return selectedWallet;return isBankMethod()?document.getElementById('bankSel').value:'Easypaisa Wallet';}
+  function fundSrc(){if(transferMethod==='Wallet'&&selectedWallet&&selectedWallet!=='Wallet')return selectedWallet;return isBankMethod()?document.getElementById('bankSel').value:'easypaisa Account';}
   function pickMethod(m){transferMethod=m;selectedWallet='';closeSheet();
     if(m==='Wallet'){resetSend();renderFavs2();var ws=document.getElementById('wSearch');if(ws)ws.value='';renderWalletList();go('walletPick');return;}
     resetSend();
@@ -1133,13 +1141,13 @@
     var note=document.getElementById('s_note').value.trim();
     if(transferMethod==='Wallet'&&curPurpose&&!note)note=curPurpose;
     var t=addTx('out','Sent to '+curName,curNum+(note?' · '+note:''),amt,'💸');t.name=curName;t.number=curNum;
-    var o={txid:t.txid,date:rcptDate(t.time),sub:'You have sent money.',amount:amt,source:fundSrc(),partyLabel:'Sent to',nameLabel:'Name',name:curName,numLabel:numLbl(),number:curNum,note:note};
+    var o={txid:t.txid,date:rcptDate(t.time),sub:'Your easypaisa payment has been made',amount:amt,source:fundSrc(),partyLabel:'Sent to',nameLabel:'Name',name:curName,numLabel:numLbl(),number:curNum,note:note};
     t.rcpt=o;showReceipt(o);}
   function doLoad(){var net=document.getElementById('l_net').value,num=document.getElementById('l_num').value.trim(),amt=val('l_amt');
     if(num.replace(/[^0-9]/g,'').length<11)return setErr('l_err','Sahi mobile number daalein');
     if(amt<10)return setErr('l_err','Kam az kam Rs 10');if(amt>balance)return setErr('l_err','Balance kaafi nahi hai');
     setErr('l_err','');var t=addTx('out','Mobile Load · '+net,num,amt,'📱');t.name=net;t.number=num;
-    var o={txid:t.txid,date:rcptDate(t.time),sub:'Mobile load successful.',amount:amt,source:'Easypaisa Account',partyLabel:'Loaded to',nameLabel:'Network',name:net,numLabel:'Mobile Number',number:num};
+    var o={txid:t.txid,date:rcptDate(t.time),sub:'Mobile load successful.',amount:amt,source:'easypaisa Account',partyLabel:'Loaded to',nameLabel:'Network',name:net,numLabel:'Account Number',number:num};
     t.rcpt=o;showReceipt(o);reset(['l_num','l_amt']);}
   var selectedBiller='';
   function selBill(b){document.querySelectorAll('#billGrid button').forEach(function(x){x.classList.remove('sel');});b.classList.add('sel');selectedBiller=b.dataset.b;}
@@ -1149,7 +1157,7 @@
     if(amt<1)return setErr('b_err','Bill amount daalein');if(amt>balance)return setErr('b_err','Balance kaafi nahi hai');
     setErr('b_err','');var ic=document.querySelector('#billGrid button.sel .bg-ico').textContent;
     var t=addTx('out',selectedBiller+' Bill','Ref #'+acc,amt,ic);t.name=selectedBiller;t.number=acc;
-    var o={txid:t.txid,date:rcptDate(t.time),sub:'Bill paid successfully.',amount:amt,source:'Easypaisa Account',partyLabel:'Paid to',nameLabel:'Biller',name:selectedBiller,numLabel:'Consumer No.',number:acc};
+    var o={txid:t.txid,date:rcptDate(t.time),sub:'Bill paid successfully.',amount:amt,source:'easypaisa Account',partyLabel:'Paid to',nameLabel:'Biller',name:selectedBiller,numLabel:'Consumer No.',number:acc};
     t.rcpt=o;showReceipt(o);
     reset(['b_acc','b_amt']);selectedBiller='';document.querySelectorAll('#billGrid button').forEach(function(x){x.classList.remove('sel');});}
   function doAdd(){var src=document.getElementById('a_src').value,amt=val('a_amt');
@@ -1165,21 +1173,22 @@
     var sn=document.getElementById('sumNum');
     if(o.number){sn.hidden=false;sn.textContent=o.number;}else sn.hidden=true;
     document.getElementById('rcpTitle').textContent=o.title||'Transaction Successful';
-    document.getElementById('rcpSub').textContent=o.sub||'';
+    document.getElementById('rcpSub').textContent=o.sub||'Your easypaisa payment has been made';
     document.getElementById('rcpId').textContent=o.txid||('#'+Math.floor(1000000000+Math.random()*9000000000));
     document.getElementById('rcpDate').textContent=o.date||rcptDate();
-    document.getElementById('rcpSrc').textContent=o.source||'Easypaisa Account';
+    document.getElementById('rcpSrc').textContent=o.source||'easypaisa Account';
     document.getElementById('rcpAmt').textContent=fmt(o.amount);
+    document.getElementById('rcpFee').textContent='Rs. 0.00';
     document.getElementById('rcpTotal').textContent=fmt(o.amount);
-    document.getElementById('rcpPartyLbl').textContent=o.partyLabel||'Details';
+    document.getElementById('rcpPartyLbl').textContent=o.partyLabel||'Sent to';
     document.getElementById('rcpNameLbl').textContent=o.nameLabel||'Name';
     document.getElementById('rcpName').textContent=o.name||'—';
     var nr=document.getElementById('rcpNumRow');
-    if(o.number){nr.hidden=false;document.getElementById('rcpNumLbl').textContent=o.numLabel||'Mobile Number';document.getElementById('rcpNum').textContent=o.number;}
+    if(o.number){nr.hidden=false;document.getElementById('rcpNumLbl').textContent=o.numLabel||'Account Number';document.getElementById('rcpNum').textContent=o.number;}
     else nr.hidden=true;
     document.getElementById('rcpByName').textContent=ME_NAME;
     document.getElementById('rcpByNum').textContent=ME_NUM||'—';
-    var s=document.getElementById('success');s.classList.add('show');s.scrollTop=0;refresh();}
+    var r=document.getElementById('receipt');r.classList.add('show');r.scrollTop=0;refresh();}
   function openFullReceipt(){var r=document.getElementById('receipt');r.classList.add('show');r.scrollTop=0;}
   function closeFullReceipt(){document.getElementById('receipt').classList.remove('show');}
   function closeSuccess(){document.getElementById('receipt').classList.remove('show');document.getElementById('success').classList.remove('show');resetSend();go('home');}
