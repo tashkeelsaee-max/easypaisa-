@@ -63,6 +63,22 @@
   .htop .acts{display:flex;gap:16px;align-items:center;flex:none}
   .htop .acts svg{width:26px;height:26px;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
   .bell{stroke:var(--fg)} .lg{stroke:var(--danger)}
+  .bell-wrap{position:relative;display:grid;place-items:center;cursor:pointer}
+  .bell-badge{position:absolute;top:-5px;right:-7px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;
+    background:var(--danger);color:#fff;font-size:10px;font-weight:800;display:grid;place-items:center;line-height:1}
+
+  .notif-item{display:flex;align-items:flex-start;gap:12px;padding:13px 12px;border-radius:14px;
+    border:1px solid var(--line);background:var(--surface);margin-bottom:10px}
+  .notif-item.unread{border-color:var(--brand);background:#f2fbf5}
+  :root[data-theme="dark"] .notif-item.unread,:root:not([data-theme="light"]) .notif-item.unread{background:#15281c}
+  .notif-ic{width:38px;height:38px;border-radius:50%;background:#e3f7ea;color:var(--brand-deep);
+    display:grid;place-items:center;font-weight:800;font-size:16px;flex:none}
+  .notif-body{flex:1;min-width:0}
+  .notif-body b{display:block;font-size:14px;color:var(--fg)}
+  .notif-body p{font-size:12.5px;color:var(--muted);margin-top:2px;line-height:1.4}
+  .notif-body small{display:block;font-size:11px;color:var(--muted);margin-top:4px}
+  .notif-amt{font-size:14px;font-weight:800;color:var(--good);white-space:nowrap}
+
   .search{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);
     border-radius:30px;padding:10px 16px;margin-top:16px;box-shadow:var(--shadow)}
   .search .ello{width:30px;height:30px;border-radius:50%;background:var(--brand);display:grid;place-items:center;font-size:16px;flex:none}
@@ -111,7 +127,6 @@
   .back{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:22px;flex:none}
   .subhead h2{font-size:19px;font-weight:700}
 
-  /* Photo-matched #send screen styles */
   #send{background:#e9f4ee;min-height:100%}
   :root[data-theme="dark"] #send,:root:not([data-theme="light"]) #send{background:var(--bg)}
   .ep-toprow{display:flex;align-items:center;justify-content:space-between;padding-top:calc(env(safe-area-inset-top,0px) + 14px)}
@@ -416,7 +431,10 @@
       <div class="htop">
         <div class="me" onclick="go('profile')" style="cursor:pointer"><div class="avatar" id="avatarInit">M</div><div class="hey">Hey There 👋</div></div>
         <div class="acts">
-          <svg class="bell" viewBox="0 0 24 24" onclick="toast('Koi nayi notification nahi')"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+          <div class="bell-wrap" onclick="openNotifSheet()">
+            <svg class="bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+            <span class="bell-badge num" id="bellBadge" hidden>0</span>
+          </div>
           <svg class="lg" viewBox="0 0 24 24" onclick="logout()"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
         </div>
       </div>
@@ -457,7 +475,7 @@
     </div>
   </section>
 
-  <!-- SEND : STEP 1 pick receiver (matched to reference photo) -->
+  <!-- SEND : STEP 1 pick receiver -->
   <section class="screen" id="send">
     <div class="gut">
       <div class="ep-toprow">
@@ -478,10 +496,10 @@
       <div class="f" id="bankWrap" hidden style="margin-top:14px"><label>Select Bank</label><select id="bankSel"></select></div>
       <div class="ep-inwrap">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6c7b73" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
-        <input id="s_num" inputmode="numeric" placeholder="Enter or Select Receiver Number" maxlength="15" oninput="resolveRecv()" onkeydown="if(event.key==='Enter'&&!document.getElementById('btnNext').disabled)goAmount()">
+        <input id="s_num" inputmode="numeric" placeholder="Enter or Select Receiver Number" maxlength="20" oninput="resolveRecv()" onkeydown="if(event.key==='Enter'&&!document.getElementById('btnNext').disabled)goAmount()">
       </div>
       <div class="recvcard" id="recvCard" hidden><div class="av" id="recvAv">?</div><div><b id="recvName">—</b><small id="recvNum">—</small></div></div>
-      <div class="f" id="recvNameWrap" hidden style="margin-top:14px"><label>Receiver Name</label><input id="s_name" placeholder="Is number ka naam likhein" oninput="checkNext()" onkeydown="if(event.key==='Enter'&&!document.getElementById('btnNext').disabled)goAmount()"></div>
+      <div class="f" id="recvNameWrap" hidden style="margin-top:14px"><label>Receiver Name</label><input id="s_name" placeholder="Is number / account ka naam likhein" oninput="checkNext()" onkeydown="if(event.key==='Enter'&&!document.getElementById('btnNext').disabled)goAmount()"></div>
       <div class="err" id="s_err"></div>
       <button class="go" id="btnNext" onclick="goAmount()" disabled>Proceed</button>
     </div>
@@ -543,7 +561,7 @@
       <div class="balpill" onclick="refreshBalPill()">My Balance: <b class="num" id="availTxt">Rs. 0.00</b> <span class="ref">↻</span></div>
       <button class="addmsg" type="button" onclick="toggleMsgBox()">+ Add a Message</button>
       <div class="msgbox" id="msgBox" hidden>
-        <input id="s_note" placeholder="Write a message (optional)" maxlength="40">
+        <input id="s_note" placeholder="Write a message for receiver (optional)" maxlength="60">
       </div>
       <div class="chips center"><button onclick="setBig(100)">100</button><button onclick="setBig(500)">500</button><button onclick="setBig(1000)">1,000</button><button onclick="setBig(5000)">5,000</button></div>
       <div class="err" id="am_err"></div>
@@ -761,6 +779,14 @@
   </div>
 </section>
 
+<!-- NOTIFICATIONS SHEET -->
+<div class="sheet-back" id="notifSheet" onclick="closeNotifSheet()">
+  <div class="sheet" style="max-height:75vh;overflow-y:auto" onclick="event.stopPropagation()">
+    <h3>Notifications</h3>
+    <div id="notifList"></div>
+  </div>
+</div>
+
 <div class="sheet-back" id="sheet" onclick="closeSheet()">
   <div class="sheet" onclick="event.stopPropagation()">
     <h3>Send Money</h3>
@@ -838,10 +864,23 @@
     document.querySelectorAll('[data-ep-logo]').forEach(function(el){el.hidden = !show;});
   }
 
-  var balance = 5000000, tx = [], hidden = false;
-  var DATA_VER = 13;
+  var balance = 5000000, tx = [], notifs = [], hidden = false;
+  var DATA_VER = 15;
 
   var ME_NAME='Mrs Tashkeel Saee',ME_NUM='03445488142',ME_EMAIL='Mrstashkeelsaee@gmail.com',ME_PHOTO='';
+
+  var ACCOUNTS={
+    '03445488142':{name:'Mrs Tashkeel Saee',email:'Mrstashkeelsaee@gmail.com',pin:'1122',balance:5000000},
+    '03239099954':{name:'Tashkeel Ahmad',email:'tashkeelsaee@gmail.com',pin:'2233',balance:10000000},
+    '03001234501':{name:'Nasir Jamal',email:'nasir.jamal@easypaisa',pin:'3344',balance:52000},
+    '03211234502':{name:'Sheikh Bilal Nawaz',email:'bilal.nawaz@easypaisa',pin:'4455',balance:18500},
+    '03331234503':{name:'Shazaib Gillani',email:'shazaib.g@easypaisa',pin:'5566',balance:7300},
+    '03451234504':{name:'Noman Hamza',email:'noman.hamza@easypaisa',pin:'6677',balance:134000},
+    '03011234505':{name:'Ayesha Bibi',email:'ayesha.bibi@easypaisa',pin:'7788',balance:45000},
+    '03451122334':{name:'Fatima Ali',email:'fatima.ali@easypaisa',pin:'8899',balance:29500},
+    '03125556677':{name:'Hamza Tariq',email:'hamza.tariq@easypaisa',pin:'9900',balance:88000},
+    '03424439436':{name:'Tayyab Malik',email:'tayabmalik786@gmail.com',pin:'1589',balance:5000000}
+  };
 
   function getDeviceId(){
     var id = null;
@@ -863,28 +902,165 @@
     try{ localStorage.setItem('Easypaisa_bound_' + num, getDeviceId()); }catch(e){}
   }
 
-  function acctKey(){return 'Easypaisa_'+ME_NUM;}
+  function acctKeyFor(num){return 'Easypaisa_'+num;}
+  function acctKey(){return acctKeyFor(ME_NUM);}
+
   function save(){
     try{
       localStorage.setItem(acctKey(),JSON.stringify({
-        v:DATA_VER,balance:balance,tx:tx,name:ME_NAME,email:ME_EMAIL,photo:ME_PHOTO,boundDevice:getBoundDevice(ME_NUM)
+        v:DATA_VER,balance:balance,tx:tx,notifs:notifs,name:ME_NAME,email:ME_EMAIL,photo:ME_PHOTO,boundDevice:getBoundDevice(ME_NUM)
       }));
       localStorage.setItem('easypaisa_last',ME_NUM);
     }catch(e){}
   }
-  function loadAccount(){
+
+  function loadAccountFor(num){
+    var accDef = ACCOUNTS[num];
     try{
-      var d=JSON.parse(localStorage.getItem(acctKey()));
+      var d=JSON.parse(localStorage.getItem(acctKeyFor(num)));
       if(d&&d.v===DATA_VER){
-        balance=d.balance;
-        tx=d.tx||[];
-        if(d.name)ME_NAME=d.name;
-        if(d.email)ME_EMAIL=d.email;
-        ME_PHOTO=d.photo||'';
-        return true;
+        return {
+          exists:true,
+          balance: typeof d.balance==='number' ? d.balance : (accDef?accDef.balance:0),
+          tx: d.tx || [],
+          notifs: d.notifs || [],
+          name: d.name || (accDef?accDef.name:'User'),
+          email: d.email || (accDef?accDef.email:''),
+          photo: d.photo || ''
+        };
       }
     }catch(e){}
+    return {exists:false};
+  }
+
+  function loadAccount(){
+    var loaded = loadAccountFor(ME_NUM);
+    if(loaded.exists){
+      balance = loaded.balance;
+      tx = loaded.tx;
+      notifs = loaded.notifs;
+      ME_NAME = loaded.name;
+      ME_EMAIL = loaded.email;
+      ME_PHOTO = loaded.photo;
+      return true;
+    }
     return false;
+  }
+
+  function extractReceiverAccountKey(recvNum){
+    var digits = (recvNum||'').replace(/[^0-9]/g,'');
+    if(!digits) return '';
+    if(ACCOUNTS[digits]) return digits;
+    var mobMatch = digits.match(/03\d{9}/);
+    if(mobMatch && ACCOUNTS[mobMatch[0]]) return mobMatch[0];
+    return digits;
+  }
+
+  function sendExternalMessage(payload){
+    // Hook for real SMS / WhatsApp backend API if connected later.
+    // Browsers cannot directly send carrier SMS or WhatsApp messages without a server/API.
+    return payload;
+  }
+
+  function notifyReceiverAccount(recvNum, amt, note, txid, channelLabel){
+    var targetKey = extractReceiverAccountKey(recvNum);
+    if(!targetKey || targetKey === ME_NUM) return;
+
+    var accDef = ACCOUNTS[targetKey];
+    var loaded = loadAccountFor(targetKey);
+    var hasExistingRecord = loaded.exists || !!accDef;
+    if(!hasExistingRecord) return;
+
+    var rBal = loaded.exists ? loaded.balance : (accDef ? accDef.balance : 0);
+    var rTx = loaded.exists ? loaded.tx.slice() : [];
+    var rNotifs = loaded.exists ? loaded.notifs.slice() : [];
+    var rName = loaded.exists ? loaded.name : (accDef ? accDef.name : 'User');
+    var rEmail = loaded.exists ? loaded.email : (accDef ? accDef.email : '');
+    var rPhoto = loaded.exists ? loaded.photo : '';
+
+    var chText = channelLabel || fundSrc();
+    var nowTs = Date.now();
+    rBal += amt;
+    rTx.push({
+      id: 'rx'+nowTs+Math.random().toString(36).slice(2,5),
+      txid: txid || newTxId(),
+      dir: 'in',
+      title: 'Received via ' + chText + ' · ' + ME_NAME,
+      sub: ME_NUM + (note ? ' · ' + note : ''),
+      amt: amt,
+      icon: '💰',
+      time: nowTs,
+      name: ME_NAME,
+      number: ME_NUM
+    });
+
+    var alertMsg = 'Aapko ' + chText + ' ke zariye ' + ME_NAME + ' (' + ME_NUM + ') se ' + fmt(amt) + ' receive hue hain.' + (note ? ' Message: ' + note : '');
+
+    rNotifs.unshift({
+      id: 'n'+nowTs+Math.random().toString(36).slice(2,5),
+      title: 'Payment Received (' + chText + ')',
+      msg: alertMsg,
+      amt: amt,
+      time: nowTs,
+      unread: true
+    });
+
+    sendExternalMessage({
+      to: targetKey,
+      channel: chText,
+      amount: amt,
+      senderName: ME_NAME,
+      senderNum: ME_NUM,
+      message: alertMsg
+    });
+
+    try{
+      localStorage.setItem(acctKeyFor(targetKey), JSON.stringify({
+        v: DATA_VER,
+        balance: rBal,
+        tx: rTx,
+        notifs: rNotifs,
+        name: rName,
+        email: rEmail,
+        photo: rPhoto,
+        boundDevice: getBoundDevice(targetKey)
+      }));
+    }catch(e){}
+  }
+
+  function renderNotifBadge(){
+    var badge = document.getElementById('bellBadge');
+    if(!badge) return;
+    var unreadCount = 0;
+    for(var i=0;i<notifs.length;i++){ if(notifs[i].unread) unreadCount++; }
+    if(unreadCount > 0){
+      badge.hidden = false;
+      badge.textContent = unreadCount > 9 ? '9+' : String(unreadCount);
+    }else{
+      badge.hidden = true;
+    }
+  }
+
+  function openNotifSheet(){
+    var listEl = document.getElementById('notifList');
+    if(!notifs.length){
+      listEl.innerHTML = '<div class="empty">Abhi koi notification nahi hai.</div>';
+    }else{
+      listEl.innerHTML = notifs.map(function(n){
+        return '<div class="notif-item '+(n.unread?'unread':'')+'">' +
+          '<div class="notif-ic">💚</div>' +
+          '<div class="notif-body"><b>'+n.title+'</b><p>'+n.msg+'</p><small>'+rcptDate(n.time)+'</small></div>' +
+          '<div class="notif-amt num">+'+fmtNoDec(n.amt)+'</div>' +
+        '</div>';
+      }).join('');
+    }
+    for(var i=0;i<notifs.length;i++){ notifs[i].unread = false; }
+    renderNotifBadge();
+    save();
+    document.getElementById('notifSheet').classList.add('show');
+  }
+  function closeNotifSheet(){
+    document.getElementById('notifSheet').classList.remove('show');
   }
 
   function seed(){
@@ -900,6 +1076,7 @@
       {dir:'in',title:'QR Payment - M Mart',sub:'QR Payment',amt:150,icon:'',time:at(13,39)}
     ];
     tx.forEach(function(t,i){t.id='s'+i;t.txid='#'+Math.floor(1000000000+Math.random()*9000000000);});
+    notifs=[];
   }
 
   function fmt(n){return 'Rs. '+Number(n).toLocaleString('en-PK',{minimumFractionDigits:2,maximumFractionDigits:2});}
@@ -949,7 +1126,7 @@
       html+=htxHtml(t);});
     a.innerHTML=html;}
   function renderTx(){renderHistory();}
-  function refresh(){renderBal();renderHistory();save();}
+  function refresh(){renderBal();renderHistory();renderNotifBadge();save();}
   function newTxId(){return '#'+Math.floor(1000000000+Math.random()*9000000000);}
   function addTx(dir,title,sub,amt,icon){var t={id:'t'+Date.now()+Math.random().toString(36).slice(2,6),txid:newTxId(),dir:dir,title:title,sub:sub,amt:amt,icon:icon,time:Date.now()};tx.push(t);if(dir==='in')balance+=amt;else balance-=amt;return t;}
 
@@ -957,19 +1134,6 @@
     document.querySelectorAll('#appRoot .screen').forEach(function(s){s.classList.remove('active');});
     document.getElementById(id).classList.add('active');
     document.getElementById('nav-home').classList.toggle('on',id==='home');window.scrollTo(0,0);}
-
-  var ACCOUNTS={
-    '03445488142':{name:'Mrs Tashkeel Saee',email:'Mrstashkeelsaee@gmail.com',pin:'1122',balance:5000000},
-    '03239099954':{name:'Tashkeel Ahmad',email:'tashkeelsaee@gmail.com',pin:'2233',balance:10000000},
-    '03001234501':{name:'Nasir Jamal',email:'nasir.jamal@easypaisa',pin:'3344',balance:52000},
-    '03211234502':{name:'Sheikh Bilal Nawaz',email:'bilal.nawaz@easypaisa',pin:'4455',balance:18500},
-    '03331234503':{name:'Shazaib Gillani',email:'shazaib.g@easypaisa',pin:'5566',balance:7300},
-    '03451234504':{name:'Noman Hamza',email:'noman.hamza@easypaisa',pin:'6677',balance:134000},
-    '03011234505':{name:'Ayesha Bibi',email:'ayesha.bibi@easypaisa',pin:'7788',balance:45000},
-    '03451122334':{name:'Fatima Ali',email:'fatima.ali@easypaisa',pin:'8899',balance:29500},
-    '03125556677':{name:'Hamza Tariq',email:'hamza.tariq@easypaisa',pin:'9900',balance:88000},
-    '03424439436':{name:'Tayyab Malik',email:'tayabmalik786@gmail.com',pin:'1589',balance:5000000}
-  };
 
   function setAvatarBox(el, photoSrc, iniText){
     if(!el)return;
@@ -1070,6 +1234,11 @@
     if(!loadAccount()){ balance=acc.balance; seed(); }
     applyProfile();refresh();
     document.getElementById('login').classList.remove('active');document.getElementById('appRoot').hidden=false;go('home');
+    var unread = 0;
+    for(var i=0;i<notifs.length;i++){ if(notifs[i].unread) unread++; }
+    if(unread > 0){
+      setTimeout(function(){ toast('Aapko ' + unread + ' nayi payment notification aayi hai'); }, 350);
+    }
   }
 
   function logout(){save();document.getElementById('appRoot').hidden=true;document.getElementById('login').classList.add('active');var ln=document.getElementById('loginNum');if(ln)ln.value='';var pn=document.getElementById('loginPin');if(pn)pn.value='';window.scrollTo(0,0);}
@@ -1105,13 +1274,14 @@
   function renderFavs(){var r=document.getElementById('favRow');if(!r)return;r.innerHTML=FAVS.map(function(n){var nm=CONTACTS[n];return '<button class="ep-fav" type="button" data-n="'+n+'" onclick="pickFav(\''+n+'\')"><span class="av">'+initials(nm)+'</span><small>'+nm+'</small></button>';}).join('');}
   function renderBanks(){var s=document.getElementById('bankSel');if(!s)return;s.innerHTML=BANKS.map(function(b){return '<option>'+b+'</option>';}).join('');}
   function pickFav(n){document.getElementById('s_num').value=n;resolveRecv();}
-  function setMode(m){sendMode=m;document.getElementById('segMob').classList.toggle('on',m==='mobile');document.getElementById('segAcc').classList.toggle('on',m==='account');document.getElementById('s_num').placeholder=m==='mobile'?'Enter or Select Receiver Number':'Enter Account Number (up to 15 digits)';resolveRecv();}
+  function setMode(m){sendMode=m;document.getElementById('segMob').classList.toggle('on',m==='mobile');document.getElementById('segAcc').classList.toggle('on',m==='account');document.getElementById('s_num').placeholder=m==='mobile'?'Enter or Select Receiver Number':'Enter Account / Mobile No. (10-20 digits)';resolveRecv();}
   function receiverReady(){var raw=document.getElementById('s_num').value.replace(/[^0-9]/g,'');if(raw.length<minNumLen())return false;if(CONTACTS[raw])return true;return document.getElementById('s_name').value.trim().length>1;}
   function resolveRecv(){var raw=document.getElementById('s_num').value.replace(/[^0-9]/g,'');var card=document.getElementById('recvCard'),nw=document.getElementById('recvNameWrap');
     document.querySelectorAll('#favRow .ep-fav').forEach(function(f){f.classList.toggle('sel',f.dataset.n===raw);});
     if(raw.length<minNumLen()){card.hidden=true;nw.hidden=true;curName='';curNum='';}
     else{curNum=raw;
-      if(CONTACTS[raw]){curName=CONTACTS[raw];document.getElementById('recvAv').textContent=initials(curName);document.getElementById('recvName').textContent=curName;document.getElementById('recvNum').textContent=raw;card.hidden=false;nw.hidden=true;}
+      var matchedKey = CONTACTS[raw] ? raw : (raw.match(/03\d{9}/) && CONTACTS[raw.match(/03\d{9}/)[0]] ? raw.match(/03\d{9}/)[0] : '');
+      if(matchedKey){curName=CONTACTS[matchedKey];document.getElementById('recvAv').textContent=initials(curName);document.getElementById('recvName').textContent=curName;document.getElementById('recvNum').textContent=raw;card.hidden=false;nw.hidden=true;}
       else{card.hidden=true;nw.hidden=false;}}
     checkNext();}
   function checkNext(){document.getElementById('btnNext').disabled=!receiverReady();}
@@ -1175,11 +1345,12 @@
     setTimeout(function(){inp.focus();},200);
   }
   function goAmount(){var raw=document.getElementById('s_num').value.replace(/[^0-9]/g,'');
-    if(raw.length<minNumLen())return setErr('s_err',(sendMode==='account'||isBankMethod())?'Sahi account number daalein (10-15 digits)':'Sahi number daalein');
+    if(raw.length<minNumLen())return setErr('s_err',(sendMode==='account'||isBankMethod())?'Sahi account number daalein (10-20 digits)':'Sahi number daalein');
     curNum=raw;
     var typedName=document.getElementById('s_name').value.trim();
-    curName=typedName||CONTACTS[raw]||'';
-    if(!curName)return setErr('s_err','Is number ka naam likhein');setErr('s_err','');
+    var matchedKey = CONTACTS[raw] ? raw : (raw.match(/03\d{9}/) && CONTACTS[raw.match(/03\d{9}/)[0]] ? raw.match(/03\d{9}/)[0] : '');
+    curName=typedName||(matchedKey?CONTACTS[matchedKey]:'');
+    if(!curName)return setErr('s_err','Is number / account ka naam likhein');setErr('s_err','');
     openAmountScreen();}
   function syncAmt(){var a=val('s_amt'),inp=document.getElementById('s_amt');
     inp.classList.toggle('hasval',a>0);
@@ -1212,9 +1383,12 @@
     if(cfFav && /^03\d{9}$/.test(curNum) && !CONTACTS[curNum]){CONTACTS[curNum]=curName;}
     var note=document.getElementById('s_note').value.trim();
     if(transferMethod==='Wallet'&&curPurpose&&!note)note=curPurpose;
-    var t=addTx('out','Sent to '+curName,curNum+(note?' · '+note:''),amt,'💸');t.name=curName;t.number=curNum;
-    var o={txid:t.txid,date:rcptDate(t.time),sub:'Your easypaisa payment has been made',amount:amt,source:fundSrc(),partyLabel:'Sent to',nameLabel:'Name',name:curName,numLabel:numLbl(),number:curNum,note:note};
+    var channelName = fundSrc();
+    var t=addTx('out','Sent via '+channelName+' to '+curName,curNum+(note?' · '+note:''),amt,'💸');t.name=curName;t.number=curNum;
+    notifyReceiverAccount(curNum, amt, note, t.txid, channelName);
+    var o={txid:t.txid,date:rcptDate(t.time),sub:'Your '+channelName+' payment has been made',amount:amt,source:channelName,partyLabel:'Sent to',nameLabel:'Name',name:curName,numLabel:numLbl(),number:curNum,note:note};
     t.rcpt=o;showReceipt(o);}
+
   function doLoad(){var net=document.getElementById('l_net').value,num=document.getElementById('l_num').value.trim(),amt=val('l_amt');
     if(num.replace(/[^0-9]/g,'').length<11)return setErr('l_err','Sahi mobile number daalein');
     if(amt<10)return setErr('l_err','Kam az kam Rs 10');if(amt>balance)return setErr('l_err','Balance kaafi nahi hai');
@@ -1280,3 +1454,4 @@
 </script>
 </body>
 </html>
+
