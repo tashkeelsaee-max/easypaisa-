@@ -478,7 +478,7 @@
       <div class="f" id="bankWrap" hidden style="margin-top:14px"><label>Select Bank</label><select id="bankSel"></select></div>
       <div class="ep-inwrap">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6c7b73" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
-        <input id="s_num" inputmode="numeric" placeholder="Enter or Select Receiver Number" maxlength="12" oninput="resolveRecv()" onkeydown="if(event.key==='Enter'&&!document.getElementById('btnNext').disabled)goAmount()">
+        <input id="s_num" inputmode="numeric" placeholder="Enter or Select Receiver Number" maxlength="15" oninput="resolveRecv()" onkeydown="if(event.key==='Enter'&&!document.getElementById('btnNext').disabled)goAmount()">
       </div>
       <div class="recvcard" id="recvCard" hidden><div class="av" id="recvAv">?</div><div><b id="recvName">—</b><small id="recvNum">—</small></div></div>
       <div class="f" id="recvNameWrap" hidden style="margin-top:14px"><label>Receiver Name</label><input id="s_name" placeholder="Is number ka naam likhein" oninput="checkNext()" onkeydown="if(event.key==='Enter'&&!document.getElementById('btnNext').disabled)goAmount()"></div>
@@ -1091,6 +1091,7 @@
   var FAVS=['03001234501','03211234502','03331234503','03451234504','03239099954'];
   var BANKS=['Allied Bank (ABL)','Askari Bank','Bank Alfalah','Bank AL Habib','BankIslami Pakistan','Bank of Khyber','Bank of Punjab (BOP)','Dubai Islamic Bank','Faysal Bank','First Women Bank','Habib Bank (HBL)','Habib Metropolitan Bank','JS Bank','MCB Bank','MCB Islamic Bank','Meezan Bank','National Bank of Pakistan (NBP)','Samba Bank','Silkbank','Sindh Bank','Soneri Bank','Standard Chartered Pakistan','Summit Bank','United Bank (UBL)','Al Baraka Bank','Zarai Taraqiati Bank (ZTBL)','SME Bank','First Microfinance Bank','Khushhali Microfinance Bank','Mobilink Microfinance Bank (JazzCash)','Telenor Microfinance Bank (Easypaisa)','U Microfinance Bank','NRSP Microfinance Bank','FINCA Microfinance Bank','Apna Microfinance Bank','Citibank','Deutsche Bank','Bank of China','ICBC Pakistan'];
   var sendMode='mobile',curName='',curNum='',transferMethod='Easypaisa',curPurpose='',cfFav=false;
+  function minNumLen(){return (sendMode==='account'||isBankMethod())?10:11;}
   function numLbl(){return (transferMethod==='Wallet'||isBankMethod())?'Account Number':'Account Number';}
   function initials(n){var p=(n||'').trim().split(/\s+/);return (((p[0]||'')[0]||'')+((p[1]||'')[0]||'')).toUpperCase();}
   function setEpTab(t){
@@ -1103,11 +1104,11 @@
   function renderFavs(){var r=document.getElementById('favRow');if(!r)return;r.innerHTML=FAVS.map(function(n){var nm=CONTACTS[n];return '<button class="ep-fav" type="button" data-n="'+n+'" onclick="pickFav(\''+n+'\')"><span class="av">'+initials(nm)+'</span><small>'+nm+'</small></button>';}).join('');}
   function renderBanks(){var s=document.getElementById('bankSel');if(!s)return;s.innerHTML=BANKS.map(function(b){return '<option>'+b+'</option>';}).join('');}
   function pickFav(n){document.getElementById('s_num').value=n;resolveRecv();}
-  function setMode(m){sendMode=m;document.getElementById('segMob').classList.toggle('on',m==='mobile');document.getElementById('segAcc').classList.toggle('on',m==='account');document.getElementById('s_num').placeholder=m==='mobile'?'Enter or Select Receiver Number':'Enter Digital Account Number';resolveRecv();}
-  function receiverReady(){var raw=document.getElementById('s_num').value.replace(/[^0-9]/g,'');if(raw.length<11)return false;if(CONTACTS[raw])return true;return document.getElementById('s_name').value.trim().length>1;}
+  function setMode(m){sendMode=m;document.getElementById('segMob').classList.toggle('on',m==='mobile');document.getElementById('segAcc').classList.toggle('on',m==='account');document.getElementById('s_num').placeholder=m==='mobile'?'Enter or Select Receiver Number':'Enter Account Number (up to 15 digits)';resolveRecv();}
+  function receiverReady(){var raw=document.getElementById('s_num').value.replace(/[^0-9]/g,'');if(raw.length<minNumLen())return false;if(CONTACTS[raw])return true;return document.getElementById('s_name').value.trim().length>1;}
   function resolveRecv(){var raw=document.getElementById('s_num').value.replace(/[^0-9]/g,'');var card=document.getElementById('recvCard'),nw=document.getElementById('recvNameWrap');
     document.querySelectorAll('#favRow .ep-fav').forEach(function(f){f.classList.toggle('sel',f.dataset.n===raw);});
-    if(raw.length<11){card.hidden=true;nw.hidden=true;curName='';curNum='';}
+    if(raw.length<minNumLen()){card.hidden=true;nw.hidden=true;curName='';curNum='';}
     else{curNum=raw;
       if(CONTACTS[raw]){curName=CONTACTS[raw];document.getElementById('recvAv').textContent=initials(curName);document.getElementById('recvName').textContent=curName;document.getElementById('recvNum').textContent=raw;card.hidden=false;nw.hidden=true;}
       else{card.hidden=true;nw.hidden=false;}}
@@ -1173,7 +1174,7 @@
     setTimeout(function(){inp.focus();},200);
   }
   function goAmount(){var raw=document.getElementById('s_num').value.replace(/[^0-9]/g,'');
-    if(raw.length<11)return setErr('s_err','Sahi number daalein');
+    if(raw.length<minNumLen())return setErr('s_err',(sendMode==='account'||isBankMethod())?'Sahi account number daalein (10-15 digits)':'Sahi number daalein');
     curNum=raw;
     var typedName=document.getElementById('s_name').value.trim();
     curName=typedName||CONTACTS[raw]||'';
