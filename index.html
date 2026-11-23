@@ -298,17 +298,17 @@
     :root:not([data-theme="dark"]) .seg button.on{background:#c9efd5;color:#0f5a2b}
   }
 
-  /* Success & Receipt matching Image 6 */
+  /* Success Summary & Receipt matching attached photo */
   .success{position:fixed;inset:0;background:linear-gradient(180deg,#e9f7ef 0%,#def3e7 50%,#d3ede0 100%);z-index:70;display:none;align-items:center;justify-content:center;overflow-y:auto;padding:20px 16px}
   :root[data-theme="dark"] .success,:root:not([data-theme="light"]) .success{background:var(--bg)}
   .success.show{display:flex;animation:fade .3s}
   .receipt{background:linear-gradient(180deg,#f5fbf7 0%,#eef8f2 100%);border-radius:26px;width:100%;max-width:410px;padding:28px 22px 24px;box-shadow:0 12px 32px rgba(15,85,42,.12);text-align:center;margin:auto;color:var(--fg)}
   :root[data-theme="dark"] .receipt,:root:not([data-theme="light"]) .receipt{background:var(--surface)}
-  .coin{width:84px;height:84px;margin:0 auto 14px;border-radius:50%;position:relative;
+  .coin{width:88px;height:88px;margin:0 auto 14px;border-radius:50%;position:relative;
     background:radial-gradient(circle at 35% 28%,#ffe99e,#e0b14d 58%,#b8842e);
     display:grid;place-items:center;box-shadow:0 10px 22px rgba(184,132,46,.28),inset 0 -5px 10px rgba(0,0,0,.16);animation:pop .4s ease}
   @keyframes pop{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1)}}
-  .coin svg{width:40px;height:40px;stroke:#16a33f;stroke-width:4.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .coin svg{width:42px;height:42px;stroke:#16a33f;stroke-width:4.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
   .receipt h2{font-size:22px;font-weight:700;margin-bottom:3px;color:var(--fg)}
   .receipt .sub{color:#5d6e65;font-size:13.5px}
   .rcp-sec-gap{height:14px}
@@ -326,12 +326,12 @@
   .rcp-ic{width:46px;height:46px;flex:none;border:1.5px solid #22b852;border-radius:50%;display:grid;place-items:center;background:transparent}
   .rcp-ic svg{width:20px;height:20px;stroke:#128c3a;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
 
-  .summary{width:100%;max-width:400px;margin:auto;text-align:center;display:flex;flex-direction:column;align-items:center;padding:10px}
-  .sumamt{font-size:36px;font-weight:800;margin-top:26px;color:var(--fg)}
-  .sumsub{color:var(--muted);font-size:16px;margin-top:4px}
-  .sumav{width:68px;height:68px;border-radius:50%;border:2px solid var(--brand);background:var(--surface);color:var(--brand);display:grid;place-items:center;font-size:26px;font-weight:900;font-style:italic;margin:28px 0 14px}
-  .sumname{font-size:20px;font-weight:700;letter-spacing:.2px;color:var(--fg)}
-  .sumnum{color:var(--muted);font-size:15px;margin-top:4px;letter-spacing:.5px}
+  .summary{width:100%;max-width:400px;margin:auto;text-align:center;display:flex;flex-direction:column;align-items:center;padding:16px 10px}
+  .sumamt{font-size:38px;font-weight:800;margin-top:24px;color:var(--fg)}
+  .sumsub{color:#5d6e65;font-size:15px;margin-top:4px}
+  .sumav{width:64px;height:64px;border-radius:50%;border:2px solid var(--brand);background:var(--surface);color:var(--brand);display:grid;place-items:center;font-size:26px;font-weight:900;font-style:italic;margin:28px 0 14px}
+  .sumname{font-size:21px;font-weight:700;letter-spacing:.2px;color:var(--fg)}
+  .sumnum{color:#5d6e65;font-size:15px;margin-top:4px;letter-spacing:.5px}
   .sumbtns{display:flex;align-items:center;gap:14px;margin-top:44px;width:100%;justify-content:center}
   .sumback{flex:1;max-width:225px;padding:14px;border:1.5px solid var(--brand);border-radius:30px;color:var(--brand);font-weight:700;font-size:15px;background:transparent}
   .sumic{width:52px;height:52px;flex:none;border:1.5px solid var(--brand);border-radius:50%;display:grid;place-items:center;background:transparent}
@@ -729,6 +729,7 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- SUMMARY SCREEN SHOWN FIRST AFTER PAYMENT -->
 <div class="success" id="success">
   <div class="summary">
     <div class="coin"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
@@ -738,14 +739,14 @@
     <div class="sumname" id="sumName">—</div>
     <div class="sumnum num" id="sumNum">—</div>
     <div class="sumbtns">
-      <button class="sumback" onclick="closeSuccess()">Back to home</button>
-      <button class="sumic" onclick="toast('Share')" aria-label="Share"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
-      <button class="sumic" onclick="openFullReceipt()" aria-label="Receipt"><svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></button>
+      <button class="sumback" type="button" onclick="closeSuccess()">Back to home</button>
+      <button class="sumic" type="button" onclick="toast('Share')" aria-label="Share"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
+      <button class="sumic" type="button" onclick="openFullReceipt()" aria-label="Receipt"><svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></button>
     </div>
   </div>
 </div>
 
-<!-- DETAILED RECEIPT MATCHING IMAGE 6 -->
+<!-- DETAILED RECEIPT SCREEN OPENED WHEN CLICKING RECEIPT ICON -->
 <div class="success" id="receipt">
   <div class="receipt">
     <div class="coin"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
@@ -774,7 +775,7 @@
     <div class="paidvia">Paid via <span class="epword">easypaisa</span></div>
 
     <div class="rcp-bot">
-      <button class="rcp-back" type="button" onclick="closeSuccess()">Back</button>
+      <button class="rcp-back" type="button" onclick="closeFullReceipt()">Back</button>
       <button class="rcp-ic" type="button" onclick="toast('Share receipt')" aria-label="Share"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
       <button class="rcp-ic" type="button" onclick="toast('Receipt downloaded')" aria-label="Download"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 11l5 5 5-5"/><path d="M5 21h14"/></svg></button>
     </div>
@@ -783,7 +784,7 @@
 
 <script>
   var balance = 5000000, tx = [], hidden = false;
-  var DATA_VER = 12;
+  var DATA_VER = 13;
 
   var ME_NAME='Mrs Tashkeel Saee',ME_NUM='03445488142',ME_EMAIL='Mrstashkeelsaee@gmail.com',ME_PHOTO='';
 
@@ -1108,7 +1109,9 @@
   }
   function goAmount(){var raw=document.getElementById('s_num').value.replace(/[^0-9]/g,'');
     if(raw.length<11)return setErr('s_err','Sahi number daalein');
-    curNum=raw;curName=CONTACTS[raw]||document.getElementById('s_name').value.trim();
+    curNum=raw;
+    var typedName=document.getElementById('s_name').value.trim();
+    curName=typedName||CONTACTS[raw]||'';
     if(!curName)return setErr('s_err','Is number ka naam likhein');setErr('s_err','');
     openAmountScreen();}
   function syncAmt(){var a=val('s_amt'),inp=document.getElementById('s_amt');
@@ -1173,6 +1176,7 @@
     document.getElementById('sumName').textContent=o.name||'—';
     var sn=document.getElementById('sumNum');
     if(o.number){sn.hidden=false;sn.textContent=o.number;}else sn.hidden=true;
+
     document.getElementById('rcpTitle').textContent=o.title||'Transaction Successful';
     document.getElementById('rcpSub').textContent=o.sub||'Your easypaisa payment has been made';
     document.getElementById('rcpId').textContent=o.txid||('#'+Math.floor(1000000000+Math.random()*9000000000));
@@ -1189,7 +1193,13 @@
     else nr.hidden=true;
     document.getElementById('rcpByName').textContent=ME_NAME;
     document.getElementById('rcpByNum').textContent=ME_NUM||'—';
-    var r=document.getElementById('receipt');r.classList.add('show');r.scrollTop=0;refresh();}
+
+    document.getElementById('receipt').classList.remove('show');
+    var s=document.getElementById('success');
+    s.classList.add('show');
+    s.scrollTop=0;
+    refresh();
+  }
   function openFullReceipt(){var r=document.getElementById('receipt');r.classList.add('show');r.scrollTop=0;}
   function closeFullReceipt(){document.getElementById('receipt').classList.remove('show');}
   function closeSuccess(){document.getElementById('receipt').classList.remove('show');document.getElementById('success').classList.remove('show');resetSend();go('home');}
