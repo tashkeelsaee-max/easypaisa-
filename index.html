@@ -256,75 +256,81 @@
   .htx-amt{font-weight:700;font-size:15px;white-space:nowrap}
   .htx-amt.pos{color:var(--good)} .htx-amt.neg{color:var(--danger)}
 
-  /* White Theme Top 3737 SMS Banner (stays on screen for 1 minute) */
-  .sms3737-banner{
+  /* Easypaisa Push Notification Banner (stays visible for 1 minute)[span_4](start_span)[span_4](end_span) */
+  .ep-notif-banner{
     position:fixed;
     top:calc(env(safe-area-inset-top,0px) + 10px);
     left:50%;
     transform:translateX(-50%) translateY(-140%);
-    width:calc(100% - 24px);
-    max-width:436px;
-    background:#ffffff;
-    color:#17241d;
-    border:1.5px solid #d5e5dc;
+    width:calc(100% - 22px);
+    max-width:438px;
+    background:#ececee;
+    color:#26282a;
     border-radius:18px;
-    padding:13px 14px;
-    box-shadow:0 12px 30px rgba(15,60,30,.16);
+    padding:14px 16px;
+    box-shadow:0 12px 28px rgba(0,0,0,.22);
     z-index:95;
     opacity:0;
     transition:transform .28s cubic-bezier(.22,1,.36,1), opacity .25s ease;
     pointer-events:none;
   }
-  .sms3737-banner.show{
+  .ep-notif-banner.show{
     transform:translateX(-50%) translateY(0);
     opacity:1;
     pointer-events:auto;
   }
-  .sms3737-top{
+  .ep-notif-head{
     display:flex;
     align-items:center;
     justify-content:space-between;
     gap:10px;
-    margin-bottom:6px;
+    margin-bottom:8px;
   }
-  .sms3737-sender{
-    display:inline-flex;
-    align-items:center;
-    gap:7px;
-    font-size:14px;
-    font-weight:800;
-    color:#0f8f3a;
-    letter-spacing:.3px;
-  }
-  .sms3737-tag{
-    background:#e8f8ee;
-    color:#0f8f3a;
-    font-size:10px;
-    font-weight:700;
-    padding:2px 8px;
-    border-radius:99px;
-  }
-  .sms3737-meta{
+  .ep-notif-brand{
     display:flex;
     align-items:center;
     gap:8px;
-    font-size:11px;
-    color:#66756d;
+    font-size:13.5px;
+    font-weight:500;
+    color:#3a3d40;
   }
-  .sms3737-x{
-    width:24px;height:24px;border-radius:50%;
-    background:#f0f4f2;color:#17241d;
-    display:grid;place-items:center;font-size:13px;line-height:1;
+  .ep-notif-logo{
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    background:#222426;
+    color:#27b855;
+    font-weight:900;
+    font-size:12px;
+    line-height:1;
+    display:grid;
+    place-items:center;
+    flex:none;
   }
-  .sms3737-body{
+  .ep-notif-right{
+    display:flex;
+    align-items:center;
+    gap:10px;
     font-size:13px;
-    line-height:1.45;
-    color:#17241d;
-    word-break:break-word;
+    color:#54585c;
   }
-  .sms3737-hi{
-    color:#0f8f3a;
+  .ep-notif-chev{
+    font-size:13px;
+    color:#54585c;
+    line-height:1;
+  }
+  .ep-notif-title{
+    font-size:15.5px;
     font-weight:700;
+    color:#232527;
+    margin-bottom:3px;
+    line-height:1.25;
+  }
+  .ep-notif-body{
+    font-size:14.5px;
+    line-height:1.38;
+    color:#3b3e42;
+    word-break:break-word;
   }
 
   .toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%) translateY(20px);opacity:0;background:var(--fg);color:var(--bg);padding:12px 20px;border-radius:30px;font-size:13px;font-weight:600;z-index:80;transition:all .3s;pointer-events:none;max-width:90%;text-align:center}
@@ -494,19 +500,20 @@
 </head>
 <body>
 
-<!-- White Theme Top 3737 SMS Pop-up Banner (stays visible for 60 seconds) -->
-<div class="sms3737-banner" id="sms3737Banner" onclick="hideSms3737()">
-  <div class="sms3737-top">
-    <div class="sms3737-sender">
-      <span>3737</span>
-      <span class="sms3737-tag">SMS</span>
+<!-- Easypaisa Push Notification Banner (stays visible for 60 seconds)[span_5](start_span)[span_5](end_span) -->
+<div class="ep-notif-banner" id="epNotifBanner" onclick="hideEpNotif()">
+  <div class="ep-notif-head">
+    <div class="ep-notif-brand">
+      <span class="ep-notif-logo">e</span>
+      <span>easypaisa</span>
     </div>
-    <div class="sms3737-meta">
-      <span class="num" id="sms3737Timer">60s</span>
-      <button class="sms3737-x" type="button" onclick="event.stopPropagation();hideSms3737()" aria-label="Close SMS">✕</button>
+    <div class="ep-notif-right">
+      <span>Just now</span>
+      <span class="ep-notif-chev">^</span>
     </div>
   </div>
-  <div class="sms3737-body" id="sms3737Body"></div>
+  <div class="ep-notif-title">easypaisa</div>
+  <div class="ep-notif-body" id="epNotifBody"></div>
 </div>
 
 <div class="app" id="appRoot" hidden>
@@ -969,43 +976,23 @@
     '03424439436':{name:'Tayyab Malik',email:'tayabmalik786@gmail.com',pin:'1589',balance:5000000}
   };
 
-  var sms3737Timer = null;
-  var sms3737Interval = null;
+  var epNotifTimer = null;
 
-  function showSms3737(htmlText){
-    var banner = document.getElementById('sms3737Banner');
-    var body = document.getElementById('sms3737Body');
-    var timerEl = document.getElementById('sms3737Timer');
+  function showEpNotif(text){
+    var banner = document.getElementById('epNotifBanner');
+    var body = document.getElementById('epNotifBody');
     if(!banner || !body) return;
-
-    clearTimeout(sms3737Timer);
-    clearInterval(sms3737Interval);
-
-    body.innerHTML = htmlText;
-    var left = 60;
-    if(timerEl) timerEl.textContent = left + 's';
-
+    clearTimeout(epNotifTimer);
+    body.textContent = text;
     banner.classList.add('show');
-
-    sms3737Interval = setInterval(function(){
-      left -= 1;
-      if(left <= 0){
-        clearInterval(sms3737Interval);
-        if(timerEl) timerEl.textContent = '0s';
-      }else if(timerEl){
-        timerEl.textContent = left + 's';
-      }
-    }, 1000);
-
-    sms3737Timer = setTimeout(function(){
-      hideSms3737();
+    epNotifTimer = setTimeout(function(){
+      hideEpNotif();
     }, 60000);
   }
 
-  function hideSms3737(){
-    clearTimeout(sms3737Timer);
-    clearInterval(sms3737Interval);
-    var banner = document.getElementById('sms3737Banner');
+  function hideEpNotif(){
+    clearTimeout(epNotifTimer);
+    var banner = document.getElementById('epNotifBanner');
     if(banner) banner.classList.remove('show');
   }
 
@@ -1226,23 +1213,6 @@
     var h=d.getHours(),ap=h>=12?'PM':'AM',h12=h%12||12,mm=d.getMinutes();mm=mm<10?'0'+mm:mm;
     var dd=d.getDate()<10?'0'+d.getDate():d.getDate();
     return dd+'-'+m[d.getMonth()]+'-'+d.getFullYear()+', '+h12+':'+mm+' '+ap;}
-
-  function formatSmsDateTime(ts){
-    var d=ts?new Date(ts):new Date();
-    var m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var dd=d.getDate()<10?'0'+d.getDate():d.getDate();
-    var h=d.getHours(),ap=h>=12?'PM':'AM',h12=h%12||12;
-    var hh=h12<10?'0'+h12:h12;
-    var mm=d.getMinutes()<10?'0'+d.getMinutes():d.getMinutes();
-    var ss=d.getSeconds()<10?'0'+d.getSeconds():d.getSeconds();
-    return dd+' '+m[d.getMonth()]+', '+d.getFullYear()+' '+hh+':'+mm+':'+ss+' '+ap;
-  }
-
-  function escHtml(s){
-    return String(s||'').replace(/[&<>"']/g,function(c){
-      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
-    });
-  }
 
   function renderBal(){
     var txt = hidden ? 'Rs. ••••••' : fmt(balance);
@@ -1535,18 +1505,15 @@
     setErr('cf_err','');
     go('sendConfirm');}
 
-  function build3737SendSmsHtml(amt, name, num, channelName, txid, note, remBal, ts){
+  function formatNotifAmt(amt){
+    var n = Number(amt);
+    return Number.isInteger(n) ? n.toFixed(1) : String(n);
+  }
+
+  function buildEpPushText(amt, name, num, txid){
     var cleanId = String(txid || '').replace(/^#/, '');
-    var dtStr = formatSmsDateTime(ts);
-    var html = 'Dear Customer, you have successfully sent payment of <span class="sms3737-hi">Rs. ' +
-      escHtml(Number(amt).toLocaleString('en-PK')) + '</span> to <span class="sms3737-hi">' +
-      escHtml(name) + ' (' + escHtml(num) + ')</span> via ' + escHtml(channelName) +
-      ' at <span class="sms3737-hi">' + escHtml(dtStr) + '</span>. Trx ID: <span class="sms3737-hi">' +
-      escHtml(cleanId) + '</span>. Bal: ' + escHtml(fmt(remBal)) + '.';
-    if(note){
-      html += ' Msg: ' + escHtml(note) + '.';
-    }
-    return html;
+    return 'Rs. ' + formatNotifAmt(amt) + ' sent to ' + String(name || '').toUpperCase() +
+      ' with easypaisa account ' + String(num || '') + '. Fee: Rs. 0.0. Trx ID ' + cleanId + '.';
   }
 
   function doSend(){var amt=val('s_amt');
@@ -1558,7 +1525,7 @@
     var channelName = fundSrc();
     var t=addTx('out','Sent via '+channelName+' to '+curName,curNum+(note?' · '+note:''),amt,'💸');t.name=curName;t.number=curNum;
     notifyReceiverAccount(curNum, amt, note, t.txid, channelName);
-    showSms3737(build3737SendSmsHtml(amt, curName, curNum, channelName, t.txid, note, balance, t.time));
+    showEpNotif(buildEpPushText(amt, curName, curNum, t.txid));
     var o={txid:t.txid,date:rcptDate(t.time),sub:'Your '+channelName+' payment has been made',amount:amt,source:channelName,partyLabel:'Sent to',nameLabel:'Name',name:curName,numLabel:numLbl(),number:curNum,note:note};
     t.rcpt=o;showReceipt(o);}
 
