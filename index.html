@@ -1015,7 +1015,7 @@
     lastTouchEnd = now;
   }, {passive: false});
 
-  /* Optional custom MP3/WAV voice URLs (agar apni Easypaisa voice file ho to yahan link daalein) */
+  /* Optional custom MP3/WAV tone URLs (agar apni clip file ho to yahan link daalein) */
   var SEND_VOICE_URL = '';
   var NOTIF_VOICE_URL = '';
   var activeVoiceAudio = null;
@@ -1030,11 +1030,27 @@
   }
 
   function playVideoStyleTone(type){
+    if(type === 'send' && SEND_VOICE_URL){
+      try{
+        if(activeVoiceAudio){ activeVoiceAudio.pause(); activeVoiceAudio.currentTime = 0; }
+        activeVoiceAudio = new Audio(SEND_VOICE_URL);
+        activeVoiceAudio.play().catch(function(){});
+        return;
+      }catch(e){}
+    }
+    if(type === 'notif' && NOTIF_VOICE_URL){
+      try{
+        if(activeVoiceAudio){ activeVoiceAudio.pause(); activeVoiceAudio.currentTime = 0; }
+        activeVoiceAudio = new Audio(NOTIF_VOICE_URL);
+        activeVoiceAudio.play().catch(function(){});
+        return;
+      }catch(e){}
+    }
+
     var ctx = getAudioCtx();
     if(!ctx) return;
     try{
       var now = ctx.currentTime;
-      /* Video jaisi 2 quick chime tones followed by alert sound */
       var tones = (type === 'notif')
         ? [
             {f: 784, t: 0.00, d: 0.08},
@@ -1060,41 +1076,12 @@
     }catch(e){}
   }
 
-  function speakAlert(text){
-    try{
-      if(!('speechSynthesis' in window)) return;
-      window.speechSynthesis.cancel();
-      var utter = new SpeechSynthesisUtterance(text);
-      utter.lang = 'en-US';
-      utter.rate = 0.96;
-      utter.pitch = 1.04;
-      utter.volume = 1;
-      window.speechSynthesis.speak(utter);
-    }catch(e){}
-  }
-
-  function playVoiceClip(url, fallbackText){
-    if(url){
-      try{
-        if(activeVoiceAudio){ activeVoiceAudio.pause(); activeVoiceAudio.currentTime = 0; }
-        activeVoiceAudio = new Audio(url);
-        activeVoiceAudio.play().catch(function(){ speakAlert(fallbackText); });
-        return;
-      }catch(e){}
-    }
-    setTimeout(function(){ speakAlert(fallbackText); }, 230);
-  }
-
-  function playSendVoice(amt, name){
+  function playSendVoice(){
     playVideoStyleTone('send');
-    var spoken = 'Easypaisa: Rupees ' + Number(amt).toLocaleString('en-PK') + ' sent to ' + (name || 'receiver') + '.';
-    playVoiceClip(SEND_VOICE_URL, spoken);
   }
 
-  function playNotifVoice(msgText){
+  function playNotifVoice(){
     playVideoStyleTone('notif');
-    var spoken = 'Easypaisa notification: ' + (msgText || 'New payment alert.');
-    playVoiceClip(NOTIF_VOICE_URL, spoken);
   }
 
   var EP_LOGO_SVG='<svg viewBox="0 0 200 200" width="100%" height="100%" aria-hidden="true"><path fill="#232527" fill-rule="evenodd" d="M35 104C35 58 72 26 122 26c37 0 60 19 60 44 0 28-29 44-76 44H66c3 11 14 17 31 17 18 0 34-6 48-15l12 18c-18 12-39 18-62 18-37 0-60-18-60-42zm43-17h26c24 0 39-7 39-19 0-11-11-18-27-18-22 0-35 14-38 37z"/><path fill="#25b857" d="M18 118c16 34 52 54 94 54 37 0 65-14 78-36l-22-13c-10 16-31 25-56 25-33 0-62-16-75-42l-22 11z"/></svg>';
@@ -1140,7 +1127,7 @@
     clearTimeout(epNotifTimer);
     body.textContent = text;
     banner.classList.add('show');
-    playNotifVoice(text);
+    playNotifVoice();
     epNotifTimer = setTimeout(function(){
       hideEpNotif();
     }, 60000);
@@ -1730,7 +1717,7 @@
     var t=addTx('out','Money Transfer - '+curName.toUpperCase(),curNum+(note?' · '+note:''),amt,'💸');t.name=curName;t.number=curNum;
     notifyReceiverAccount(curNum, amt, note, t.txid, channelName);
     var pushText = buildEpPushText(amt, curName, curNum, t.txid);
-    playSendVoice(amt, curName);
+    playSendVoice();
     setTimeout(function(){ showEpNotif(pushText); }, 10000);
     var o={txid:t.txid,date:rcptDate(t.time),sub:'Your '+channelName+' payment has been made',amount:amt,source:channelName,partyLabel:'Sent to',nameLabel:'Name',name:curName,numLabel:numLbl(),number:curNum,note:note};
     t.rcpt=o;showReceipt(o);}
