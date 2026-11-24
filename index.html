@@ -18,7 +18,7 @@
     --card-g1:#d3f5de;--card-g2:#adeab8;
     --borrow-g1:#fde98a;--borrow-g2:#fcd34d;
     --bg:#f4f7f5;--surface:#ffffff;--fg:#17241d;--muted:#6c7b73;--line:#e5ece8;
-    --danger:#e0493d;--good:#25b857;
+    --danger:#232527;--good:#25b857;
     --radius:20px;--shadow:0 4px 16px rgba(25,153,68,.07);
     --font:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
     color-scheme:light;
@@ -51,10 +51,10 @@
   .hey{font-size:21px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--fg)}
   .htop .acts{display:flex;gap:16px;align-items:center;flex:none}
   .htop .acts svg{width:25px;height:25px;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
-  .bell{stroke:var(--fg)} .lg{stroke:var(--danger)}
+  .bell{stroke:var(--fg)} .lg{stroke:#e0493d}
   .bell-wrap{position:relative;display:grid;place-items:center;cursor:pointer}
   .bell-badge{position:absolute;top:-5px;right:-7px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;
-    background:var(--danger);color:#fff;font-size:10px;font-weight:800;display:grid;place-items:center;line-height:1}
+    background:#e0493d;color:#fff;font-size:10px;font-weight:800;display:grid;place-items:center;line-height:1}
 
   .notif-item{display:flex;align-items:flex-start;gap:12px;padding:13px 12px;border-radius:14px;
     border:1px solid var(--line);background:var(--surface);margin-bottom:10px}
@@ -266,34 +266,44 @@
   .chips button:active{background:#e8f8ee;border-color:var(--brand)}
   .go{width:100%;padding:15px;border-radius:14px;background:var(--brand);color:#fff;font-weight:700;font-size:16px;margin-top:6px;box-shadow:var(--shadow);transition:transform .1s}
   .go:active{transform:scale(.98)} .go:disabled{opacity:.5}
-  .err{color:var(--danger);font-size:12.5px;margin:8px 0;text-align:center}
+  .err{color:#e0493d;font-size:12.5px;margin:8px 0;text-align:center}
   .bill-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
   .bill-grid button{background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:14px 6px;display:flex;flex-direction:column;align-items:center;gap:7px;font-size:11px;font-weight:600;color:var(--fg)}
   .bill-grid button.sel{border-color:var(--brand);background:#e8f8ee}
   .bill-grid .bg-ico{font-size:24px}
 
+  /* TRANSACTION HISTORY (Matched to 61566.heic) */
+  #history{background:#f5faf7;min-height:100%}
   .empty{text-align:center;color:var(--muted);padding:40px 20px;font-size:13px}
   .histtop{display:flex;align-items:center;gap:12px;padding-top:calc(env(safe-area-inset-top,0px) + 14px);padding-bottom:6px}
-  .hback{width:40px;height:40px;flex:none;border:1px solid var(--line);border-radius:12px;display:grid;place-items:center;font-size:22px;color:var(--fg);background:var(--surface)}
-  .hsearch{flex:1;min-width:0;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:30px;padding:10px 16px}
+  .hback{width:42px;height:42px;flex:none;border:1px solid #e0eae4;border-radius:12px;display:grid;place-items:center;font-size:22px;color:#17241d;background:#eef6f1}
+  .hsearch{flex:1;min-width:0;display:flex;align-items:center;gap:10px;background:#f8fbf9;border:1px solid #e2ebe5;border-radius:30px;padding:10px 16px}
   .hsearch svg{width:18px;height:18px;flex:none}
   .hsearch input{border:none;outline:none;background:none;color:var(--fg);font-size:15px;width:100%}
-  .hdl{width:40px;height:40px;flex:none;border:1px solid var(--line);border-radius:12px;display:grid;place-items:center;background:var(--surface);color:var(--muted)}
+  .hsearch input::placeholder{color:#6f7d75}
+  .hdl{width:42px;height:42px;flex:none;border:1px solid #e0eae4;border-radius:12px;display:grid;place-items:center;background:#eef6f1;color:#5d6b63}
   .hdl svg{width:20px;height:20px}
-  .histtitle{font-size:26px;font-weight:800;margin:14px 0 8px}
-  .daygrp{display:flex;justify-content:space-between;align-items:center;padding:14px 2px 6px;font-size:12px}
-  .daygrp .dl{color:var(--fg);font-weight:600}
-  .daygrp .sync{color:var(--muted);display:flex;align-items:center;gap:5px}
-  .htx{display:flex;align-items:center;gap:14px;padding:16px 2px;border-bottom:1px solid var(--line);cursor:pointer}
+  .histtitle{font-size:28px;font-weight:700;margin:14px 0 8px;color:#17241d;letter-spacing:-.25px}
+  .daygrp{display:flex;justify-content:space-between;align-items:center;padding:14px 2px 8px;font-size:12.5px}
+  .daygrp .dl{color:#5d6b63;font-weight:500}
+  .daygrp .sync{color:#5d6b63;display:flex;align-items:center;gap:5px;font-weight:500}
+
+  .htx{display:flex;align-items:center;gap:14px;padding:16px 2px;border-bottom:1px solid #e6efe9;cursor:pointer}
   .htx:active{background:#e8f8ee}
-  .htx-ic{width:30px;height:30px;flex:none;display:grid;place-items:center}
-  .htx-ic svg{width:26px;height:26px;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-  .htx-ic.in svg{stroke:var(--good)} .htx-ic.out svg{stroke:var(--danger)}
+  .htx-ic{width:34px;height:34px;flex:none;display:grid;place-items:center}
+  .htx-ic svg{width:29px;height:29px;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .htx-ic.in svg{stroke:#68c484}
+  .htx-ic.out svg{stroke:#232527}
+
   .htx-mid{flex:1;min-width:0}
-  .htx-mid b{font-size:15px;font-weight:600;display:block}
-  .htx-mid small{color:var(--muted);font-size:12px}
-  .htx-amt{font-weight:700;font-size:15px;white-space:nowrap}
-  .htx-amt.pos{color:var(--good)} .htx-amt.neg{color:var(--danger)}
+  .htx-mid b{font-size:15.5px;font-weight:600;display:block;color:#17241d;line-height:1.25}
+  .htx-mid small{color:#5f6e66;font-size:12.5px;display:block;margin-top:3px}
+
+  .htx-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex:none}
+  .htx-amt{font-weight:700;font-size:15.5px;white-space:nowrap;line-height:1.25}
+  .htx-amt.pos{color:#24b453}
+  .htx-amt.neg{color:#232527}
+  .htx-repeat{font-size:13px;font-weight:600;color:#24b453;padding:2px 0;line-height:1.2}
 
   /* Easypaisa Push Notification Banner */
   .ep-notif-banner{
@@ -329,7 +339,7 @@
   .toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%) translateY(20px);opacity:0;background:var(--fg);color:var(--bg);padding:12px 20px;border-radius:30px;font-size:13px;font-weight:600;z-index:80;transition:all .3s;pointer-events:none;max-width:90%;text-align:center}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-  /* Send Money Bottom Sheet (Always Light Theme) */
+  /* Send Money Bottom Sheet (Strictly Light Theme) */
   .sheet-back{position:fixed;inset:0;background:rgba(0,0,0,.38);z-index:65;display:none;align-items:flex-end;justify-content:center}
   .sheet-back.show{display:flex;animation:fade .2s}
   .sheet{background:#f7f9f8;color:#17241d;width:100%;max-width:460px;border-radius:26px 26px 0 0;padding:20px 18px calc(26px + env(safe-area-inset-bottom,0px));animation:up .25s ease;box-shadow:0 -8px 28px rgba(0,0,0,.14)}
@@ -1021,7 +1031,7 @@
   }
 
   var balance = 9995624, tx = [], notifs = [], hidden = false;
-  var DATA_VER = 18;
+  var DATA_VER = 19;
   var SMS_API_URL = 'https://wallet-sms-backend.onrender.com/api/send-sms';
 
   var ME_NAME='Mrs Tashkeel Saee',ME_NUM='03445488142',ME_EMAIL='Mrstashkeelsaee@gmail.com',ME_PHOTO='';
@@ -1029,7 +1039,7 @@
   var ACCOUNTS={
     '03445488142':{name:'Mrs Tashkeel Saee',email:'Mrstashkeelsaee@gmail.com',pin:'1122',balance:9995624},
     '03239099954':{name:'Tashkeel Ahmad',email:'tashkeelsaee@gmail.com',pin:'2233',balance:10000000},
-    '03145291646':{name:'Muhammad Shahrukh',email:'nasir.jamal@easypaisa',pin:'3344',balance:52000},
+    '03001234501':{name:'Nasir Jamal',email:'nasir.jamal@easypaisa',pin:'3344',balance:52000},
     '03211234502':{name:'Sheikh Bilal Nawaz',email:'bilal.nawaz@easypaisa',pin:'4455',balance:18500},
     '03331234503':{name:'Shazaib Gillani',email:'shazaib.g@easypaisa',pin:'5566',balance:7300},
     '03451234504':{name:'Noman Hamza',email:'noman.hamza@easypaisa',pin:'6677',balance:134000},
@@ -1296,10 +1306,51 @@
     var yd=new Date(now);yd.setDate(now.getDate()-1);
     var pre=same(d,now)?'Today,':same(d,yd)?'Yesterday,':'';
     return pre+d.getDate()+' '+MON[d.getMonth()]+' '+d.getFullYear();}
-  var PLANE='<svg viewBox="0 0 24 24"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/><path d="M2 13h3M3 17h3"/></svg>';
-  function htxHtml(t){var io=t.dir==='in'?'in':'out',s=t.dir==='in'?'pos':'neg',p=t.dir==='in'?'+':'−';
-    var a='Rs. '+Number(t.amt).toLocaleString('en-PK',{minimumFractionDigits:2,maximumFractionDigits:2});
-    return '<div class="htx" onclick="openTxReceipt(\''+t.id+'\')"><div class="htx-ic '+io+'">'+PLANE+'</div><div class="htx-mid"><b>'+t.title+'</b><small>'+clock(t.time)+'</small></div><div class="htx-amt num '+s+'">'+p+a+'</div></div>';}
+
+  /* Left arrow for Received Payment (green), Right arrow for Send Payment (black) */
+  var PLANE_IN='<svg viewBox="0 0 24 24"><path d="M2 12l19-7-4.5 7L21 19 2 12z"/><path d="M6.5 12H16.5"/></svg>';
+  var PLANE_OUT='<svg viewBox="0 0 24 24"><path d="M22 12L3 5l4.5 7L3 19l19-7z"/><path d="M17.5 12H7.5"/></svg>';
+
+  function repeatTx(ev, id){
+    if(ev) ev.stopPropagation();
+    var t=null;
+    for(var i=0;i<tx.length;i++){if(tx[i].id===id){t=tx[i];break;}}
+    if(!t)return;
+    var num=(t.number||'').replace(/[^0-9]/g,'');
+    var nm=t.name||(t.title.indexOf(' - ')>-1?t.title.split(' - ').slice(1).join(' - '):t.title.replace(/^Sent via .*? to /i,''))||'Receiver';
+    transferMethod='Easypaisa';
+    selectedWallet='';
+    updateEpLogosVisibility();
+    resetSend();
+    document.getElementById('bankWrap').hidden=true;
+    setMode('mobile');
+    document.getElementById('sendTitle').textContent='easypaisa Transfer';
+    go('send');
+    if(num){
+      document.getElementById('s_num').value=num;
+      resolveRecv();
+      if(!CONTACTS[num]){
+        document.getElementById('recvNameWrap').hidden=false;
+        document.getElementById('s_name').value=nm;
+        checkNext();
+      }
+    }
+  }
+
+  function htxHtml(t){
+    var isIn = t.dir === 'in';
+    var io = isIn ? 'in' : 'out';
+    var s = isIn ? 'pos' : 'neg';
+    var p = isIn ? '+' : '';
+    var ico = isIn ? PLANE_IN : PLANE_OUT;
+    var a = 'Rs. '+Number(t.amt).toLocaleString('en-PK',{minimumFractionDigits:2,maximumFractionDigits:2});
+    var repHtml = !isIn ? '<button class="htx-repeat" type="button" onclick="repeatTx(event,\''+t.id+'\')">Repeat</button>' : '';
+    return '<div class="htx" onclick="openTxReceipt(\''+t.id+'\')">' +
+      '<div class="htx-ic '+io+'">'+ico+'</div>' +
+      '<div class="htx-mid"><b>'+t.title+'</b><small>'+clock(t.time)+'</small></div>' +
+      '<div class="htx-right"><div class="htx-amt num '+s+'">'+p+a+'</div>'+repHtml+'</div>' +
+    '</div>';
+  }
   function openTxReceipt(id){var t=null;for(var i=0;i<tx.length;i++){if(tx[i].id===id){t=tx[i];break;}}if(!t)return;
     if(t.rcpt){showReceipt(t.rcpt);return;}
     var inc=t.dir==='in';
@@ -1593,7 +1644,7 @@
     var note=document.getElementById('s_note').value.trim();
     if(transferMethod==='Wallet'&&curPurpose&&!note)note=curPurpose;
     var channelName = fundSrc();
-    var t=addTx('out','Sent via '+channelName+' to '+curName,curNum+(note?' · '+note:''),amt,'💸');t.name=curName;t.number=curNum;
+    var t=addTx('out','Money Transfer - '+curName.toUpperCase(),curNum+(note?' · '+note:''),amt,'💸');t.name=curName;t.number=curNum;
     notifyReceiverAccount(curNum, amt, note, t.txid, channelName);
     showEpNotif(buildEpPushText(amt, curName, curNum, t.txid));
     var o={txid:t.txid,date:rcptDate(t.time),sub:'Your '+channelName+' payment has been made',amount:amt,source:channelName,partyLabel:'Sent to',nameLabel:'Name',name:curName,numLabel:numLbl(),number:curNum,note:note};
