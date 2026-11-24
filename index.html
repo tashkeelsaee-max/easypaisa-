@@ -10,8 +10,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Easypaisa">
-<link rel="apple-touch-icon" href="icon-192.png">
-<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" sizes="512x512" href="icon-512.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 <style>
   :root{
     --brand:#25b857;--brand-deep:#199944;
@@ -502,11 +504,13 @@
   .nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--surface);border-top:1px solid var(--line);display:flex;max-width:460px;margin:0 auto;padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -4px 16px rgba(0,0,0,.04)}
   .nav button{flex:1;padding:10px 4px 10px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11px;font-weight:600;color:#6c7b73}
   .nav button svg{width:23px;height:23px;stroke:#6c7b73;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .nav button img{width:23px;height:23px;object-fit:contain;border-radius:6px;display:block}
   .nav button.on{color:var(--brand)}
   .nav button.on svg{stroke:var(--brand);fill:rgba(37,184,87,.14)}
 
   #login.active{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(160deg,var(--brand-deep),var(--brand));color:#fff;padding-block:40px}
-  #login .logo{width:76px;height:76px;border-radius:22px;background:#fff;display:grid;place-items:center;margin:0 auto 18px;box-shadow:0 10px 30px rgba(0,0,0,.2);font-size:40px}
+  #login .logo{width:76px;height:76px;border-radius:22px;background:#fff;display:grid;place-items:center;margin:0 auto 18px;box-shadow:0 10px 30px rgba(0,0,0,.2);padding:12px;overflow:hidden}
+  #login .logo img{width:100%;height:100%;object-fit:contain;display:block}
   #login h1{text-align:center;font-size:30px}
   #login .tag{text-align:center;opacity:.85;margin:4px 0 32px;font-size:14px}
   .field{margin-bottom:14px}
@@ -873,7 +877,7 @@
   </section>
 
   <nav class="nav">
-    <button id="nav-home" class="on" onclick="go('home')"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Home</button>
+    <button id="nav-home" class="on" onclick="go('home')"><img src="icon-192.png" alt="Home">Home</button>
     <button onclick="go('history')"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Cards</button>
     <button onclick="openScanner()"><svg viewBox="0 0 24 24"><path d="M3 7V4h3M21 7V4h-3M3 17v3h3M21 17v3h-3"/><path d="M7 12h10"/></svg>Pay</button>
     <button onclick="toast('Promotions')"><svg viewBox="0 0 24 24"><path d="M12 3l2.5 5 5.5.8-4 4 1 5.5-5-2.7-5 2.7 1-5.5-4-4 5.5-.8z"/></svg>Promotion</button>
@@ -884,7 +888,7 @@
 <!-- LOGIN -->
 <section class="screen active" id="login">
   <div class="gut">
-    <div class="logo">💚</div><h1>Easypaisa</h1><p class="tag">Aapka digital wallet</p>
+    <div class="logo"><img src="icon-512.png" alt="Easypaisa"></div><h1>Easypaisa</h1><p class="tag">Aapka digital wallet</p>
     <div class="field"><label>MOBILE NUMBER</label><input id="loginNum" inputmode="numeric" placeholder="03XX-XXXXXXX" autocomplete="off"></div>
     <div class="field"><label>PIN</label><input id="loginPin" type="password" inputmode="numeric" placeholder="4-digit PIN" maxlength="4" autocomplete="off"></div>
     <button class="btn-primary" onclick="login()">Login</button>
@@ -1093,7 +1097,7 @@
     playVideoStyleTone('notif');
   }
 
-  var EP_LOGO_SVG='<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true"><path fill="#23252a" fill-rule="evenodd" d="M18 60C18 28 42 12 72 12c24 0 38 12 38 29 0 18-19 29-50 29H41c3 7 11 11 23 11 12 0 21-4 29-10l8 12c-11 8-25 12-40 12-25 0-41-12-41-35zm26-11h20c14 0 23-4 23-11 0-6-7-10-18-10-13 0-22 8-25 21z"/><path fill="#1db954" d="M16 78c10 22 29 33 53 33 21 0 37-9 44-22l-15-8c-5 10-16 15-29 15-18 0-32-9-39-24l-14 6z"/></svg>';
+  var EP_LOGO_SVG='<img src="icon-192.png" alt="easypaisa" style="width:100%;height:100%;object-fit:contain;display:block">';
   var EP_WALLET_ICO_SVG='<svg viewBox="0 0 36 36" width="100%" height="100%" aria-hidden="true"><rect x="4" y="10" width="22" height="17" rx="4" fill="#25b857"/><path d="M4 15h22" stroke="#ffffff" stroke-width="2"/><circle cx="27" cy="21" r="6.5" fill="#f7c948" stroke="#c9931c" stroke-width="1.6"/><text x="27" y="23.5" text-anchor="middle" font-size="7.5" font-weight="800" fill="#7a5200">Rs</text></svg>';
   function mountEpLogos(){
     var mini = document.getElementById('epNotifMiniLogo');
