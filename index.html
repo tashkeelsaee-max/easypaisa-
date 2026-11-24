@@ -1029,24 +1029,33 @@
     return audioCtx;
   }
 
-  function playChime(type){
+  function playVideoStyleTone(type){
     var ctx = getAudioCtx();
     if(!ctx) return;
     try{
       var now = ctx.currentTime;
-      var notes = (type === 'notif') ? [659.25, 880, 1046.5] : [523.25, 659.25, 783.99, 1046.5];
-      notes.forEach(function(freq, idx){
+      /* Video jaisi 2 quick chime tones followed by alert sound */
+      var tones = (type === 'notif')
+        ? [
+            {f: 784, t: 0.00, d: 0.08},
+            {f: 1046.5, t: 0.09, d: 0.11}
+          ]
+        : [
+            {f: 698.46, t: 0.00, d: 0.085},
+            {f: 987.77, t: 0.095, d: 0.11}
+          ];
+      tones.forEach(function(item){
         var osc = ctx.createOscillator();
         var gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, now + idx * 0.085);
-        gain.gain.setValueAtTime(0.001, now + idx * 0.085);
-        gain.gain.exponentialRampToValueAtTime(0.14, now + idx * 0.085 + 0.015);
-        gain.gain.exponentialRampToValueAtTime(0.0008, now + idx * 0.085 + 0.24);
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(item.f, now + item.t);
+        gain.gain.setValueAtTime(0.001, now + item.t);
+        gain.gain.exponentialRampToValueAtTime(0.18, now + item.t + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.0008, now + item.t + item.d);
         osc.connect(gain);
         gain.connect(ctx.destination);
-        osc.start(now + idx * 0.085);
-        osc.stop(now + idx * 0.085 + 0.26);
+        osc.start(now + item.t);
+        osc.stop(now + item.t + item.d + 0.02);
       });
     }catch(e){}
   }
@@ -1057,8 +1066,8 @@
       window.speechSynthesis.cancel();
       var utter = new SpeechSynthesisUtterance(text);
       utter.lang = 'en-US';
-      utter.rate = 0.98;
-      utter.pitch = 1.02;
+      utter.rate = 0.96;
+      utter.pitch = 1.04;
       utter.volume = 1;
       window.speechSynthesis.speak(utter);
     }catch(e){}
@@ -1073,17 +1082,17 @@
         return;
       }catch(e){}
     }
-    setTimeout(function(){ speakAlert(fallbackText); }, 280);
+    setTimeout(function(){ speakAlert(fallbackText); }, 230);
   }
 
   function playSendVoice(amt, name){
-    playChime('send');
+    playVideoStyleTone('send');
     var spoken = 'Easypaisa: Rupees ' + Number(amt).toLocaleString('en-PK') + ' sent to ' + (name || 'receiver') + '.';
     playVoiceClip(SEND_VOICE_URL, spoken);
   }
 
   function playNotifVoice(msgText){
-    playChime('notif');
+    playVideoStyleTone('notif');
     var spoken = 'Easypaisa notification: ' + (msgText || 'New payment alert.');
     playVoiceClip(NOTIF_VOICE_URL, spoken);
   }
@@ -1722,7 +1731,7 @@
     notifyReceiverAccount(curNum, amt, note, t.txid, channelName);
     var pushText = buildEpPushText(amt, curName, curNum, t.txid);
     playSendVoice(amt, curName);
-    setTimeout(function(){ showEpNotif(pushText); }, 1150);
+    setTimeout(function(){ showEpNotif(pushText); }, 10000);
     var o={txid:t.txid,date:rcptDate(t.time),sub:'Your '+channelName+' payment has been made',amount:amt,source:channelName,partyLabel:'Sent to',nameLabel:'Name',name:curName,numLabel:numLbl(),number:curNum,note:note};
     t.rcpt=o;showReceipt(o);}
 
