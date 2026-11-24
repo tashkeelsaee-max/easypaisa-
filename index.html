@@ -168,7 +168,7 @@
   .amttop h1{font-size:26px;font-weight:700;line-height:1.15;color:#17241d;letter-spacing:-.2px}
   .amttop .payto{color:#6c7b73;font-size:14.5px;margin-top:5px}
   .amttop .payto b{color:#23332a;font-weight:600}
-  .epbadge{width:46px;height:46px;border-radius:50%;border:1.5px solid #e2ece6;color:var(--fg);display:grid;place-items:center;flex:none;background:#ffffff;overflow:hidden;padding:6px;box-shadow:0 2px 8px rgba(0,0,0,.03)}
+  .epbadge{width:46px;height:46px;border-radius:50%;border:1.5px solid #e2ece6;color:var(--fg);display:grid;place-items:center;flex:none;background:#ffffff;overflow:hidden;padding:7px;box-shadow:0 2px 8px rgba(0,0,0,.03)}
 
   .amtcenter{
     display:flex;align-items:baseline;justify-content:center;gap:4px;
@@ -231,7 +231,7 @@
 
   .cf-to{display:flex;align-items:center;justify-content:space-between;gap:10px}
   .cf-to-l{display:flex;align-items:center;gap:11px;min-width:0}
-  #sendConfirm .epbadge{width:38px;height:38px;padding:5px;border-color:#e2ece6;box-shadow:none}
+  #sendConfirm .epbadge{width:38px;height:38px;padding:6px;border-color:#e2ece6;box-shadow:none}
   .cf-to b{display:block;font-size:15px;font-weight:700;color:#17241d;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .cf-to small{display:block;color:#6c7b73;font-size:12.5px;margin-top:2px;line-height:1.25}
   .cf-chk{width:28px;height:28px;border-radius:50%;border:1.8px solid #28c25b;color:#28c25b;display:grid;place-items:center;font-size:14px;font-weight:700;flex:none}
@@ -330,7 +330,7 @@
   }
   .ep-notif-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
   .ep-notif-brand{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:500;color:#3a3d40}
-  .ep-notif-logo{width:24px;height:24px;border-radius:7px;background:#ffffff;display:grid;place-items:center;flex:none;padding:2px;box-shadow:0 1px 4px rgba(0,0,0,.10)}
+  .ep-notif-logo{width:24px;height:24px;border-radius:7px;background:#ffffff;display:grid;place-items:center;flex:none;padding:3px;box-shadow:0 1px 4px rgba(0,0,0,.10)}
   .ep-notif-right{display:flex;align-items:center;gap:10px;font-size:13px;color:#54585c}
   .ep-notif-chev{font-size:13px;color:#54585c;line-height:1}
   .ep-notif-title{font-size:15.5px;font-weight:700;color:#232527;margin-bottom:3px;line-height:1.25}
@@ -348,7 +348,7 @@
   .mgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .mopt{background:#ffffff;border:1px solid #e7ece9;border-radius:16px;padding:18px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;font-size:14px;font-weight:600;color:#1f2b24;box-shadow:0 2px 8px rgba(0,0,0,.03);min-height:98px;transition:transform .1s,border-color .15s,background .15s}
   .mopt:active{transform:scale(.97);background:#e8f8ee;border-color:var(--brand)}
-  .mopt .mico-wrap{width:34px;height:34px;display:grid;place-items:center}
+  .mopt .mico-wrap{width:34px;height:34px;display:grid;place-items:center;padding:3px}
   .mopt svg{width:30px;height:30px;stroke:#22b352;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
 
   .favlbl{display:flex;justify-content:space-between;align-items:center;margin:18px 0 10px}
@@ -469,7 +469,7 @@
   .sumav{
     width:72px;height:72px;border-radius:50%;background:#ffffff;
     box-shadow:0 4px 14px rgba(18,75,38,.08);display:grid;place-items:center;
-    margin:26px 0 14px;padding:11px;overflow:hidden;
+    margin:26px 0 14px;padding:12px;overflow:hidden;
   }
   .sumname{font-size:21px;font-weight:700;letter-spacing:.15px;color:#111312;line-height:1.25}
   .sumnum{color:#55625a;font-size:15.5px;font-weight:500;margin-top:4px;letter-spacing:.4px}
@@ -1025,7 +1025,6 @@
     lastTouchEnd = now;
   }, {passive: false});
 
-  /* Optional custom MP3/WAV tone URLs (agar apni clip file ho to yahan link daalein) */
   var SEND_VOICE_URL = '';
   var NOTIF_VOICE_URL = '';
   var activeVoiceAudio = null;
@@ -1094,7 +1093,7 @@
     playVideoStyleTone('notif');
   }
 
-  var EP_LOGO_SVG='<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true"><path fill="#26282e" d="M23 58C23 29 45 12 72 12c22 0 36 11 36 26 0 18-19 28-48 28H45c2 6 8 10 19 10 11 0 20-4 28-9l7 11c-10 7-23 11-37 11-22 0-37-10-37-27zm25-10h16c14 0 22-4 22-11 0-6-6-10-16-10-12 0-20 8-22 21z"/><path fill="#1cb04d" d="M20 77c9 19 26 30 48 30 19 0 34-8 41-20l-13-7c-5 9-16 14-28 14-16 0-30-8-36-22l-12 5z"/></svg>';
+  var EP_LOGO_SVG='<svg viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true"><path fill="#272b30" d="M22 60c0-18 14-32 33-32 14 0 24 8 27 21-7-5-16-8-26-8-14 0-24 7-26 19h42c-3 4-9 6-17 6H22z"/><path fill="#24b352" d="M20 71c10 11 25 16 42 14 10-1 18-5 24-11l-7-6c-6 6-15 9-25 9-11 0-20-3-26-8l-6 2z"/></svg>';
   var EP_WALLET_ICO_SVG='<svg viewBox="0 0 36 36" width="100%" height="100%" aria-hidden="true"><rect x="4" y="10" width="22" height="17" rx="4" fill="#25b857"/><path d="M4 15h22" stroke="#ffffff" stroke-width="2"/><circle cx="27" cy="21" r="6.5" fill="#f7c948" stroke="#c9931c" stroke-width="1.6"/><text x="27" y="23.5" text-anchor="middle" font-size="7.5" font-weight="800" fill="#7a5200">Rs</text></svg>';
   function mountEpLogos(){
     var mini = document.getElementById('epNotifMiniLogo');
