@@ -420,23 +420,23 @@
   /* Soft Mint-Green & White Success / Receipt Screen */
   .success{
     position:fixed;inset:0;
-    background:linear-gradient(180deg,#e4f7ec 0%,#ebf9f0 48%,#f3fcf7 100%);
+    background:linear-gradient(180deg,#e7f6ee 0%,#eef8f2 52%,#f4faf6 100%);
     z-index:70;display:none;align-items:center;justify-content:center;
     overflow-y:auto;padding:20px 16px;color:#111312;
   }
   .success.show{display:flex;animation:fade .3s}
 
-  .coin-wrap{position:relative;width:166px;height:156px;margin:0 auto 10px;display:grid;place-items:center}
-  .coin-rays{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-  .coin-rays line{stroke:#25b857;stroke-width:3.2;stroke-linecap:round}
+  .coin-wrap{position:relative;width:196px;height:178px;margin:0 auto 10px;display:grid;place-items:center}
+  .coin-rays{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
   .coin{
-    position:relative;z-index:2;width:92px;height:92px;border-radius:50%;
-    background:radial-gradient(circle at 34% 26%,#fff0b3 0%,#e9bd55 58%,#be8a2e 100%);
-    display:grid;place-items:center;box-shadow:0 12px 24px rgba(176,128,36,.28),inset 0 -5px 10px rgba(0,0,0,.16);
+    position:relative;z-index:2;width:96px;height:96px;border-radius:50%;
+    background:radial-gradient(circle at 38% 30%,#f9df88 0%,#e7be58 58%,#cf9d36 100%);
+    display:grid;place-items:center;
+    box-shadow:0 10px 22px rgba(176,132,42,.20),inset 0 -4px 8px rgba(140,98,18,.18);
     animation:pop .4s ease;
   }
   @keyframes pop{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1)}}
-  .coin svg{width:46px;height:46px;stroke:#18ad46;stroke-width:5.5;fill:none;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 2px 1px rgba(255,255,255,.55))}
+  .coin svg{width:50px;height:50px;stroke:#149e3e;stroke-width:6.2;fill:none;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 2px 1.5px rgba(255,255,255,.55))}
 
   .receipt{
     background:#f6fcf8;border:1px solid #d9eee2;border-radius:26px;
@@ -942,15 +942,15 @@
 <div class="success" id="success">
   <div class="summary">
     <div class="coin-wrap">
-      <svg class="coin-rays" viewBox="0 0 170 160" aria-hidden="true">
-        <line x1="62" y1="22" x2="66" y2="33"/>
-        <line x1="108" y1="22" x2="104" y2="33"/>
-        <line x1="138" y1="54" x2="128" y2="60"/>
-        <line x1="142" y1="96" x2="131" y2="94"/>
-        <line x1="112" y1="128" x2="107" y2="118"/>
-        <line x1="58" y1="128" x2="63" y2="118"/>
-        <line x1="28" y1="96" x2="39" y2="94"/>
-        <line x1="32" y1="54" x2="42" y2="60"/>
+      <svg class="coin-rays" viewBox="0 0 200 180" aria-hidden="true">
+        <path d="M66 16 L69 30" stroke="#18b148" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M134 16 L131 30" stroke="#18b148" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M24 58 L37 64" stroke="#18b148" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M176 58 L163 64" stroke="#18b148" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M26 116 L39 111" stroke="#18b148" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M174 116 L161 111" stroke="#18b148" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M62 152 L66 139" stroke="#18b148" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M138 152 L134 139" stroke="#18b148" stroke-width="3.2" stroke-linecap="round"/>
       </svg>
       <div class="coin"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
     </div>
@@ -969,8 +969,18 @@
 
 <div class="success" id="receipt">
   <div class="receipt">
-    <div class="coin-wrap" style="width:130px;height:110px;margin-bottom:6px">
-      <div class="coin" style="width:76px;height:76px"><svg viewBox="0 0 24 24" style="width:38px;height:38px"><path d="M5 13l4 4L19 7"/></svg></div>
+    <div class="coin-wrap" style="width:150px;height:126px;margin-bottom:6px">
+      <svg class="coin-rays" viewBox="0 0 200 180" aria-hidden="true">
+        <path d="M66 16 L69 30" stroke="#18b148" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M134 16 L131 30" stroke="#18b148" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M24 58 L37 64" stroke="#18b148" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M176 58 L163 64" stroke="#18b148" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M26 116 L39 111" stroke="#18b148" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M174 116 L161 111" stroke="#18b148" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M62 152 L66 139" stroke="#18b148" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M138 152 L134 139" stroke="#18b148" stroke-width="3.2" stroke-linecap="round"/>
+      </svg>
+      <div class="coin" style="width:80px;height:80px"><svg viewBox="0 0 24 24" style="width:40px;height:40px"><path d="M5 13l4 4L19 7"/></svg></div>
     </div>
     <h2 id="rcpTitle">Transaction Successful</h2>
     <p class="sub" id="rcpSub">Your easypaisa payment has been made</p>
@@ -1787,3 +1797,4 @@
 </script>
 </body>
 </html>
+
