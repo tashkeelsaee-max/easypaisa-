@@ -330,7 +330,7 @@
   }
   .ep-notif-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
   .ep-notif-brand{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:500;color:#3a3d40}
-  .ep-notif-logo{width:22px;height:22px;border-radius:6px;background:#ffffff;display:grid;place-items:center;flex:none;padding:2px;box-shadow:0 1px 4px rgba(0,0,0,.10)}
+  .ep-notif-logo{width:24px;height:24px;border-radius:7px;background:#ffffff;display:grid;place-items:center;flex:none;padding:2px;box-shadow:0 1px 4px rgba(0,0,0,.10)}
   .ep-notif-right{display:flex;align-items:center;gap:10px;font-size:13px;color:#54585c}
   .ep-notif-chev{font-size:13px;color:#54585c;line-height:1}
   .ep-notif-title{font-size:15.5px;font-weight:700;color:#232527;margin-bottom:3px;line-height:1.25}
@@ -467,9 +467,9 @@
   .sumamt{font-size:38px;font-weight:800;margin-top:10px;color:#111312;line-height:1.15}
   .sumsub{color:#55625a;font-size:15.5px;font-weight:500;margin-top:6px}
   .sumav{
-    width:68px;height:68px;border-radius:50%;background:#ffffff;
+    width:72px;height:72px;border-radius:50%;background:#ffffff;
     box-shadow:0 4px 14px rgba(18,75,38,.08);display:grid;place-items:center;
-    margin:26px 0 14px;padding:12px;overflow:hidden;
+    margin:26px 0 14px;padding:11px;overflow:hidden;
   }
   .sumname{font-size:21px;font-weight:700;letter-spacing:.15px;color:#111312;line-height:1.25}
   .sumnum{color:#55625a;font-size:15.5px;font-weight:500;margin-top:4px;letter-spacing:.4px}
@@ -1094,7 +1094,7 @@
     playVideoStyleTone('notif');
   }
 
-  var EP_LOGO_SVG='<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true"><path fill="#26282e" fill-rule="evenodd" d="M24 56C24 27 46 11 73 11c21 0 34 11 34 25 0 16-17 25-44 25H44c2 6 8 9 18 9 10 0 19-3 27-8l7 11c-10 7-22 10-35 10-21 0-35-10-35-24zm24-9h15c13 0 21-4 21-10 0-6-6-10-15-10-12 0-19 8-21 20z"/><path fill="#19b24b" d="M20 75c9 19 26 29 48 29 19 0 33-7 40-19l-12-7c-5 8-16 13-28 13-16 0-30-8-36-21l-12 5z"/></svg>';
+  var EP_LOGO_SVG='<svg viewBox="0 0 120 120" width="100%" height="100%" aria-hidden="true"><path fill="#26282e" d="M23 58C23 29 45 12 72 12c22 0 36 11 36 26 0 18-19 28-48 28H45c2 6 8 10 19 10 11 0 20-4 28-9l7 11c-10 7-23 11-37 11-22 0-37-10-37-27zm25-10h16c14 0 22-4 22-11 0-6-6-10-16-10-12 0-20 8-22 21z"/><path fill="#1cb04d" d="M20 77c9 19 26 30 48 30 19 0 34-8 41-20l-13-7c-5 9-16 14-28 14-16 0-30-8-36-22l-12 5z"/></svg>';
   var EP_WALLET_ICO_SVG='<svg viewBox="0 0 36 36" width="100%" height="100%" aria-hidden="true"><rect x="4" y="10" width="22" height="17" rx="4" fill="#25b857"/><path d="M4 15h22" stroke="#ffffff" stroke-width="2"/><circle cx="27" cy="21" r="6.5" fill="#f7c948" stroke="#c9931c" stroke-width="1.6"/><text x="27" y="23.5" text-anchor="middle" font-size="7.5" font-weight="800" fill="#7a5200">Rs</text></svg>';
   function mountEpLogos(){
     var mini = document.getElementById('epNotifMiniLogo');
