@@ -76,7 +76,7 @@
   .search input{border:none;outline:none;background:none;color:var(--fg);font-size:13px;width:100%;min-width:0}
   .search input::placeholder{color:#5a6860}
 
-  /* CAROUSEL CARDS - IDENTICAL HEIGHT & RESPONSIVE FIT ON ANY SCREEN */
+  /* CAROUSEL CARDS */
   .carousel{display:flex;gap:10px;margin-top:12px;overflow-x:auto;scroll-snap-type:x mandatory;
     padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:12px;padding-bottom:2px;scrollbar-width:none;width:100%}
   .carousel::-webkit-scrollbar{display:none}
@@ -128,6 +128,24 @@
   .subhead{background:var(--brand);color:#fff;padding-top:calc(env(safe-area-inset-top,0px) + 11px);padding-bottom:13px;display:flex;align-items:center;gap:10px;border-radius:0 0 16px 16px}
   .back{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:19px;flex:none}
   .subhead h2{font-size:16px;font-weight:700}
+
+  /* BANK TRANSFER DIRECTORY SCREEN */
+  #bankPick{background:#f5faf7;min-height:100dvh;padding-bottom:84px}
+  .bp-toprow{display:flex;align-items:center;justify-content:space-between;padding-top:calc(env(safe-area-inset-top,0px) + 10px)}
+  .bp-back{width:34px;height:34px;border-radius:10px;background:#eef6f1;border:1px solid #e0ede5;color:#17241d;display:grid;place-items:center;font-size:20px;line-height:1}
+  .bp-help{background:#eef6f1;border:1px solid #e0ede5;color:#23332a;font-size:11.5px;font-weight:600;padding:5px 11px;border-radius:8px}
+  .bp-title{font-size:20px;font-weight:700;color:#17241d;margin-top:10px;letter-spacing:-.2px;line-height:1.2}
+  .bp-tabs{display:grid;grid-template-columns:1fr 1fr;margin-top:12px;border-bottom:1px solid #e2ebe5}
+  .bp-tab{padding:8px 6px;font-size:13px;font-weight:600;color:#6c7b73;position:relative;text-align:center}
+  .bp-tab.on{color:#22b352}
+  .bp-tab.on::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:#27c059;border-radius:2px}
+  .bp-list{display:flex;flex-direction:column;margin-top:4px}
+  .bp-row{display:flex;align-items:center;gap:12px;padding:12px 2px;border-bottom:1px solid #e8efe9;width:100%;text-align:left;background:transparent;transition:background .12s}
+  .bp-row:active{background:#e8f8ee}
+  .bp-logo{width:36px;height:36px;border-radius:9px;background:#ffffff;border:1px solid #e2ebe5;display:grid;place-items:center;flex:none;overflow:hidden;padding:3px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+  .bp-logo img{width:100%;height:100%;object-fit:contain;display:block}
+  .bp-name{flex:1;min-width:0;font-size:13.5px;font-weight:600;color:#17241d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .bp-chev{color:#7c8b82;font-size:17px;line-height:1;flex:none}
 
   /* SEND / EASYPAISA TRANSFER SCREEN */
   #send{background:#eef8f2;min-height:100dvh;padding-bottom:84px}
@@ -403,7 +421,7 @@
   .wrow:active{background:#e8f8ee}
   .accthead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
   .acctsub{color:var(--muted);font-size:13px}.acctsub b{color:var(--fg)}
-  .acctlogo{width:44px;height:44px;border-radius:50%;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;font-weight:800;color:var(--brand);flex:none;margin-top:8px;font-size:13.5px}
+  .acctlogo{width:44px;height:44px;border-radius:50%;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;font-weight:800;color:var(--brand);flex:none;margin-top:8px;font-size:13.5px;overflow:hidden;padding:4px}
   .walsep{height:1px;background:var(--line);margin:11px 0 0}
 
   .profhead{position:relative;height:128px;background:radial-gradient(circle at 82% 25%,#78ea9b 0%,#28c25b 45%,#179943 100%);border-radius:0 0 18px 18px;padding-top:env(safe-area-inset-top,0px);overflow:hidden}
@@ -623,6 +641,54 @@
     </div>
   </section>
 
+  <!-- BANK TRANSFER LIST SCREEN -->
+  <section class="screen" id="bankPick">
+    <div class="gut">
+      <div class="bp-toprow">
+        <button class="bp-back" type="button" onclick="go('home')">‹</button>
+        <button class="bp-help" type="button" onclick="toast('Bank Transfer Help')">Help</button>
+      </div>
+      <h2 class="bp-title" id="bankPickTitle">Bank Transfer</h2>
+      <div class="bp-tabs">
+        <button class="bp-tab on" id="bpTabSend" type="button" onclick="setBankTab('send')">Send Money</button>
+        <button class="bp-tab" id="bpTabHist" type="button" onclick="setBankTab('history')">History</button>
+      </div>
+      <div class="bp-list" id="bankPickList"></div>
+    </div>
+  </section>
+
+  <!-- BANK ACCOUNT NUMBER & RECEIVER NAME SCREEN -->
+  <section class="screen" id="bankAcct">
+    <div class="cleanhead gut">
+      <button class="cback" type="button" onclick="go('bankPick')">‹</button>
+      <div class="amttop" style="margin-top:10px">
+        <div>
+          <h1 id="baBankTitle">Bank Transfer</h1>
+          <div class="payto">Account / Mobile No. &amp; Name</div>
+        </div>
+        <div class="epbadge" id="baBankBadge"></div>
+      </div>
+    </div>
+    <div class="gut">
+      <div class="card" style="margin-top:10px">
+        <div class="f">
+          <label for="ba_num">Account / Mobile Number</label>
+          <input id="ba_num" inputmode="numeric" placeholder="Enter Account / Mobile Number" maxlength="24" oninput="resolveBankRecv()" onkeydown="if(event.key==='Enter')document.getElementById('ba_name').focus()">
+        </div>
+        <div class="f">
+          <label for="ba_name">Receiver Name</label>
+          <input id="ba_name" placeholder="Enter Receiver Name" oninput="setErr('ba_err','')" onkeydown="if(event.key==='Enter')bankAcctProceed()">
+        </div>
+        <div class="f" style="margin-bottom:4px">
+          <label for="ba_purpose">Purpose of Payment</label>
+          <select id="ba_purpose"><option>Others</option><option>Family Support</option><option>Salary</option><option>Goods &amp; Services</option><option>Savings</option><option>Loan Repayment</option><option>Education Fee</option><option>Gift</option></select>
+        </div>
+        <div class="err" id="ba_err"></div>
+        <button class="go" type="button" onclick="bankAcctProceed()">Proceed</button>
+      </div>
+    </div>
+  </section>
+
   <!-- SEND : STEP 1 pick receiver -->
   <section class="screen" id="send">
     <div class="gut">
@@ -693,13 +759,13 @@
   <!-- SEND : STEP 2 Enter Amount -->
   <section class="screen" id="sendAmt">
     <div class="cleanhead gut">
-      <button class="cback" onclick="go('send')">‹</button>
+      <button class="cback" onclick="backFromAmount()">‹</button>
       <div class="amttop">
         <div>
           <h1>Enter Amount</h1>
           <div class="payto">Pay To: <b id="amPayTo">—</b></div>
         </div>
-        <div class="epbadge" data-ep-logo="always"></div>
+        <div class="epbadge" id="amLogoBox"></div>
       </div>
     </div>
     <div class="gut">
@@ -742,7 +808,7 @@
       <div class="cfcard">
         <div class="cf-to">
           <div class="cf-to-l">
-            <div class="epbadge" data-ep-logo="always"></div>
+            <div class="epbadge" id="cfLogoBox"></div>
             <div>
               <b id="cf_name">—</b>
               <small class="num" id="cf_num">—</small>
@@ -1134,20 +1200,166 @@
     }catch(e){}
   }
 
-  function playSendVoice(){
-    playVideoStyleTone('send');
-  }
-
-  function playNotifVoice(){
-    playVideoStyleTone('notif');
-  }
+  function playSendVoice(){ playVideoStyleTone('send'); }
+  function playNotifVoice(){ playVideoStyleTone('notif'); }
 
   var EP_LOGO_SVG='<img src="icon-192.png" alt="easypaisa" style="width:100%;height:100%;object-fit:contain;display:block">';
   var JC_LOGO_IMG='<img src="jazzcash.webp" alt="JazzCash" style="width:100%;height:100%;object-fit:contain;display:block" onerror="this.onerror=null;this.src=\'icon-192.png\'">';
   var EP_WALLET_ICO_SVG='<svg viewBox="0 0 36 36" width="100%" height="100%" aria-hidden="true"><rect x="4" y="10" width="22" height="17" rx="4" fill="#25b857"/><path d="M4 15h22" stroke="#ffffff" stroke-width="2"/><circle cx="27" cy="21" r="6.5" fill="#f7c948" stroke="#c9931c" stroke-width="1.6"/><text x="27" y="23.5" text-anchor="middle" font-size="7.5" font-weight="800" fill="#7a5200">Rs</text></svg>';
 
+  var BANK_DIRECTORY = [
+    {name:'Al Baraka Bank (Pakistan) Limited', code:'AB', bg:'#0057a8', fg:'#ffffff'},
+    {name:'Al Baraka Islamic Bank Limited', code:'AI', bg:'#006847', fg:'#ffffff'},
+    {name:'Alfa Pay', code:'AP', bg:'#c8102e', fg:'#ffffff'},
+    {name:'Allied Bank Limited', code:'ABL', bg:'#0b3d91', fg:'#ffffff'},
+    {name:'Apna Microfinance Bank', code:'AMB', bg:'#1b7f43', fg:'#ffffff'},
+    {name:'Askari Commercial Bank Limited', code:'AKBL', bg:'#004b87', fg:'#ffffff'},
+    {name:'Bank Al Habib Limited', code:'BAHL', bg:'#005a9c', fg:'#ffffff'},
+    {name:'Bank Alfalah Limited', code:'BAFL', bg:'#d91b24', fg:'#ffffff'},
+    {name:'BankIslami Pakistan Limited', code:'BIPL', bg:'#007a4d', fg:'#ffffff'},
+    {name:'Bank Makramah Limited BML', code:'BML', bg:'#143d73', fg:'#ffffff'},
+    {name:'Bank of China', code:'BOC', bg:'#b71c1c', fg:'#ffffff'},
+    {name:'Bank of Khyber', code:'BOK', bg:'#006b3f', fg:'#ffffff'},
+    {name:'Bank of Punjab', code:'BOP', bg:'#004990', fg:'#ffffff'},
+    {name:'Burj Bank Limited', code:'BURJ', bg:'#0f5c4c', fg:'#ffffff'},
+    {name:'Citi Bank', code:'CITI', bg:'#056dae', fg:'#ffffff'},
+    {name:'CMpay', code:'CM', bg:'#008542', fg:'#ffffff'},
+    {name:'Digitt', code:'DG', bg:'#1f4e78', fg:'#ffffff'},
+    {name:'Dubai Islamic Bank', code:'DIB', bg:'#007a3d', fg:'#ffffff'},
+    {name:'Faysal Bank Limited', code:'FBL', bg:'#1b365d', fg:'#ffffff'},
+    {name:'FINCA Microfinance Bank', code:'FINCA', bg:'#0072bc', fg:'#ffffff'},
+    {name:'First Microfinance Bank', code:'FMFB', bg:'#006633', fg:'#ffffff'},
+    {name:'First Women Bank', code:'FWBL', bg:'#6a1b9a', fg:'#ffffff'},
+    {name:'FirstPay', code:'FP', bg:'#0b6e4f', fg:'#ffffff'},
+    {name:'HBL Konnect', code:'HK', bg:'#006747', fg:'#ffffff'},
+    {name:'HBL Microfinance Bank', code:'HMB', bg:'#006747', fg:'#ffffff'},
+    {name:'Habib Bank Limited HBL', code:'HBL', bg:'#006747', fg:'#ffffff'},
+    {name:'Habib Metropolitan Bank', code:'HMB', bg:'#004c8c', fg:'#ffffff'},
+    {name:'Halian Microfinance Bank', code:'HLN', bg:'#1976d2', fg:'#ffffff'},
+    {name:'Hubpay', code:'HP', bg:'#0d47a1', fg:'#ffffff'},
+    {name:'HugoBank Limited', code:'HB', bg:'#1b5e20', fg:'#ffffff'},
+    {name:'ICBC Pakistan', code:'ICBC', bg:'#c62828', fg:'#ffffff'},
+    {name:'JS Bank Zindigi', code:'JS', bg:'#005596', fg:'#ffffff'},
+    {name:'JazzCash', code:'JC', bg:'#ffffff', fg:'#d91b24', useJazzLogo:true},
+    {name:'KASB Bank', code:'KASB', bg:'#1e3a5f', fg:'#ffffff'},
+    {name:'KEENU', code:'KN', bg:'#00695c', fg:'#ffffff'},
+    {name:'Khushhali Microfinance Bank KMBL', code:'KMBL', bg:'#00796b', fg:'#ffffff'},
+    {name:'MCB Bank Limited', code:'MCB', bg:'#003366', fg:'#ffffff'},
+    {name:'MCB Islamic Bank', code:'MCBI', bg:'#00693e', fg:'#ffffff'},
+    {name:'Meezan Bank', code:'MBL', bg:'#4a154b', fg:'#ffffff'},
+    {name:'Mobilink Microfinance Bank', code:'MMBL', bg:'#b71c1c', fg:'#ffffff'},
+    {name:'National Bank of Pakistan', code:'NBP', bg:'#1b5e20', fg:'#ffffff'},
+    {name:'NayaPay', code:'NP', bg:'#1e88e5', fg:'#ffffff'},
+    {name:'NRSP Bank Fort Cash', code:'NRSP', bg:'#2e7d32', fg:'#ffffff'},
+    {name:'OPay', code:'OP', bg:'#00a86b', fg:'#ffffff'},
+    {name:'OneZapp', code:'OZ', bg:'#006064', fg:'#ffffff'},
+    {name:'Paymax', code:'PM', bg:'#283593', fg:'#ffffff'},
+    {name:'Payvay', code:'PV', bg:'#00695c', fg:'#ffffff'},
+    {name:'Punjab Provincial Cooperative Bank', code:'PPCBL', bg:'#1b5e20', fg:'#ffffff'},
+    {name:'Raqami Islamic Digital Bank', code:'RQ', bg:'#00695c', fg:'#ffffff'},
+    {name:'Rupin', code:'RP', bg:'#1565c0', fg:'#ffffff'},
+    {name:'SadaPay', code:'SP', bg:'#e65100', fg:'#ffffff'},
+    {name:'Samba Bank', code:'SAMBA', bg:'#004d40', fg:'#ffffff'},
+    {name:'Silk Bank', code:'SILK', bg:'#0056b3', fg:'#ffffff'},
+    {name:'SimSim', code:'SS', bg:'#b71c1c', fg:'#ffffff'},
+    {name:'Sindh Bank', code:'SNDB', bg:'#0057a8', fg:'#ffffff'},
+    {name:'Soneri Bank Limited', code:'SNBL', bg:'#004b87', fg:'#ffffff'},
+    {name:'Soneri Bank Limited (Alt)', code:'SNBL', bg:'#004b87', fg:'#ffffff'},
+    {name:'Standard Chartered Bank', code:'SCB', bg:'#0072aa', fg:'#ffffff'},
+    {name:'Summit Bank', code:'SMBL', bg:'#005a9c', fg:'#ffffff'},
+    {name:'U Microfinance Bank', code:'UMB', bg:'#00695c', fg:'#ffffff'},
+    {name:'United Bank Limited UBL', code:'UBL', bg:'#0072ce', fg:'#ffffff'},
+    {name:'Upaisa', code:'UP', bg:'#e65100', fg:'#ffffff'},
+    {name:'YAP', code:'YAP', bg:'#1a237e', fg:'#ffffff'},
+    {name:'ZTBL', code:'ZTBL', bg:'#1b5e20', fg:'#ffffff'}
+  ];
+
+  var selectedBankItem = null;
+  var returnScreenAfterAmt = 'send';
+
+  function renderBankBadgeHtml(item){
+    if(!item) return EP_LOGO_SVG;
+    if(item.useJazzLogo || String(item.name || '').toLowerCase().indexOf('jazzcash') > -1){
+      return JC_LOGO_IMG;
+    }
+    return '<span style="width:100%;height:100%;border-radius:7px;background:'+(item.bg||'#199944')+';color:'+(item.fg||'#ffffff')+';display:grid;place-items:center;font-size:'+(item.code.length>3?'8.5px':'10px')+';font-weight:800;letter-spacing:-.3px;line-height:1">'+item.code+'</span>';
+  }
+
+  function renderBankPickList(){
+    var el = document.getElementById('bankPickList');
+    if(!el) return;
+    el.innerHTML = BANK_DIRECTORY.map(function(item, idx){
+      return '<button class="bp-row" type="button" onclick="selectBankForTransfer('+idx+')">' +
+        '<span class="bp-logo">'+renderBankBadgeHtml(item)+'</span>' +
+        '<span class="bp-name">'+item.name+'</span>' +
+        '<span class="bp-chev">›</span>' +
+      '</button>';
+    }).join('');
+  }
+
+  function setBankTab(tab){
+    var isH = tab === 'history';
+    var sBtn = document.getElementById('bpTabSend');
+    var hBtn = document.getElementById('bpTabHist');
+    if(sBtn) sBtn.classList.toggle('on', !isH);
+    if(hBtn) hBtn.classList.toggle('on', isH);
+    if(isH) go('history');
+  }
+
+  function selectBankForTransfer(idx){
+    var item = BANK_DIRECTORY[idx];
+    if(!item) return;
+    selectedBankItem = item;
+    transferMethod = 'Bank';
+    selectedWallet = item.name;
+    var titleEl = document.getElementById('baBankTitle');
+    var badgeEl = document.getElementById('baBankBadge');
+    var numInp = document.getElementById('ba_num');
+    var nameInp = document.getElementById('ba_name');
+    if(titleEl) titleEl.textContent = item.name;
+    if(badgeEl) badgeEl.innerHTML = renderBankBadgeHtml(item);
+    if(numInp) numInp.value = '';
+    if(nameInp) nameInp.value = '';
+    setErr('ba_err', '');
+    go('bankAcct');
+    setTimeout(function(){ if(numInp) numInp.focus(); }, 180);
+  }
+
+  function resolveBankRecv(){
+    setErr('ba_err', '');
+    var raw = (document.getElementById('ba_num').value || '').replace(/[^0-9]/g,'');
+    var nameInp = document.getElementById('ba_name');
+    var matchedKey = CONTACTS[raw] ? raw : (raw.match(/03\d{9}/) && CONTACTS[raw.match(/03\d{9}/)[0]] ? raw.match(/03\d{9}/)[0] : '');
+    if(matchedKey && nameInp && !nameInp.value.trim()){
+      nameInp.value = CONTACTS[matchedKey];
+    }
+  }
+
+  function bankAcctProceed(){
+    var rawNum = (document.getElementById('ba_num').value || '').trim();
+    var digits = rawNum.replace(/[^0-9]/g,'');
+    var rName = (document.getElementById('ba_name').value || '').trim();
+    var purpose = document.getElementById('ba_purpose').value || 'Others';
+    if(digits.length < 6){
+      return setErr('ba_err', 'Sahi account / mobile number daalein');
+    }
+    if(rName.length < 2){
+      return setErr('ba_err', 'Receiver ka naam likhein');
+    }
+    setErr('ba_err', '');
+    curNum = rawNum;
+    curName = rName;
+    curPurpose = purpose;
+    returnScreenAfterAmt = 'bankAcct';
+    openAmountScreen();
+  }
+
+  function backFromAmount(){
+    go(returnScreenAfterAmt || 'send');
+  }
+
   function isJazzCashContext(sourceOrWallet){
-    var s = String(sourceOrWallet || selectedWallet || transferMethod || '').toLowerCase();
+    var s = String(sourceOrWallet || (selectedBankItem && selectedBankItem.name) || selectedWallet || transferMethod || '').toLowerCase();
     return s.indexOf('jazzcash') > -1;
   }
 
@@ -1164,11 +1376,26 @@
     }
   }
 
+  function updateRecipientBadges(){
+    var amBox = document.getElementById('amLogoBox');
+    var cfBox = document.getElementById('cfLogoBox');
+    var htmlToShow = EP_LOGO_SVG;
+    if(returnScreenAfterAmt === 'bankAcct' && selectedBankItem){
+      htmlToShow = renderBankBadgeHtml(selectedBankItem);
+    }else if(isJazzCashContext()){
+      htmlToShow = JC_LOGO_IMG;
+    }
+    if(amBox) amBox.innerHTML = htmlToShow;
+    if(cfBox) cfBox.innerHTML = htmlToShow;
+  }
+
   function mountEpLogos(){
     var mini = document.getElementById('epNotifMiniLogo');
     if(mini) mini.innerHTML = EP_LOGO_SVG;
     document.querySelectorAll('[data-ep-logo]').forEach(function(el){el.innerHTML=EP_LOGO_SVG;});
     document.querySelectorAll('[data-ep-wallet-ico]').forEach(function(el){el.innerHTML=EP_WALLET_ICO_SVG;});
+    renderBankPickList();
+    updateRecipientBadges();
     setSummaryReceiptLogo();
     updateEpLogosVisibility();
   }
@@ -1178,6 +1405,7 @@
       if(el.getAttribute('data-ep-logo') === 'always'){ el.hidden = false; }
       else{ el.hidden = !show; }
     });
+    updateRecipientBadges();
   }
 
   var balance = 9995624, tx = [], notifs = [], hidden = false, isSignedIn = false;
@@ -1531,6 +1759,8 @@
     var nm=t.name||(t.title.indexOf(' - ')>-1?t.title.split(' - ').slice(1).join(' - '):t.title.replace(/^Sent via .*? to /i,''))||'Receiver';
     transferMethod='Easypaisa';
     selectedWallet='';
+    selectedBankItem=null;
+    returnScreenAfterAmt='send';
     updateEpLogosVisibility();
     resetSend();
     document.getElementById('bankWrap').hidden=true;
@@ -1584,7 +1814,7 @@
   function addTx(dir,title,sub,amt,icon){var t={id:'t'+Date.now()+Math.random().toString(36).slice(2,6),txid:newTxId(),dir:dir,title:title,sub:sub,amt:amt,icon:icon,time:Date.now()};tx.push(t);if(dir==='in')balance+=amt;else balance-=amt;return t;}
 
   function go(id){if(id!=='scanner'&&typeof stopCamera==='function')stopCamera();
-    if(!isSignedIn && (id==='send'||id==='walletPick'||id==='walletAcct'||id==='sendAmt'||id==='sendConfirm'||id==='load'||id==='bill'||id==='addmoney'||id==='history'||id==='profile'||id==='editProfile')){
+    if(!isSignedIn && (id==='send'||id==='bankPick'||id==='bankAcct'||id==='walletPick'||id==='walletAcct'||id==='sendAmt'||id==='sendConfirm'||id==='load'||id==='bill'||id==='addmoney'||id==='history'||id==='profile'||id==='editProfile')){
       openSignInModal();
       return;
     }
@@ -1773,7 +2003,7 @@
     var list=WALLETS.filter(function(w){return w.toLowerCase().indexOf(q)>-1;});
     if(!list.length){el.innerHTML='<div class="empty">Koi wallet nahi mila.</div>';return;}
     el.innerHTML=list.map(function(w){return '<button class="wrow" onclick="selectWallet(\''+w.replace(/'/g,"")+'\')"><span class="wav">'+initials(w)+'</span>'+w+'<span class="ch">›</span></button>';}).join('');}
-  function selectWallet(name){transferMethod='Wallet';selectedWallet=name;updateEpLogosVisibility();
+  function selectWallet(name){transferMethod='Wallet';selectedWallet=name;selectedBankItem=null;returnScreenAfterAmt='walletAcct';updateEpLogosVisibility();
     document.getElementById('waWallet').textContent=name;
     document.getElementById('waLogo').innerHTML = isJazzCashContext(name) ? '<img src="jazzcash.webp" alt="JazzCash" style="width:100%;height:100%;object-fit:contain;display:block;border-radius:50%" onerror="this.remove();this.parentNode.textContent=\''+initials(name)+'\'">' : initials(name);
     document.getElementById('wa_num').value='';document.getElementById('wa_err').textContent='';
@@ -1787,16 +2017,33 @@
     if(acc.length<6)return setErr('wa_err','Sahi account number / IBAN daalein');
     setErr('wa_err','');var digits=acc.replace(/[^0-9]/g,'');
     curNum=acc;curName=CONTACTS[digits]||'Account Holder';curPurpose=document.getElementById('wa_purpose').value;
+    returnScreenAfterAmt='walletAcct';
     openAmountScreen();}
-  function pickFav2(n){transferMethod='Wallet';selectedWallet='Wallet';updateEpLogosVisibility();resetSend();
+  function pickFav2(n){transferMethod='Wallet';selectedWallet='Wallet';selectedBankItem=null;returnScreenAfterAmt='send';updateEpLogosVisibility();resetSend();
     document.getElementById('bankWrap').hidden=true;setMode('mobile');
     document.getElementById('sendTitle').textContent='Wallet Transfer';go('send');
     document.getElementById('s_num').value=n;resolveRecv();}
   function openSheet(){getAudioCtx();if(!isSignedIn){openSignInModal();return;}document.getElementById('sheet').classList.add('show');}
   function closeSheet(){document.getElementById('sheet').classList.remove('show');}
   function isBankMethod(){return transferMethod==='Bank'||transferMethod==='Raast';}
-  function fundSrc(){if(transferMethod==='Wallet'&&selectedWallet&&selectedWallet!=='Wallet')return selectedWallet;return isBankMethod()?document.getElementById('bankSel').value:'Easypaisa Wallet';}
-  function pickMethod(m){transferMethod=m;selectedWallet='';updateEpLogosVisibility();closeSheet();
+  function fundSrc(){
+    if(selectedBankItem && selectedBankItem.name) return selectedBankItem.name;
+    if(transferMethod==='Wallet'&&selectedWallet&&selectedWallet!=='Wallet')return selectedWallet;
+    return isBankMethod()?document.getElementById('bankSel').value:'Easypaisa Wallet';
+  }
+  function pickMethod(m){
+    closeSheet();
+    if(m==='Bank'){
+      selectedBankItem=null;
+      var sBtn=document.getElementById('bpTabSend'),hBtn=document.getElementById('bpTabHist');
+      if(sBtn)sBtn.classList.add('on');if(hBtn)hBtn.classList.remove('on');
+      renderBankPickList();
+      go('bankPick');
+      return;
+    }
+    selectedBankItem=null;
+    returnScreenAfterAmt='send';
+    transferMethod=m;selectedWallet='';updateEpLogosVisibility();
     if(m==='Wallet'){resetSend();renderFavs2();var ws=document.getElementById('wSearch');if(ws)ws.value='';renderWalletList();go('walletPick');return;}
     resetSend();
     var isBank=(m==='Bank'||m==='Raast');document.getElementById('bankWrap').hidden=!isBank;setMode(isBank?'account':'mobile');
@@ -1829,6 +2076,7 @@
     var matchedKey = CONTACTS[raw] ? raw : (raw.match(/03\d{9}/) && CONTACTS[raw.match(/03\d{9}/)[0]] ? raw.match(/03\d{9}/)[0] : '');
     curName=typedName||(matchedKey?CONTACTS[matchedKey]:'');
     if(!curName)return setErr('s_err','Is number / account ka naam likhein');setErr('s_err','');
+    returnScreenAfterAmt='send';
     openAmountScreen();}
   function syncAmt(){var a=val('s_amt'),inp=document.getElementById('s_amt');
     inp.classList.toggle('hasval',a>0);
@@ -1872,7 +2120,7 @@
     setErr('cf_err','');
     if(cfFav && /^03\d{9}$/.test(curNum) && !CONTACTS[curNum]){CONTACTS[curNum]=curName;}
     var note=document.getElementById('s_note').value.trim();
-    if(transferMethod==='Wallet'&&curPurpose&&!note)note=curPurpose;
+    if((transferMethod==='Wallet'||transferMethod==='Bank')&&curPurpose&&!note)note=curPurpose;
     var channelName = fundSrc();
     var isJc = isJazzCashContext(channelName);
     var t=addTx('out','Money Transfer - '+curName.toUpperCase(),curNum+(note?' · '+note:''),amt,'💸');t.name=curName;t.number=curNum;
