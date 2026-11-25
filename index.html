@@ -196,8 +196,9 @@
   .cback{width:34px;height:34px;border-radius:10px;background:#eef6f1;border:1px solid #e0ede5;display:grid;place-items:center;font-size:20px;line-height:1;color:#17241d}
   .amttop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-top:9px}
   .amttop h1{font-size:20px;font-weight:700;line-height:1.15;color:#17241d;letter-spacing:-.2px}
-  .amttop .payto{color:#6c7b73;font-size:12.5px;margin-top:3px}
+  .amttop .payto{color:#6c7b73;font-size:12.5px;margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
   .amttop .payto b{color:#23332a;font-weight:600}
+  .payto-bank-tag{display:inline-flex;align-items:center;gap:4px;background:#e5f4ea;color:#177a38;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:99px}
   .epbadge{width:38px;height:38px;border-radius:50%;border:1.5px solid #e2ece6;color:var(--fg);display:grid;place-items:center;flex:none;background:#ffffff;overflow:hidden;padding:5px;box-shadow:0 2px 6px rgba(0,0,0,.03)}
 
   .amtcenter{
@@ -518,6 +519,8 @@
     box-shadow:0 4px 12px rgba(18,75,38,.08);display:grid;place-items:center;
     margin:18px 0 10px;padding:8px;overflow:hidden;
   }
+  .sumname-row{display:inline-flex;align-items:center;justify-content:center;gap:7px;max-width:100%}
+  .sumname-mini-logo{width:24px;height:24px;border-radius:6px;background:#ffffff;border:1px solid #dcebe2;display:inline-grid;place-items:center;padding:2px;overflow:hidden;flex:none}
   .sumname{font-size:17.5px;font-weight:700;letter-spacing:.1px;color:#111312;line-height:1.25}
   .sumnum{color:#55625a;font-size:13.5px;font-weight:500;margin-top:3px;letter-spacing:.3px}
   .sumbtns{display:flex;align-items:center;gap:10px;margin-top:32px;width:100%;justify-content:center}
@@ -545,7 +548,8 @@
   .scanframe i:nth-child(4){right:0;bottom:0;border-left:none;border-top:none;border-radius:0 0 7px 0}
   .scanline{position:absolute;left:8px;right:8px;height:2.5px;background:linear-gradient(90deg,transparent,#28c25b,#9cebb7,#28c25b,transparent);box-shadow:0 0 10px #28c25b;animation:scanbeam 2s ease-in-out infinite}
   @keyframes scanbeam{0%,100%{top:10px}50%{top:calc(100% - 12px)}}
-  .scancaptured-name{margin-top:12px;background:rgba(16,28,20,.78);color:#9cebb7;border:1px solid rgba(156,235,183,.45);border-radius:12px;padding:6px 12px;font-size:12.5px;font-weight:700;max-width:85%;text-align:center}
+  .scancaptured-box{margin-top:12px;background:rgba(16,28,20,.82);color:#9cebb7;border:1px solid rgba(156,235,183,.45);border-radius:12px;padding:6px 12px;font-size:12.5px;font-weight:700;max-width:86%;text-align:center;display:inline-flex;align-items:center;gap:7px}
+  .scancaptured-logo{width:20px;height:20px;border-radius:5px;background:#ffffff;display:inline-grid;place-items:center;padding:2px;overflow:hidden;flex:none}
   .scanhint{color:#fff;font-size:12.5px;margin-top:12px;text-shadow:0 1px 4px rgba(0,0,0,.6);text-align:center;padding:0 18px}
   .scanmanual{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);padding:10px 20px;border-radius:24px;background:#fff;color:var(--brand-deep,#199944);font-weight:700;font-size:13px}
 
@@ -763,7 +767,7 @@
       <div class="amttop">
         <div>
           <h1>Enter Amount</h1>
-          <div class="payto">Pay To: <b id="amPayTo">—</b></div>
+          <div class="payto">Pay To: <b id="amPayTo">—</b> <span class="payto-bank-tag" id="amBankTag" hidden></span></div>
         </div>
         <div class="epbadge" id="amLogoBox"></div>
       </div>
@@ -885,7 +889,10 @@
         <span style="width:32px"></span>
       </div>
       <div class="scanframe"><i></i><i></i><i></i><i></i><div class="scanline"></div></div>
-      <div class="scancaptured-name" id="scanDetectedName" hidden></div>
+      <div class="scancaptured-box" id="scanDetectedBox" hidden>
+        <span class="scancaptured-logo" id="scanDetectedLogo"></span>
+        <span id="scanDetectedName"></span>
+      </div>
       <div class="scanhint" id="scanHint">QR code ko frame ke andar rakhein — automatic scan hoga</div>
       <button class="scanmanual" onclick="closeScanner();openSheet()">Number se bhejein</button>
     </div>
@@ -1069,7 +1076,10 @@
     <div class="sumamt num" id="sumAmt">Rs. 1.00</div>
     <div class="sumsub" id="sumSub">Successfully Sent to</div>
     <div class="sumav" id="sumLogoBox"></div>
-    <div class="sumname" id="sumName">—</div>
+    <div class="sumname-row">
+      <span class="sumname-mini-logo" id="sumNameLogo" hidden></span>
+      <div class="sumname" id="sumName">—</div>
+    </div>
     <div class="sumnum num" id="sumNum">—</div>
     <div class="sumbtns">
       <button class="sumback" type="button" onclick="closeSuccess()">Back to home</button>
@@ -1211,23 +1221,30 @@
   var EP_WALLET_ICO_SVG='<svg viewBox="0 0 36 36" width="100%" height="100%" aria-hidden="true"><rect x="4" y="10" width="22" height="17" rx="4" fill="#25b857"/><path d="M4 15h22" stroke="#ffffff" stroke-width="2"/><circle cx="27" cy="21" r="6.5" fill="#f7c948" stroke="#c9931c" stroke-width="1.6"/><text x="27" y="23.5" text-anchor="middle" font-size="7.5" font-weight="800" fill="#7a5200">Rs</text></svg>';
 
   var REPO_LOGOS_BY_NAME = {
+    'easypaisa': 'icon-192.png',
+    'telenor microfinance bank': 'icon-192.png',
     'abhi microfinance bank': 'AbhiMicrofinance.png',
     'abhi microfinance': 'AbhiMicrofinance.png',
     'al baraka islamic bank limited': 'Abankislamic.jpg',
     'alfa pay': 'Afapay.png',
     'allied bank limited': 'Alliedbank.png',
+    'allied bank': 'Alliedbank.png',
     'apna microfinance bank': 'ApnaMicrofinance.jpg',
     'bankislami pakistan limited': 'BankIslami.png',
+    'bankislami': 'BankIslami.png',
     'digitt': 'Dgtt.jpg',
     'dubai islamic bank': 'DubaiIslamicbank.jpg',
     'habib metropolitan bank': 'HabibMetropolitan.jpg',
     'habib bank limited hbl': 'Habibbanklimited.png',
     'habib bank limited': 'Habibbanklimited.png',
+    'hbl': 'Habibbanklimited.png',
     'hbl microfinance bank': 'Hblmicrofinance.png',
     'icbc pakistan': 'ICBC.png',
     'kasb bank': 'KASBBANK.jpg',
     'khushhali microfinance bank kmbl': 'KhushhaliMicrofinance.jpg',
     'mcb bank limited': 'MCB.png',
+    'mcb bank': 'MCB.png',
+    'mcb': 'MCB.png',
     'mcb islamic bank': 'MCBIslamic.png',
     'mobilink microfinance bank': 'Mobilinkbank.jpg',
     'opay': 'Opay.jpg',
@@ -1236,8 +1253,12 @@
     'ztbl': 'ZTBL.png',
     'al baraka bank (pakistan) limited': 'elbaraka.jpg',
     'askari commercial bank limited': 'askaribank.png',
+    'askari bank': 'askaribank.png',
     'bank alfalah limited': 'bankalfalah.png',
+    'bank alfalah': 'bankalfalah.png',
+    'alfalah': 'bankalfalah.png',
     'bank al habib limited': 'bankalhabib.jpg',
+    'bank al habib': 'bankalhabib.jpg',
     'bank makramah limited bml': 'bankmakramah.jpg',
     'bank makramah': 'bankmakramah.jpg',
     'bank of china': 'bankofchina.png',
@@ -1248,6 +1269,7 @@
     'citi bank': 'citibank.png',
     'citibank': 'citibank.png',
     'faysal bank limited': 'faysalbank.png',
+    'faysal bank': 'faysalbank.png',
     'finja': 'finja.png',
     'firstpay': 'firstpay.png',
     'first women bank': 'firstwomenbank.png',
@@ -1257,9 +1279,12 @@
     'hubpay': 'hubpay.jpg',
     'jazzcash': 'jazzcash.webp',
     'js bank zindigi': 'jsbank.png',
+    'zindigi': 'jsbank.png',
     'keenu': 'keenu.jpg',
     'meezan bank': 'meezanbank.png',
+    'meezan': 'meezanbank.png',
     'national bank of pakistan': 'nationalbank.jpg',
+    'nbp': 'nationalbank.jpg',
     'nayapay': 'nayapay.jpg',
     'onezapp': 'onezapp.png',
     'payway': 'payway.png',
@@ -1267,15 +1292,42 @@
     'samba bank': 'sambabank.png',
     'simsim': 'simsim.jpg',
     'soneri bank limited': 'soneribank.png',
+    'soneri bank': 'soneribank.png',
     'standard chartered bank': 'standardchartered.png',
+    'standard chartered': 'standardchartered.png',
     'u microfinance bank': 'ubank.png',
     'u microfinance': 'ubank.png',
     'united bank limited ubl': 'ubl.png',
+    'united bank': 'ubl.png',
+    'ubl': 'ubl.png',
     'upaisa': 'upaisa.png'
   };
 
+  var QR_BANK_PATTERNS = [
+    {re: /\b(TMFB|TMICFB|EASYPAISA|EP|TELENOR\s*MICROFINANCE)\b/i, name: 'easypaisa', code: 'EP', bg: '#25b857', fg: '#ffffff', logo: 'icon-192.png'},
+    {re: /\b(JAZZCASH|JC|MOBILINK\s*MICROFINANCE|MMBL)\b/i, name: 'JazzCash', code: 'JC', bg: '#ffffff', fg: '#d91b24', logo: 'jazzcash.webp'},
+    {re: /\b(MEEZAN|MBL)\b/i, name: 'Meezan Bank', code: 'MBL', bg: '#4a154b', fg: '#ffffff', logo: 'meezanbank.png'},
+    {re: /\b(HBL|HABIB\s*BANK)\b/i, name: 'Habib Bank Limited', code: 'HBL', bg: '#006747', fg: '#ffffff', logo: 'Habibbanklimited.png'},
+    {re: /\b(ALFALAH|BAFL)\b/i, name: 'Bank Alfalah', code: 'BAFL', bg: '#d91b24', fg: '#ffffff', logo: 'bankalfalah.png'},
+    {re: /\b(MCB)\b/i, name: 'MCB Bank', code: 'MCB', bg: '#003366', fg: '#ffffff', logo: 'MCB.png'},
+    {re: /\b(UBL|UNITED\s*BANK)\b/i, name: 'UBL Bank', code: 'UBL', bg: '#0072ce', fg: '#ffffff', logo: 'ubl.png'},
+    {re: /\b(ALLIED|ABL)\b/i, name: 'Allied Bank', code: 'ABL', bg: '#0b3d91', fg: '#ffffff', logo: 'Alliedbank.png'},
+    {re: /\b(SADAPAY|SP)\b/i, name: 'SadaPay', code: 'SP', bg: '#e65100', fg: '#ffffff', logo: 'sadapay.jpg'},
+    {re: /\b(NAYAPAY|NP)\b/i, name: 'NayaPay', code: 'NP', bg: '#1e88e5', fg: '#ffffff', logo: 'nayapay.jpg'},
+    {re: /\b(ASKARI|AKBL)\b/i, name: 'Askari Bank', code: 'AKBL', bg: '#004b87', fg: '#ffffff', logo: 'askaribank.png'},
+    {re: /\b(FAYSAL|FBL)\b/i, name: 'Faysal Bank', code: 'FBL', bg: '#1b365d', fg: '#ffffff', logo: 'faysalbank.png'},
+    {re: /\b(BANKISLAMI|BIPL)\b/i, name: 'BankIslami', code: 'BIPL', bg: '#007a4d', fg: '#ffffff', logo: 'BankIslami.png'},
+    {re: /\b(ZINDIGI|JS\s*BANK)\b/i, name: 'Zindigi', code: 'JS', bg: '#005596', fg: '#ffffff', logo: 'jsbank.png'},
+    {re: /\b(SONERI|SNBL)\b/i, name: 'Soneri Bank', code: 'SNBL', bg: '#004b87', fg: '#ffffff', logo: 'soneribank.png'},
+    {re: /\b(STANDARD\s*CHARTERED|SCB)\b/i, name: 'Standard Chartered', code: 'SCB', bg: '#0072aa', fg: '#ffffff', logo: 'standardchartered.png'},
+    {re: /\b(BANK\s*AL\s*HABIB|BAHL)\b/i, name: 'Bank AL Habib', code: 'BAHL', bg: '#005a9c', fg: '#ffffff', logo: 'bankalhabib.jpg'},
+    {re: /\b(NBP|NATIONAL\s*BANK)\b/i, name: 'National Bank', code: 'NBP', bg: '#1b5e20', fg: '#ffffff', logo: 'nationalbank.jpg'},
+    {re: /\b(UPAISA)\b/i, name: 'UPaisa', code: 'UP', bg: '#e65100', fg: '#ffffff', logo: 'upaisa.png'}
+  ];
+
   function getRepoLogoFile(label){
     var key = String(label || '').trim().toLowerCase();
+    if(!key) return '';
     if(REPO_LOGOS_BY_NAME[key]) return REPO_LOGOS_BY_NAME[key];
     var keys = Object.keys(REPO_LOGOS_BY_NAME);
     for(var i = 0; i < keys.length; i++){
@@ -1360,6 +1412,25 @@
   var selectedBankItem = null;
   var returnScreenAfterAmt = 'send';
   var isQrFlow = false;
+  var qrBankInfo = null;
+
+  function detectQrBank(rawText){
+    var s = String(rawText || '');
+    for(var i = 0; i < QR_BANK_PATTERNS.length; i++){
+      if(QR_BANK_PATTERNS[i].re.test(s)){
+        return QR_BANK_PATTERNS[i];
+      }
+    }
+    return QR_BANK_PATTERNS[0];
+  }
+
+  function renderQrBankLogoHtml(bankObj){
+    var b = bankObj || QR_BANK_PATTERNS[0];
+    var logoFile = b.logo || getRepoLogoFile(b.name) || 'icon-192.png';
+    var code = b.code || initials(b.name) || 'EP';
+    var fb = '<span style="width:100%;height:100%;border-radius:6px;background:'+(b.bg||'#25b857')+';color:'+(b.fg||'#ffffff')+';display:grid;place-items:center;font-size:8.5px;font-weight:800;line-height:1">'+code+'</span>';
+    return '<img src="'+logoFile+'" alt="'+String(b.name||'').replace(/"/g,'&quot;')+'" style="width:100%;height:100%;object-fit:contain;display:block" onerror="this.onerror=function(){this.outerHTML='+JSON.stringify(fb).replace(/"/g,'&quot;')+';};this.src=\'icon-192.png\'">';
+  }
 
   function renderBankBadgeHtml(item){
     if(!item) return EP_LOGO_SVG;
@@ -1428,6 +1499,7 @@
     var item = BANK_DIRECTORY[idx];
     if(!item) return;
     isQrFlow = false;
+    qrBankInfo = null;
     selectedBankItem = item;
     transferMethod = 'Bank';
     selectedWallet = item.name;
@@ -1467,6 +1539,7 @@
     }
     setErr('ba_err', '');
     isQrFlow = false;
+    qrBankInfo = null;
     curNum = rawNum;
     curName = rName;
     curPurpose = purpose;
@@ -1483,13 +1556,35 @@
   }
 
   function isJazzCashContext(sourceOrWallet){
+    if(isQrFlow && qrBankInfo && /jazzcash/i.test(qrBankInfo.name)) return true;
     var s = String(sourceOrWallet || (selectedBankItem && selectedBankItem.name) || selectedWallet || transferMethod || '').toLowerCase();
     return s.indexOf('jazzcash') > -1;
   }
 
   function setSummaryReceiptLogo(sourceOrWallet){
     var box = document.getElementById('sumLogoBox');
+    var nameLogo = document.getElementById('sumNameLogo');
     var brandEl = document.getElementById('rcpPaidViaBrand');
+
+    if(isQrFlow && qrBankInfo){
+      var qrLogoHtml = renderQrBankLogoHtml(qrBankInfo);
+      if(box) box.innerHTML = qrLogoHtml;
+      if(nameLogo){
+        nameLogo.hidden = false;
+        nameLogo.innerHTML = qrLogoHtml;
+      }
+      if(brandEl){
+        brandEl.textContent = qrBankInfo.name || 'easypaisa';
+        brandEl.style.color = /jazzcash/i.test(qrBankInfo.name) ? '#d91b24' : '#1ea349';
+      }
+      return;
+    }
+
+    if(nameLogo){
+      nameLogo.hidden = true;
+      nameLogo.innerHTML = '';
+    }
+
     var isJc = isJazzCashContext(sourceOrWallet);
     if(box){
       if(isJc){
@@ -1510,17 +1605,32 @@
   function updateRecipientBadges(){
     var amBox = document.getElementById('amLogoBox');
     var cfBox = document.getElementById('cfLogoBox');
+    var bankTag = document.getElementById('amBankTag');
     var htmlToShow = EP_LOGO_SVG;
-    if(returnScreenAfterAmt === 'bankAcct' && selectedBankItem){
-      htmlToShow = renderBankBadgeHtml(selectedBankItem);
-    }else if(transferMethod === 'Wallet' && selectedWallet && selectedWallet !== 'Wallet'){
-      var wLogo = getRepoLogoFile(selectedWallet);
-      htmlToShow = wLogo
-        ? '<img src="'+wLogo+'" alt="'+String(selectedWallet).replace(/"/g,'&quot;')+'" style="width:100%;height:100%;object-fit:contain;display:block" onerror="this.onerror=null;this.src=\'icon-192.png\'">'
-        : EP_LOGO_SVG;
-    }else if(isJazzCashContext()){
-      htmlToShow = JC_LOGO_IMG;
+
+    if(isQrFlow && qrBankInfo){
+      htmlToShow = renderQrBankLogoHtml(qrBankInfo);
+      if(bankTag){
+        bankTag.hidden = false;
+        bankTag.textContent = qrBankInfo.name;
+      }
+    }else{
+      if(bankTag){
+        bankTag.hidden = true;
+        bankTag.textContent = '';
+      }
+      if(returnScreenAfterAmt === 'bankAcct' && selectedBankItem){
+        htmlToShow = renderBankBadgeHtml(selectedBankItem);
+      }else if(transferMethod === 'Wallet' && selectedWallet && selectedWallet !== 'Wallet'){
+        var wLogo = getRepoLogoFile(selectedWallet);
+        htmlToShow = wLogo
+          ? '<img src="'+wLogo+'" alt="'+String(selectedWallet).replace(/"/g,'&quot;')+'" style="width:100%;height:100%;object-fit:contain;display:block" onerror="this.onerror=null;this.src=\'icon-192.png\'">'
+          : EP_LOGO_SVG;
+      }else if(isJazzCashContext()){
+        htmlToShow = JC_LOGO_IMG;
+      }
     }
+
     if(amBox) amBox.innerHTML = htmlToShow;
     if(cfBox) cfBox.innerHTML = htmlToShow;
   }
@@ -1915,6 +2025,7 @@
     var num=(t.number||'').replace(/[^0-9]/g,'');
     var nm=t.name||(t.title.indexOf(' - ')>-1?t.title.split(' - ').slice(1).join(' - '):t.title.replace(/^Sent via .*? to /i,''))||'Receiver';
     isQrFlow=false;
+    qrBankInfo=null;
     transferMethod='Easypaisa';
     selectedWallet='';
     selectedBankItem=null;
@@ -2138,12 +2249,23 @@
     var words = s.replace(/[^A-Za-z0-9 &.'-]/g, ' ').split(/\s+/).filter(function(w){
       if(!w) return false;
       if(/^[0-9]+$/.test(w)) return false;
-      if(/^(PK\d*|TC\d*|L\d+|ID\d*|QR|EP|PS|OPS\d*|TMFB\d*|TMICFB\d*)$/i.test(w)) return false;
+      if(/^(PK\d*|TC\d*|L\d+|ID\d*|QR|EP|PS|OPS\d*|TMFB\d*|TMICFB\d*|RAWALPINDI|LAHORE|KARACHI|ISLAMABAD|MULTAN|FAISALABAD|PESHAWAR|QUETTA|SIALKOT|GUJRANWALA)$/i.test(w)) return false;
       return /[A-Za-z]{2,}/.test(w);
     });
     if(words.length){
       return words.slice(0, 3).join(' ').trim();
     }
+
+    try{
+      if(/^https?:\/\//i.test(s)){
+        var u = new URL(s);
+        var hostParts = u.hostname.replace(/^www\./i, '').split('.');
+        if(hostParts[0] && hostParts[0].length > 1){
+          return hostParts[0].charAt(0).toUpperCase() + hostParts[0].slice(1);
+        }
+      }
+    }catch(e){}
+
     return '';
   }
 
@@ -2168,6 +2290,7 @@
 
   function parseQrPayload(rawText){
     var clean = String(rawText || '').trim();
+    var bankObj = detectQrBank(clean);
     var extractedName = '';
     var extractedNum = '';
 
@@ -2192,13 +2315,13 @@
     }
 
     if(!extractedName){
-      extractedName = 'QR Merchant';
+      extractedName = bankObj && bankObj.name ? (bankObj.name + ' QR') : 'QR Merchant';
     }
 
     var digitsOnly = clean.replace(/[^0-9]/g,'');
     extractedNum = digitsOnly.length >= 6 ? digitsOnly.slice(0, 14) : '';
 
-    return { name: extractedName, num: extractedNum, raw: clean };
+    return { name: extractedName, num: extractedNum, bank: bankObj, raw: clean };
   }
 
   function handleQrDetected(rawText){
@@ -2208,17 +2331,21 @@
     playScanBeep();
 
     var parsed = parseQrPayload(rawText);
+    var detBox = document.getElementById('scanDetectedBox');
+    var detLogo = document.getElementById('scanDetectedLogo');
     var nameBadge = document.getElementById('scanDetectedName');
     var hint = document.getElementById('scanHint');
-    if(nameBadge){
-      nameBadge.textContent = parsed.name;
-      nameBadge.hidden = false;
+    if(detBox && nameBadge){
+      if(detLogo) detLogo.innerHTML = renderQrBankLogoHtml(parsed.bank);
+      nameBadge.textContent = parsed.name + (parsed.bank && parsed.bank.name ? ' · ' + parsed.bank.name : '');
+      detBox.hidden = false;
     }
     if(hint){
       hint.textContent = 'QR scan ho gaya: ' + parsed.name;
     }
 
     isQrFlow = true;
+    qrBankInfo = parsed.bank || QR_BANK_PATTERNS[0];
     transferMethod = 'Easypaisa';
     selectedWallet = '';
     selectedBankItem = null;
@@ -2292,8 +2419,10 @@
 
   function startCamera(){
     scanBusy = false;
+    var detBox = document.getElementById('scanDetectedBox');
     var nameBadge = document.getElementById('scanDetectedName');
-    if(nameBadge){ nameBadge.hidden = true; nameBadge.textContent = ''; }
+    if(detBox){ detBox.hidden = true; }
+    if(nameBadge){ nameBadge.textContent = ''; }
     var hint=document.getElementById('scanHint');
     hint.textContent='QR code ko frame ke andar rakhein — automatic scan hoga';
     if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
@@ -2354,7 +2483,7 @@
       else{card.hidden=true;nw.hidden=false;}}
     checkNext();}
   function checkNext(){document.getElementById('btnNext').disabled=!receiverReady();}
-  function resetSend(){isQrFlow=false;document.getElementById('s_num').value='';document.getElementById('s_name').value='';var a=document.getElementById('s_amt');if(a){a.value='';a.classList.remove('hasval');a.style.width='34px';}
+  function resetSend(){isQrFlow=false;qrBankInfo=null;document.getElementById('s_num').value='';document.getElementById('s_name').value='';var a=document.getElementById('s_amt');if(a){a.value='';a.classList.remove('hasval');a.style.width='34px';}
     var nt=document.getElementById('s_note');if(nt)nt.value='';var mb=document.getElementById('msgBox');if(mb)mb.hidden=true;
     var nb=document.getElementById('btnAmtNext');if(nb)nb.classList.remove('ready');
     document.getElementById('recvCard').hidden=true;document.getElementById('recvNameWrap').hidden=true;
@@ -2370,7 +2499,7 @@
     var list=WALLETS.filter(function(w){return w.toLowerCase().indexOf(q)>-1;});
     if(!list.length){el.innerHTML='<div class="empty">Koi wallet nahi mila.</div>';return;}
     el.innerHTML=list.map(function(w){return '<button class="wrow" onclick="selectWallet(\''+w.replace(/'/g,"")+'\')"><span class="wav">'+renderWalletLogoHtml(w)+'</span>'+w+'</button>';}).join('');}
-  function selectWallet(name){isQrFlow=false;transferMethod='Wallet';selectedWallet=name;selectedBankItem=null;returnScreenAfterAmt='walletAcct';updateEpLogosVisibility();
+  function selectWallet(name){isQrFlow=false;qrBankInfo=null;transferMethod='Wallet';selectedWallet=name;selectedBankItem=null;returnScreenAfterAmt='walletAcct';updateEpLogosVisibility();
     document.getElementById('waWallet').textContent=name;
     var wLogo = getRepoLogoFile(name);
     document.getElementById('waLogo').innerHTML = wLogo ? '<img src="'+wLogo+'" alt="'+String(name).replace(/"/g,'&quot;')+'" style="width:100%;height:100%;object-fit:contain;display:block;border-radius:50%" onerror="this.remove();this.parentNode.textContent=\''+initials(name)+'\'">' : initials(name);
@@ -2384,11 +2513,11 @@
   function walletProceed(){var acc=document.getElementById('wa_num').value.trim();
     if(acc.length<6)return setErr('wa_err','Sahi account number / IBAN daalein');
     setErr('wa_err','');var digits=acc.replace(/[^0-9]/g,'');
-    isQrFlow=false;
+    isQrFlow=false;qrBankInfo=null;
     curNum=acc;curName=CONTACTS[digits]||'Account Holder';curPurpose=document.getElementById('wa_purpose').value;
     returnScreenAfterAmt='walletAcct';
     openAmountScreen();}
-  function pickFav2(n){isQrFlow=false;transferMethod='Wallet';selectedWallet='Wallet';selectedBankItem=null;returnScreenAfterAmt='send';updateEpLogosVisibility();resetSend();
+  function pickFav2(n){isQrFlow=false;qrBankInfo=null;transferMethod='Wallet';selectedWallet='Wallet';selectedBankItem=null;returnScreenAfterAmt='send';updateEpLogosVisibility();resetSend();
     document.getElementById('bankWrap').hidden=true;setMode('mobile');
     document.getElementById('sendTitle').textContent='Wallet Transfer';go('send');
     document.getElementById('s_num').value=n;resolveRecv();}
@@ -2396,13 +2525,14 @@
   function closeSheet(){document.getElementById('sheet').classList.remove('show');}
   function isBankMethod(){return transferMethod==='Bank'||transferMethod==='Raast';}
   function fundSrc(){
+    if(isQrFlow && qrBankInfo && qrBankInfo.name) return qrBankInfo.name;
     if(selectedBankItem && selectedBankItem.name) return selectedBankItem.name;
     if(transferMethod==='Wallet'&&selectedWallet&&selectedWallet!=='Wallet')return selectedWallet;
     return isBankMethod()?document.getElementById('bankSel').value:'Easypaisa Wallet';
   }
   function pickMethod(m){
     closeSheet();
-    isQrFlow=false;
+    isQrFlow=false;qrBankInfo=null;
     if(m==='Bank'){
       selectedBankItem=null;
       var sBtn=document.getElementById('bpTabSend'),hBtn=document.getElementById('bpTabHist');
@@ -2448,7 +2578,7 @@
     var matchedKey = CONTACTS[raw] ? raw : (raw.match(/03\d{9}/) && CONTACTS[raw.match(/03\d{9}/)[0]] ? raw.match(/03\d{9}/)[0] : '');
     curName=typedName||(matchedKey?CONTACTS[matchedKey]:'');
     if(!curName)return setErr('s_err','Is number / account ka naam likhein');setErr('s_err','');
-    isQrFlow=false;
+    isQrFlow=false;qrBankInfo=null;
     returnScreenAfterAmt='send';
     openAmountScreen();}
   function syncAmt(){var a=val('s_amt'),inp=document.getElementById('s_amt');
@@ -2468,7 +2598,7 @@
     cfFav = false;
     document.getElementById('cfFavRow').classList.remove('on');
     document.getElementById('cfFavBox').textContent = '';
-    document.getElementById('cf_src').textContent = fundSrc();
+    document.getElementById('cf_src').textContent = isQrFlow ? 'Easypaisa Wallet' : fundSrc();
     document.getElementById('cf_bal').textContent = 'Balance: ' + (hidden ? 'Rs. ••••••' : fmtNoDec(balance));
     document.getElementById('cf_name').textContent = curName;
     document.getElementById('cf_num').textContent = isQrFlow ? '' : curNum;
@@ -2495,10 +2625,10 @@
     if(!isQrFlow && cfFav && /^03\d{9}$/.test(curNum) && !CONTACTS[curNum]){CONTACTS[curNum]=curName;}
     var note=document.getElementById('s_note').value.trim();
     if((transferMethod==='Wallet'||transferMethod==='Bank')&&curPurpose&&!note)note=curPurpose;
-    var channelName = isQrFlow ? 'QR Payment' : fundSrc();
+    var channelName = isQrFlow ? ((qrBankInfo && qrBankInfo.name) ? (qrBankInfo.name + ' QR') : 'QR Payment') : fundSrc();
     var isJc = !isQrFlow && isJazzCashContext(channelName);
     var txTitle = isQrFlow ? ('QR Payment - ' + curName) : ('Money Transfer - ' + curName.toUpperCase());
-    var txSub = isQrFlow ? (note || 'QR Payment') : (curNum + (note ? ' · ' + note : ''));
+    var txSub = isQrFlow ? (note || channelName) : (curNum + (note ? ' · ' + note : ''));
     var t=addTx('out',txTitle,txSub,amt,'💸');
     t.name=curName;
     t.number=isQrFlow?'':curNum;
@@ -2577,3 +2707,4 @@
 </script>
 </body>
 </html>
+
