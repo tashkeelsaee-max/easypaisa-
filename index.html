@@ -492,7 +492,7 @@
   .sumav{
     width:58px;height:58px;border-radius:50%;background:#ffffff;
     box-shadow:0 4px 12px rgba(18,75,38,.08);display:grid;place-items:center;
-    margin:18px 0 10px;padding:9px;overflow:hidden;
+    margin:18px 0 10px;padding:8px;overflow:hidden;
   }
   .sumname{font-size:17.5px;font-weight:700;letter-spacing:.1px;color:#111312;line-height:1.25}
   .sumnum{color:#55625a;font-size:13.5px;font-weight:500;margin-top:3px;letter-spacing:.3px}
@@ -995,7 +995,7 @@
     </div>
     <div class="sumamt num" id="sumAmt">Rs. 1.00</div>
     <div class="sumsub" id="sumSub">Successfully Sent to</div>
-    <div class="sumav" data-ep-logo="always"></div>
+    <div class="sumav" id="sumLogoBox"></div>
     <div class="sumname" id="sumName">—</div>
     <div class="sumnum num" id="sumNum">—</div>
     <div class="sumbtns">
@@ -1043,7 +1043,7 @@
 
     <div class="rtotrow"><span class="totlbl">Total Amount</span><b class="num totval" id="rcpTotal">Rs. 0.00</b></div>
 
-    <div class="paidvia">Paid via <span class="epword">easypaisa</span></div>
+    <div class="paidvia">Paid via <span class="epword" id="rcpPaidViaBrand">easypaisa</span></div>
 
     <div class="rcp-bot">
       <button class="rcp-back" type="button" onclick="closeFullReceipt()">Back</button>
@@ -1133,12 +1133,33 @@
   }
 
   var EP_LOGO_SVG='<img src="icon-192.png" alt="easypaisa" style="width:100%;height:100%;object-fit:contain;display:block">';
+  var JC_LOGO_IMG='<img src="jazzcash.webp" alt="JazzCash" style="width:100%;height:100%;object-fit:contain;display:block" onerror="this.onerror=null;this.src=\'icon-192.png\'">';
   var EP_WALLET_ICO_SVG='<svg viewBox="0 0 36 36" width="100%" height="100%" aria-hidden="true"><rect x="4" y="10" width="22" height="17" rx="4" fill="#25b857"/><path d="M4 15h22" stroke="#ffffff" stroke-width="2"/><circle cx="27" cy="21" r="6.5" fill="#f7c948" stroke="#c9931c" stroke-width="1.6"/><text x="27" y="23.5" text-anchor="middle" font-size="7.5" font-weight="800" fill="#7a5200">Rs</text></svg>';
+
+  function isJazzCashContext(sourceOrWallet){
+    var s = String(sourceOrWallet || selectedWallet || transferMethod || '').toLowerCase();
+    return s.indexOf('jazzcash') > -1;
+  }
+
+  function setSummaryReceiptLogo(sourceOrWallet){
+    var box = document.getElementById('sumLogoBox');
+    var brandEl = document.getElementById('rcpPaidViaBrand');
+    var isJc = isJazzCashContext(sourceOrWallet);
+    if(box){
+      box.innerHTML = isJc ? JC_LOGO_IMG : EP_LOGO_SVG;
+    }
+    if(brandEl){
+      brandEl.textContent = isJc ? 'JazzCash' : 'easypaisa';
+      brandEl.style.color = isJc ? '#d91b24' : '#1ea349';
+    }
+  }
+
   function mountEpLogos(){
     var mini = document.getElementById('epNotifMiniLogo');
     if(mini) mini.innerHTML = EP_LOGO_SVG;
     document.querySelectorAll('[data-ep-logo]').forEach(function(el){el.innerHTML=EP_LOGO_SVG;});
     document.querySelectorAll('[data-ep-wallet-ico]').forEach(function(el){el.innerHTML=EP_WALLET_ICO_SVG;});
+    setSummaryReceiptLogo();
     updateEpLogosVisibility();
   }
   function updateEpLogosVisibility(){
@@ -1738,7 +1759,7 @@
     el.innerHTML=list.map(function(w){return '<button class="wrow" onclick="selectWallet(\''+w.replace(/'/g,"")+'\')"><span class="wav">'+initials(w)+'</span>'+w+'<span class="ch">›</span></button>';}).join('');}
   function selectWallet(name){transferMethod='Wallet';selectedWallet=name;updateEpLogosVisibility();
     document.getElementById('waWallet').textContent=name;
-    document.getElementById('waLogo').textContent=initials(name);
+    document.getElementById('waLogo').innerHTML = isJazzCashContext(name) ? '<img src="jazzcash.webp" alt="JazzCash" style="width:100%;height:100%;object-fit:contain;display:block;border-radius:50%" onerror="this.remove();this.parentNode.textContent=\''+initials(name)+'\'">' : initials(name);
     document.getElementById('wa_num').value='';document.getElementById('wa_err').textContent='';
     waMode('acc');go('walletAcct');}
   function waMode(m){var acc=m==='acc';
@@ -1837,12 +1858,13 @@
     var note=document.getElementById('s_note').value.trim();
     if(transferMethod==='Wallet'&&curPurpose&&!note)note=curPurpose;
     var channelName = fundSrc();
+    var isJc = isJazzCashContext(channelName);
     var t=addTx('out','Money Transfer - '+curName.toUpperCase(),curNum+(note?' · '+note:''),amt,'💸');t.name=curName;t.number=curNum;
     notifyReceiverAccount(curNum, amt, note, t.txid, channelName);
     var pushText = buildEpPushText(amt, curName, curNum, t.txid);
     playSendVoice();
     setTimeout(function(){ showEpNotif(pushText); }, 10000);
-    var o={txid:t.txid,date:rcptDate(t.time),sub:'Your '+channelName+' payment has been made',amount:amt,source:channelName,partyLabel:'Sent to',nameLabel:'Name',name:curName,numLabel:numLbl(),number:curNum,note:note};
+    var o={txid:t.txid,date:rcptDate(t.time),sub:isJc?'Your JazzCash payment has been made':'Your '+channelName+' payment has been made',amount:amt,source:channelName,partyLabel:'Sent to',nameLabel:'Name',name:curName,numLabel:numLbl(),number:curNum,note:note};
     t.rcpt=o;showReceipt(o);}
 
   function doLoad(){var net=document.getElementById('l_net').value,num=document.getElementById('l_num').value.trim(),amt=val('l_amt');
@@ -1870,6 +1892,7 @@
 
   function showReceipt(o){
     updateEpLogosVisibility();
+    setSummaryReceiptLogo(o.source || '');
     document.getElementById('sumAmt').textContent=fmt(o.amount);
     document.getElementById('sumSub').textContent='Successfully '+(o.partyLabel||'Sent to');
     document.getElementById('sumName').textContent=o.name||'—';
