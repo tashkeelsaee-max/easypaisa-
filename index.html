@@ -1298,7 +1298,8 @@
     }
     var fb = '<span style="width:100%;height:100%;border-radius:7px;background:'+(item.bg||'#199944')+';color:'+(item.fg||'#ffffff')+';display:grid;place-items:center;font-size:'+(item.code.length>3?'8.5px':'10px')+';font-weight:800;letter-spacing:-.3px;line-height:1">'+item.code+'</span>';
     if(item.logo){
-      return '<img src="'+item.logo+'" alt="'+item.name+'" style="width:100%;height:100%;object-fit:contain;display:block" onerror="this.outerHTML='+JSON.stringify(fb)+'">';
+      var safeName = String(item.name || '').replace(/"/g,'&quot;');
+      return '<img src="'+item.logo+'" alt="'+safeName+'" style="width:100%;height:100%;object-fit:contain;display:block" onerror="this.outerHTML='+JSON.stringify(fb).replace(/"/g,'&quot;')+'">';
     }
     return fb;
   }
