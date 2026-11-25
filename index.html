@@ -35,7 +35,7 @@
   button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
   input,select{font:inherit;font-size:15px}
   .num{font-variant-numeric:tabular-nums}
-  .app{width:100%;max-width:440px;margin:0 auto;min-height:100dvh;position:relative;padding-bottom:calc(74px + env(safe-area-inset-bottom,0px));overflow-x:hidden}
+  .app{width:100%;max-width:440px;margin:0 auto;min-height:100dvh;position:relative;padding-bottom:calc(88px + env(safe-area-inset-bottom,0px));overflow-x:hidden}
   .gut{padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));width:100%}
   .screen{display:none;width:100%;overflow-x:hidden}.screen.active{display:block}
   #appRoot .screen.active{animation:fade .2s ease}
@@ -123,6 +123,51 @@
   .stories::-webkit-scrollbar{display:none}
   .story{flex:none;width:84px;height:84px;border-radius:50%;padding:2.5px;background:linear-gradient(145deg,var(--brand),var(--brand-deep));display:grid;place-items:center}
   .story .inner{width:100%;height:100%;border-radius:50%;background:linear-gradient(160deg,#22b554,#149440);display:grid;place-items:center;text-align:center;color:#eafff0;font-size:9.5px;font-weight:600;padding:7px;border:2px solid var(--bg);line-height:1.2}
+
+  /* Hubs Section (Dashboard Bottom) */
+  .hubs-wrap{margin-top:14px;padding-bottom:6px;width:100%}
+  .hubs-heading{font-size:15.5px;font-weight:700;color:#1b241f;margin:0 0 10px 1px;letter-spacing:-.2px}
+  .hubs-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;width:100%}
+  .hub-box{
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    aspect-ratio:1.05 / 1;
+    min-height:142px;
+    padding:14px 12px 10px;
+    border-radius:16px;
+    background:linear-gradient(180deg,#f1f3f1 0%,#eaedea 100%);
+    border:1px solid #e2e7e3;
+    box-shadow:0 2px 6px rgba(18,36,25,.03);
+    text-align:left;
+    overflow:hidden;
+    min-width:0;
+    transition:transform .12s ease,background .15s ease;
+  }
+  .hub-box::before{
+    content:"";
+    position:absolute;
+    left:10px;
+    right:10px;
+    bottom:8px;
+    height:56%;
+    border-radius:12px;
+    background:linear-gradient(90deg,rgba(198,229,207,.62) 0%,rgba(220,239,226,.35) 62%,rgba(236,240,236,.08) 100%);
+    pointer-events:none;
+    z-index:0;
+  }
+  .hub-box:active{transform:scale(.98);background:#e3eae5}
+  .hub-box-title{position:relative;z-index:1;font-size:13.5px;font-weight:600;color:#202924;line-height:1.25}
+  .hub-box-art{position:relative;z-index:1;width:100%;height:74%;display:flex;align-items:flex-end;justify-content:center}
+  .hub-box-art svg{width:88px;height:82px;max-width:100%;max-height:100%;overflow:visible}
+
+  @media (max-width:360px){
+    .hubs-grid{gap:9px}
+    .hub-box{min-height:128px;padding:12px 10px 9px;border-radius:14px}
+    .hub-box-title{font-size:12.5px}
+    .hub-box-art svg{width:76px;height:70px}
+  }
 
   .subhead{background:var(--brand);color:#fff;padding-top:calc(env(safe-area-inset-top,0px) + 11px);padding-bottom:13px;display:flex;align-items:center;gap:10px;border-radius:0 0 16px 16px}
   .back{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;font-size:19px;flex:none}
@@ -646,6 +691,121 @@
       <div class="story"><div class="inner">your zong package comes with a cashback</div></div>
       <div class="story"><div class="inner">mega week, now for Rs. 50 less</div></div>
       <div class="story"><div class="inner">refer a friend &amp; earn rewards</div></div>
+    </div>
+
+    <!-- Hubs Section at Bottom of Main Dashboard -->
+    <div class="gut hubs-wrap">
+      <h2 class="hubs-heading">Hubs</h2>
+      <div class="hubs-grid">
+        <button class="hub-box" type="button" onclick="toast('Mini Apps — demo')">
+          <span class="hub-box-title">Mini Apps</span>
+          <div class="hub-box-art" aria-hidden="true">
+            <svg viewBox="0 0 110 96">
+              <defs>
+                <linearGradient id="hShopRoof" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#69b385"/>
+                  <stop offset="100%" stop-color="#3f875c"/>
+                </linearGradient>
+                <linearGradient id="hGoldBase" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#e5ca87"/>
+                  <stop offset="100%" stop-color="#c39f52"/>
+                </linearGradient>
+              </defs>
+              <!-- Shopping Bag Left -->
+              <path d="M18 52 L34 52 L36 80 L16 80 Z" fill="#4f996c"/>
+              <path d="M22 52 C22 44, 30 44, 30 52" fill="none" stroke="#85c49c" stroke-width="2.4" stroke-linecap="round"/>
+              <!-- Storefront -->
+              <polygon points="36,30 74,16 88,24 50,39" fill="url(#hShopRoof)"/>
+              <polygon points="36,30 50,39 50,74 36,66" fill="#488f64"/>
+              <polygon points="50,39 88,24 88,60 50,74" fill="#63ab7f"/>
+              <!-- Window & Door -->
+              <polygon points="54,45 68,40 68,54 54,59" fill="#dfeee4"/>
+              <polygon points="71,39 82,35 82,62 71,66" fill="#35754e"/>
+              <!-- Base -->
+              <polygon points="32,67 50,77 92,61 74,52" fill="url(#hGoldBase)"/>
+              <!-- Green 'e' Badge Right -->
+              <circle cx="88" cy="70" r="12" fill="#59a877"/>
+              <path d="M84 70 H92 C92 67, 89 65.5, 87.5 66.5 C85.5 67.8, 85.5 72.2, 87.8 73.5 C89.5 74.4, 91.5 73.5, 92 72.2" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </button>
+
+        <button class="hub-box" type="button" onclick="toast('Insurance — demo')">
+          <span class="hub-box-title">Insurance</span>
+          <div class="hub-box-art" aria-hidden="true">
+            <svg viewBox="0 0 110 96">
+              <defs>
+                <linearGradient id="hGoldUm" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#ebd292"/>
+                  <stop offset="100%" stop-color="#c8a55a"/>
+                </linearGradient>
+                <linearGradient id="hGrnUm" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#69b585"/>
+                  <stop offset="100%" stop-color="#428b5e"/>
+                </linearGradient>
+              </defs>
+              <!-- Umbrella Canopy -->
+              <path d="M36 42 C38 22, 68 18, 82 36 C73 35, 65 38, 60 44 C54 40, 44 40, 36 42 Z" fill="url(#hGoldUm)"/>
+              <path d="M48 41 C52 24, 68 20, 82 36 C73 35, 65 38, 60 44 Z" fill="url(#hGrnUm)"/>
+              <path d="M60 44 C64 26, 76 22, 86 34 C80 35, 74 39, 71 45 Z" fill="#559e71"/>
+              <!-- Umbrella Handle -->
+              <path d="M58 43 L48 76 C46.5 81, 40 80, 41 74" fill="none" stroke="#c7a356" stroke-width="3.6" stroke-linecap="round"/>
+              <!-- Shield with Check -->
+              <path d="M52 52 L67 48 L72 62 C72 70, 64 76, 58 78 C53 74, 51 64, 52 52 Z" fill="url(#hGoldUm)" stroke="#b89448" stroke-width="1.2"/>
+              <path d="M57 62 L61 66 L67 57" fill="none" stroke="#3f895c" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </button>
+
+        <button class="hub-box" type="button" onclick="go('load')">
+          <span class="hub-box-title">Load &amp; Packages</span>
+          <div class="hub-box-art" aria-hidden="true">
+            <svg viewBox="0 0 110 96">
+              <defs>
+                <linearGradient id="hPhoneG" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#69b484"/>
+                  <stop offset="100%" stop-color="#3e865a"/>
+                </linearGradient>
+              </defs>
+              <!-- SIM Card Behind -->
+              <path d="M54 34 L72 30 L76 66 L58 70 Z" fill="#dfc480" stroke="#b9964b" stroke-width="1.2"/>
+              <rect x="61" y="45" width="9" height="11" rx="1.5" transform="rotate(-8 65 50)" fill="#cfa95b"/>
+              <!-- Phone Body -->
+              <rect x="30" y="24" width="28" height="54" rx="5" transform="rotate(-12 44 51)" fill="#d9bc75"/>
+              <rect x="33" y="27" width="22" height="48" rx="3.5" transform="rotate(-12 44 51)" fill="url(#hPhoneG)"/>
+              <!-- Green Notification / Package Flag + 1 -->
+              <path d="M50 25 L73 20 L71 38 L52 42 Z" fill="#54a272"/>
+              <circle cx="75" cy="22" r="9.5" fill="#63b080" stroke="#e8ede9" stroke-width="1.5"/>
+              <text x="75" y="25.5" text-anchor="middle" font-size="10.5" font-weight="800" fill="#ffffff">1</text>
+            </svg>
+          </div>
+        </button>
+
+        <button class="hub-box" type="button" onclick="toast('Help Center — demo')">
+          <span class="hub-box-title">Help Center</span>
+          <div class="hub-box-art" aria-hidden="true">
+            <svg viewBox="0 0 110 96">
+              <defs>
+                <linearGradient id="hGoldBand" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#ebd292"/>
+                  <stop offset="100%" stop-color="#c39f52"/>
+                </linearGradient>
+              </defs>
+              <!-- Headband Arch -->
+              <path d="M35 54 C35 24, 78 24, 80 56" fill="none" stroke="url(#hGoldBand)" stroke-width="6.5" stroke-linecap="round"/>
+              <!-- Left Earcup -->
+              <ellipse cx="36" cy="57" rx="8" ry="12" fill="#d8ba72" stroke="#b69247" stroke-width="1.2"/>
+              <ellipse cx="41" cy="57" rx="5" ry="9" fill="#559f72"/>
+              <!-- Right Earcup -->
+              <ellipse cx="78" cy="59" rx="8" ry="12" fill="#d8ba72" stroke="#b69247" stroke-width="1.2"/>
+              <ellipse cx="73" cy="59" rx="5" ry="9" fill="#559f72"/>
+              <!-- Mic Boom -->
+              <path d="M75 66 C68 77, 52 78, 43 74" fill="none" stroke="#559f72" stroke-width="3.6" stroke-linecap="round"/>
+              <rect x="33" y="69" width="11" height="7" rx="2.5" fill="url(#hGoldBand)"/>
+            </svg>
+          </div>
+        </button>
+      </div>
     </div>
   </section>
 
@@ -2793,3 +2953,4 @@
 </script>
 </body>
 </html>
+
