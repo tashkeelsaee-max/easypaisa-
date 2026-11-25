@@ -540,7 +540,7 @@
   .scanov{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center}
   .scantop{display:flex;align-items:center;justify-content:space-between;width:100%;color:#fff;font-size:15px;font-weight:600;padding-top:calc(env(safe-area-inset-top,0px) + 12px)}
   .scanx{width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.4);color:#fff;font-size:15px;display:grid;place-items:center}
-  .scanframe{position:relative;width:210px;height:210px;margin-top:18vh;overflow:hidden}
+  .scanframe{position:relative;width:210px;height:210px;margin-top:16vh;overflow:hidden}
   .scanframe i{position:absolute;width:28px;height:28px;border:3px solid #28c25b}
   .scanframe i:nth-child(1){left:0;top:0;border-right:none;border-bottom:none;border-radius:7px 0 0 0}
   .scanframe i:nth-child(2){right:0;top:0;border-left:none;border-bottom:none;border-radius:0 7px 0 0}
@@ -551,7 +551,9 @@
   .scancaptured-box{margin-top:12px;background:rgba(16,28,20,.82);color:#9cebb7;border:1px solid rgba(156,235,183,.45);border-radius:12px;padding:6px 12px;font-size:12.5px;font-weight:700;max-width:86%;text-align:center;display:inline-flex;align-items:center;gap:7px}
   .scancaptured-logo{width:20px;height:20px;border-radius:5px;background:#ffffff;display:inline-grid;place-items:center;padding:2px;overflow:hidden;flex:none}
   .scanhint{color:#fff;font-size:12.5px;margin-top:12px;text-shadow:0 1px 4px rgba(0,0,0,.6);text-align:center;padding:0 18px}
-  .scanmanual{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);padding:10px 20px;border-radius:24px;background:#fff;color:var(--brand-deep,#199944);font-weight:700;font-size:13px}
+  .scan-actions{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);display:flex;align-items:center;gap:10px;padding:0 14px;flex-wrap:wrap;justify-content:center}
+  .scanmanual{padding:10px 18px;border-radius:24px;background:#fff;color:var(--brand-deep,#199944);font-weight:700;font-size:12.5px}
+  .scanupload{padding:10px 18px;border-radius:24px;background:#25b857;color:#fff;font-weight:700;font-size:12.5px;box-shadow:0 4px 12px rgba(0,0,0,.25)}
 
   .nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--surface);border-top:1px solid var(--line);display:flex;width:100%;max-width:440px;margin:0 auto;padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -4px 14px rgba(0,0,0,.04)}
   .nav button{flex:1;min-width:0;padding:7px 2px 7px;display:flex;flex-direction:column;align-items:center;gap:2.5px;font-size:9.5px;font-weight:500;color:#6c7b73}
@@ -881,6 +883,7 @@
   </section>
 
   <section class="screen" id="scanner">
+    <input type="file" id="qrImageInput" accept="image/*" hidden onchange="onQrImagePicked(event)">
     <video id="camFeed" autoplay playsinline muted></video>
     <div class="scanov">
       <div class="scantop gut">
@@ -893,8 +896,11 @@
         <span class="scancaptured-logo" id="scanDetectedLogo"></span>
         <span id="scanDetectedName"></span>
       </div>
-      <div class="scanhint" id="scanHint">QR code ko frame ke andar rakhein — automatic scan hoga</div>
-      <button class="scanmanual" onclick="closeScanner();openSheet()">Number se bhejein</button>
+      <div class="scanhint" id="scanHint">QR code ko frame ke andar rakhein — ya gallery se QR image upload karein</div>
+      <div class="scan-actions">
+        <button class="scanupload" type="button" onclick="pickQrImage()">Upload QR</button>
+        <button class="scanmanual" type="button" onclick="closeScanner();openSheet()">Number se bhejein</button>
+      </div>
     </div>
   </section>
 
@@ -1304,25 +1310,26 @@
   };
 
   var QR_BANK_PATTERNS = [
-    {re: /(BANK\s*ALFALAH|ALFALAH|BAFL|ALFA\s*PAY)/i, name: 'Bank Alfalah', code: 'BAFL', bg: '#d91b24', fg: '#ffffff', logo: 'bankalfalah.png'},
-    {re: /(TMFB|TMICFB|EASYPAISA|TELENOR\s*MICROFINANCE)/i, name: 'easypaisa', code: 'EP', bg: '#25b857', fg: '#ffffff', logo: 'icon-192.png'},
-    {re: /(JAZZCASH|MOBILINK\s*MICROFINANCE|MMBL)/i, name: 'JazzCash', code: 'JC', bg: '#ffffff', fg: '#d91b24', logo: 'jazzcash.webp'},
-    {re: /(MEEZAN|MBL)/i, name: 'Meezan Bank', code: 'MBL', bg: '#4a154b', fg: '#ffffff', logo: 'meezanbank.png'},
-    {re: /(HABIB\s*BANK|HBL\s*KONNECT|HBL\s*PAY|\bHBL\b)/i, name: 'Habib Bank Limited', code: 'HBL', bg: '#006747', fg: '#ffffff', logo: 'Habibbanklimited.png'},
-    {re: /(MCB\s*ISLAMIC|MCB)/i, name: 'MCB Bank', code: 'MCB', bg: '#003366', fg: '#ffffff', logo: 'MCB.png'},
-    {re: /(UNITED\s*BANK|\bUBL\b)/i, name: 'UBL Bank', code: 'UBL', bg: '#0072ce', fg: '#ffffff', logo: 'ubl.png'},
-    {re: /(ALLIED\s*BANK|\bABL\b)/i, name: 'Allied Bank', code: 'ABL', bg: '#0b3d91', fg: '#ffffff', logo: 'Alliedbank.png'},
-    {re: /(SADAPAY|\bSP\b)/i, name: 'SadaPay', code: 'SP', bg: '#e65100', fg: '#ffffff', logo: 'sadapay.jpg'},
-    {re: /(NAYAPAY|\bNP\b)/i, name: 'NayaPay', code: 'NP', bg: '#1e88e5', fg: '#ffffff', logo: 'nayapay.jpg'},
-    {re: /(ASKARI|\bAKBL\b)/i, name: 'Askari Bank', code: 'AKBL', bg: '#004b87', fg: '#ffffff', logo: 'askaribank.png'},
-    {re: /(FAYSAL|\bFBL\b)/i, name: 'Faysal Bank', code: 'FBL', bg: '#1b365d', fg: '#ffffff', logo: 'faysalbank.png'},
-    {re: /(BANKISLAMI|\bBIPL\b)/i, name: 'BankIslami', code: 'BIPL', bg: '#007a4d', fg: '#ffffff', logo: 'BankIslami.png'},
-    {re: /(ZINDIGI|JS\s*BANK)/i, name: 'Zindigi', code: 'JS', bg: '#005596', fg: '#ffffff', logo: 'jsbank.png'},
-    {re: /(SONERI|\bSNBL\b)/i, name: 'Soneri Bank', code: 'SNBL', bg: '#004b87', fg: '#ffffff', logo: 'soneribank.png'},
-    {re: /(STANDARD\s*CHARTERED|\bSCB\b)/i, name: 'Standard Chartered', code: 'SCB', bg: '#0072aa', fg: '#ffffff', logo: 'standardchartered.png'},
-    {re: /(BANK\s*AL\s*HABIB|\bBAHL\b)/i, name: 'Bank AL Habib', code: 'BAHL', bg: '#005a9c', fg: '#ffffff', logo: 'bankalhabib.jpg'},
-    {re: /(NATIONAL\s*BANK|\bNBP\b)/i, name: 'National Bank', code: 'NBP', bg: '#1b5e20', fg: '#ffffff', logo: 'nationalbank.jpg'},
-    {re: /(UPAISA)/i, name: 'UPaisa', code: 'UP', bg: '#e65100', fg: '#ffffff', logo: 'upaisa.png'}
+    {re: /(BANK\s*ALFALAH|ALFALAH|BAFL|ALFA\s*PAY|PK\d{2}ALFH)/i, name: 'Bank Alfalah', code: 'BAFL', bg: '#d91b24', fg: '#ffffff', logo: 'bankalfalah.png'},
+    {re: /(TMFB|TMICFB|EASYPAISA|TELENOR\s*MICROFINANCE|PK\d{2}TMFB)/i, name: 'easypaisa', code: 'EP', bg: '#25b857', fg: '#ffffff', logo: 'icon-192.png'},
+    {re: /(JAZZCASH|MOBILINK\s*MICROFINANCE|MMBL|PK\d{2}JCMA|PK\d{2}MMBL)/i, name: 'JazzCash', code: 'JC', bg: '#ffffff', fg: '#d91b24', logo: 'jazzcash.webp'},
+    {re: /(MEEZAN|MBL|PK\d{2}MEZN)/i, name: 'Meezan Bank', code: 'MBL', bg: '#4a154b', fg: '#ffffff', logo: 'meezanbank.png'},
+    {re: /(HABIB\s*BANK|HBL\s*KONNECT|HBL\s*PAY|\bHBL\b|PK\d{2}HABK)/i, name: 'Habib Bank Limited', code: 'HBL', bg: '#006747', fg: '#ffffff', logo: 'Habibbanklimited.png'},
+    {re: /(MCB\s*ISLAMIC|MCB|PK\d{2}MUCB|PK\d{2}MCIB)/i, name: 'MCB Bank', code: 'MCB', bg: '#003366', fg: '#ffffff', logo: 'MCB.png'},
+    {re: /(UNITED\s*BANK|\bUBL\b|PK\d{2}UNIL)/i, name: 'UBL Bank', code: 'UBL', bg: '#0072ce', fg: '#ffffff', logo: 'ubl.png'},
+    {re: /(ALLIED\s*BANK|\bABL\b|PK\d{2}ABPA)/i, name: 'Allied Bank', code: 'ABL', bg: '#0b3d91', fg: '#ffffff', logo: 'Alliedbank.png'},
+    {re: /(SADAPAY|PK\d{2}SADA)/i, name: 'SadaPay', code: 'SP', bg: '#e65100', fg: '#ffffff', logo: 'sadapay.jpg'},
+    {re: /(NAYAPAY|PK\d{2}NAYA)/i, name: 'NayaPay', code: 'NP', bg: '#1e88e5', fg: '#ffffff', logo: 'nayapay.jpg'},
+    {re: /(ASKARI|\bAKBL\b|PK\d{2}ASCM)/i, name: 'Askari Bank', code: 'AKBL', bg: '#004b87', fg: '#ffffff', logo: 'askaribank.png'},
+    {re: /(FAYSAL|\bFBL\b|PK\d{2}FAYS)/i, name: 'Faysal Bank', code: 'FBL', bg: '#1b365d', fg: '#ffffff', logo: 'faysalbank.png'},
+    {re: /(BANKISLAMI|\bBIPL\b|PK\d{2}BKIP)/i, name: 'BankIslami', code: 'BIPL', bg: '#007a4d', fg: '#ffffff', logo: 'BankIslami.png'},
+    {re: /(ZINDIGI|JS\s*BANK|PK\d{2}JSBL)/i, name: 'Zindigi', code: 'JS', bg: '#005596', fg: '#ffffff', logo: 'jsbank.png'},
+    {re: /(SONERI|\bSNBL\b|PK\d{2}SONE)/i, name: 'Soneri Bank', code: 'SNBL', bg: '#004b87', fg: '#ffffff', logo: 'soneribank.png'},
+    {re: /(STANDARD\s*CHARTERED|\bSCB\b|PK\d{2}SCBL)/i, name: 'Standard Chartered', code: 'SCB', bg: '#0072aa', fg: '#ffffff', logo: 'standardchartered.png'},
+    {re: /(BANK\s*AL\s*HABIB|\bBAHL\b|PK\d{2}BAHL)/i, name: 'Bank AL Habib', code: 'BAHL', bg: '#005a9c', fg: '#ffffff', logo: 'bankalhabib.jpg'},
+    {re: /(NATIONAL\s*BANK|\bNBP\b|PK\d{2}NBPA)/i, name: 'National Bank', code: 'NBP', bg: '#1b5e20', fg: '#ffffff', logo: 'nationalbank.jpg'},
+    {re: /(UPAISA|PK\d{2}UPAI)/i, name: 'UPaisa', code: 'UP', bg: '#e65100', fg: '#ffffff', logo: 'upaisa.png'},
+    {re: /(\bRAAST\b|\bIBFT\b)/i, name: 'Raast QR', code: 'RAAST', bg: '#199944', fg: '#ffffff', logo: ''}
   ];
 
   function getRepoLogoFile(label){
@@ -1431,7 +1438,7 @@
     }
     var logoFile = b.logo || getRepoLogoFile(b.name) || '';
     var code = b.code || initials(b.name) || 'QR';
-    var fb = '<span style="width:100%;height:100%;border-radius:6px;background:'+(b.bg||'#177a38')+';color:'+(b.fg||'#ffffff')+';display:grid;place-items:center;font-size:8.5px;font-weight:800;line-height:1">'+code+'</span>';
+    var fb = '<span style="width:100%;height:100%;border-radius:6px;background:'+(b.bg||'#177a38')+';color:'+(b.fg||'#ffffff')+';display:grid;place-items:center;font-size:'+(code.length>4?'7px':'8.5px')+';font-weight:800;line-height:1">'+code+'</span>';
     if(!logoFile) return fb;
     return '<img src="'+logoFile+'" alt="'+String(b.name||'').replace(/"/g,'&quot;')+'" style="width:100%;height:100%;object-fit:contain;display:block" onerror="this.outerHTML='+JSON.stringify(fb).replace(/"/g,'&quot;')+'">';
   }
@@ -2240,6 +2247,62 @@
     startCamera();
   }
 
+  function pickQrImage(){
+    var inp = document.getElementById('qrImageInput');
+    if(inp){
+      inp.value = '';
+      inp.click();
+    }
+  }
+
+  function decodeQrFromCanvas(canvas, ctx){
+    var w = canvas.width;
+    var h = canvas.height;
+    if(!w || !h || typeof window.jsQR !== 'function') return '';
+    var imgData = ctx.getImageData(0, 0, w, h);
+    var res = window.jsQR(imgData.data, imgData.width, imgData.height, {inversionAttempts: 'attemptBoth'});
+    return (res && res.data) ? res.data : '';
+  }
+
+  function onQrImagePicked(ev){
+    var file = ev && ev.target && ev.target.files && ev.target.files[0];
+    if(!file) return;
+    var hint = document.getElementById('scanHint');
+    if(hint) hint.textContent = 'Image se QR scan ho raha hai...';
+    var reader = new FileReader();
+    reader.onload = function(e){
+      var img = new Image();
+      img.onload = function(){
+        var sizes = [1200, 800, 560];
+        var found = '';
+        for(var i = 0; i < sizes.length; i++){
+          var maxDim = sizes[i];
+          var w = img.width, h = img.height;
+          if(w > h){
+            if(w > maxDim){ h = Math.round(h * maxDim / w); w = maxDim; }
+          }else{
+            if(h > maxDim){ w = Math.round(w * maxDim / h); h = maxDim; }
+          }
+          var c = document.createElement('canvas');
+          c.width = w;
+          c.height = h;
+          var cx = c.getContext('2d', {willReadFrequently:true});
+          cx.drawImage(img, 0, 0, w, h);
+          found = decodeQrFromCanvas(c, cx);
+          if(found) break;
+        }
+        if(found){
+          handleQrDetected(found);
+        }else{
+          toast('Is image mein QR code clear detect nahi hua');
+          if(hint) hint.textContent = 'QR code ko frame ke andar rakhein — ya gallery se QR image upload karein';
+        }
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
   function cleanShortQrName(rawVal){
     var s = String(rawVal || '').trim();
     if(!s) return '';
@@ -2259,7 +2322,7 @@
     var words = s.replace(/[^A-Za-z0-9 &.'-]/g, ' ').split(/\s+/).filter(function(w){
       if(!w) return false;
       if(/^[0-9]+$/.test(w)) return false;
-      if(/^(PK\d*|TC\d*|L\d+|ID\d*|QR|EP|PS|OPS\d*|TMFB\d*|TMICFB\d*|BAFL\d*|RAWALPINDI|LAHORE|KARACHI|ISLAMABAD|MULTAN|FAISALABAD|PESHAWAR|QUETTA|SIALKOT|GUJRANWALA)$/i.test(w)) return false;
+      if(/^(PK\d*|TC\d*|L\d+|ID\d*|QR|EP|PS|OPS\d*|TMFB\d*|TMICFB\d*|BAFL\d*|RAAST|IBFT|RAWALPINDI|LAHORE|KARACHI|ISLAMABAD|MULTAN|FAISALABAD|PESHAWAR|QUETTA|SIALKOT|GUJRANWALA)$/i.test(w)) return false;
       return /[A-Za-z]{2,}/.test(w);
     });
     if(words.length){
@@ -2282,7 +2345,8 @@
   function parseEmvFields(raw){
     var i = 0;
     var tag59 = '';
-    var accChunks = [];
+    var tag60 = '';
+    var extraChunks = [];
     while(i + 4 <= raw.length){
       var tag = raw.slice(i, i + 2);
       var len = parseInt(raw.slice(i + 2, i + 4), 10);
@@ -2294,12 +2358,14 @@
       if(tag === '59'){
         var cleaned = cleanShortQrName(val);
         if(cleaned) tag59 = cleaned;
-      }else if(/^(0[2-9]|[1-4][0-9]|5[0-1])$/.test(tag)){
-        accChunks.push(val);
+      }else if(tag === '60'){
+        tag60 = val;
+      }else if(/^(0[2-9]|[1-5][0-8]|62)$/.test(tag)){
+        extraChunks.push(val);
       }
       i += 4 + len;
     }
-    return { name: tag59, accountBlob: accChunks.join(' ') };
+    return { name: tag59, city: tag60, accountBlob: extraChunks.join(' ') };
   }
 
   function parseQrPayload(rawText){
@@ -2307,7 +2373,6 @@
     var emv = parseEmvFields(clean);
     var bankObj = detectQrBank(clean + ' ' + emv.accountBlob + ' ' + emv.name);
     var extractedName = '';
-    var extractedNum = '';
 
     if(emv.name){
       extractedName = emv.name;
@@ -2332,10 +2397,7 @@
       extractedName = bankObj && bankObj.name ? (bankObj.name + ' Merchant') : 'QR Merchant';
     }
 
-    var digitsOnly = clean.replace(/[^0-9]/g,'');
-    extractedNum = digitsOnly.length >= 6 ? digitsOnly.slice(0, 14) : '';
-
-    return { name: extractedName, num: extractedNum, bank: bankObj, raw: clean };
+    return { name: extractedName, num: '', bank: bankObj, raw: clean };
   }
 
   function handleQrDetected(rawText){
@@ -2364,7 +2426,7 @@
     selectedWallet = '';
     selectedBankItem = null;
     curName = parsed.name;
-    curNum = parsed.num;
+    curNum = '';
     curPurpose = 'QR Payment';
     returnScreenAfterAmt = 'scanner';
 
@@ -2397,10 +2459,9 @@
             qrCanvasEl.width = targetW;
             qrCanvasEl.height = targetH;
             qrCanvasCtx.drawImage(v, 0, 0, targetW, targetH);
-            var imgData = qrCanvasCtx.getImageData(0, 0, targetW, targetH);
-            var code = window.jsQR(imgData.data, imgData.width, imgData.height, {inversionAttempts: 'attemptBoth'});
-            if(code && code.data){
-              handleQrDetected(code.data);
+            var foundData = decodeQrFromCanvas(qrCanvasEl, qrCanvasCtx);
+            if(foundData){
+              handleQrDetected(foundData);
               return;
             }
           }
@@ -2438,9 +2499,9 @@
     if(detBox){ detBox.hidden = true; }
     if(nameBadge){ nameBadge.textContent = ''; }
     var hint=document.getElementById('scanHint');
-    hint.textContent='QR code ko frame ke andar rakhein — automatic scan hoga';
+    hint.textContent='QR code ko frame ke andar rakhein — ya gallery se QR image upload karein';
     if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
-      hint.textContent='Is browser mein camera support nahi. Neeche se number se bhejein.';
+      hint.textContent='Camera unavailable — neeche Upload QR se image scan karein';
       return;
     }
     navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false}).then(function(s){
@@ -2451,7 +2512,7 @@
       if(p && p.then){ p.then(startScanLoop).catch(startScanLoop); }
       else{ startScanLoop(); }
     }).catch(function(){
-      hint.textContent='Camera open nahi hua — permission allow karein, ya neeche se number se bhejein.';
+      hint.textContent='Camera permission nahi mili — neeche Upload QR se image scan karein';
     });
   }
 
