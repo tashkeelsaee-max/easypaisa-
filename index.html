@@ -18,7 +18,7 @@
   :root{
     --brand:#25b857;--brand-deep:#199944;
     --card-g1:#9cebb7;--card-g2:#63dc90;
-    --auth-g1:#34cc68;--auth-g2:#1db652;
+    --auth-g1:#66df8f;--auth-g2:#43c870;
     --borrow-g1:#fce877;--borrow-g2:#f5d547;
     --bg:#f4f7f5;--surface:#ffffff;--fg:#17241d;--muted:#6c7b73;--line:#e5ece8;
     --danger:#232527;--good:#25b857;
@@ -83,7 +83,7 @@
   .acct{scroll-snap-align:start;flex:none;width:min(68vw,258px);height:164px;border-radius:17px;padding:13px 14px;position:relative;
     background:linear-gradient(155deg,var(--card-g1),var(--card-g2));color:#113a21;overflow:hidden;box-shadow:0 4px 12px rgba(37,184,87,.12);cursor:pointer;
     display:flex;flex-direction:column;justify-content:space-between;transition:background .2s ease,color .2s ease}
-  .acct.signed-in{background:linear-gradient(160deg,var(--auth-g1),var(--auth-g2));color:#101c14;box-shadow:0 6px 16px rgba(29,182,82,.22)}
+  .acct.signed-in{background:linear-gradient(160deg,var(--auth-g1),var(--auth-g2));color:#101c14;box-shadow:0 6px 16px rgba(67,200,112,.22)}
   .acct-top{display:flex;align-items:flex-start;justify-content:space-between;gap:6px}
   .upgrade-pill{background:rgba(16,28,20,.62);color:#ffffff;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:7px;letter-spacing:.1px;flex:none;line-height:1.2}
   .coins{font-size:27px;line-height:1}
@@ -303,8 +303,15 @@
   .bill-grid button.sel{border-color:var(--brand);background:#e8f8ee}
   .bill-grid .bg-ico{font-size:19px}
 
-  /* TRANSACTION HISTORY */
-  #history{background:#f5faf7;min-height:100dvh}
+  /* TRANSACTION HISTORY & LOADING OVERLAY */
+  #history{background:#f5faf7;min-height:100dvh;position:relative}
+  .hist-loader{position:fixed;inset:0;background:rgba(244,247,245,.72);backdrop-filter:blur(2px);z-index:58;display:none;align-items:center;justify-content:center;padding:16px}
+  .hist-loader.show{display:flex;animation:fade .15s ease}
+  .hist-loader-box{background:#ffffff;border:1px solid #e2ebe5;border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 8px 24px rgba(0,0,0,.12);max-width:270px;width:100%}
+  .hist-spin{width:22px;height:22px;border:2.5px solid #d7e8de;border-top-color:#25b857;border-radius:50%;animation:spin .75s linear infinite;flex:none}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .hist-loader-txt{font-size:12.5px;font-weight:600;color:#23332a}
+
   .empty{text-align:center;color:var(--muted);padding:30px 16px;font-size:12px}
   .histtop{display:flex;align-items:center;gap:8px;padding-top:calc(env(safe-area-inset-top,0px) + 10px);padding-bottom:6px}
   .hback{width:34px;height:34px;flex:none;border:1px solid #e0eae4;border-radius:10px;display:grid;place-items:center;font-size:19px;color:#17241d;background:#eef6f1}
@@ -628,7 +635,7 @@
         <button class="srv" onclick="toast('Insurance — demo')"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-9 9h18a9 9 0 0 0-9-9z"/><path d="M12 12v9"/></svg><span class="cap">Insurance</span></button>
         <button class="srv" onclick="toast('Rs. 1 Game — demo')"><span class="winbadge">Win</span><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="13" r="7"/><path d="M12 10v6M9.5 13h5"/></svg><span class="cap">Rs. 1 Game</span></button>
         <button class="srv" onclick="toast('Vouchers — demo')"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 9h8M8 13h5"/></svg><span class="cap">Vouchers</span></button>
-        <button class="srv" onclick="go('history')"><svg class="ico" viewBox="0 0 24 24"><circle cx="6" cy="6" r="1.5"/><circle cx="12" cy="6" r="1.5"/><circle cx="18" cy="6" r="1.5"/><circle cx="6" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="18" cy="12" r="1.5"/><circle cx="6" cy="18" r="1.5"/><circle cx="12" cy="18" r="1.5"/><circle cx="18" cy="18" r="1.5"/></svg><span class="cap">See All</span></button>
+        <button class="srv" onclick="openHistoryWithLoader()"><svg class="ico" viewBox="0 0 24 24"><circle cx="6" cy="6" r="1.5"/><circle cx="12" cy="6" r="1.5"/><circle cx="18" cy="6" r="1.5"/><circle cx="6" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="18" cy="12" r="1.5"/><circle cx="6" cy="18" r="1.5"/><circle cx="12" cy="18" r="1.5"/><circle cx="18" cy="18" r="1.5"/></svg><span class="cap">See All</span></button>
       </div>
       <div class="dots"><i class="on"></i><i></i></div>
       <div class="h2">Stories</div>
@@ -912,7 +919,7 @@
         <div class="submenu" id="maccSub" hidden>
           <button onclick="toast('My Account')">My Account</button>
           <button onclick="toast('Account Level & Limits')">Account Level &amp; Limits</button>
-          <button onclick="go('history')">Transaction History</button>
+          <button onclick="openHistoryWithLoader()">Transaction History</button>
           <button onclick="toast('E-Statement')">E-Statement</button>
           <button onclick="toast('Download Certificate')">Download Certificate</button>
           <button onclick="toast('NewGen Account')">NewGen Account</button>
@@ -974,9 +981,16 @@
     <div class="gut"><div id="allTx"></div></div>
   </section>
 
+  <div class="hist-loader" id="histLoader">
+    <div class="hist-loader-box">
+      <div class="hist-spin"></div>
+      <div class="hist-loader-txt">Loading, please wait...</div>
+    </div>
+  </div>
+
   <nav class="nav">
     <button id="nav-home" class="on" onclick="go('home')"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Home</button>
-    <button onclick="go('history')"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Cards</button>
+    <button onclick="openHistoryWithLoader()"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Cards</button>
     <button onclick="openScanner()"><svg viewBox="0 0 24 24"><path d="M3 7V4h3M21 7V4h-3M3 17v3h3M21 17v3h-3"/><path d="M7 12h10"/></svg>Pay</button>
     <button onclick="toast('Promotions')"><svg viewBox="0 0 24 24"><path d="M12 3l2.5 5 5.5.8-4 4 1 5.5-5-2.7-5 2.7 1-5.5-4-4 5.5-.8z"/></svg>Promotion</button>
     <button onclick="toast('Zen rewards')"><svg viewBox="0 0 24 24"><path d="M3 18l3-10 4 5 2-7 2 7 4-5 3 10z"/></svg>Zen</button>
@@ -1303,7 +1317,7 @@
     var hBtn = document.getElementById('bpTabHist');
     if(sBtn) sBtn.classList.toggle('on', !isH);
     if(hBtn) hBtn.classList.toggle('on', isH);
-    if(isH) go('history');
+    if(isH) openHistoryWithLoader();
   }
 
   function selectBankForTransfer(idx){
@@ -1473,8 +1487,28 @@
     document.getElementById('signInModal').classList.remove('show');
   }
 
+  var histLoaderTimer = null;
+  function openHistoryWithLoader(){
+    if(!isSignedIn){
+      openSignInModal();
+      return;
+    }
+    var loader = document.getElementById('histLoader');
+    if(loader) loader.classList.add('show');
+    clearTimeout(histLoaderTimer);
+    histLoaderTimer = setTimeout(function(){
+      if(loader) loader.classList.remove('show');
+      renderHistory();
+      go('history');
+    }, 380);
+  }
+
   function onAcctCardClick(){
-    if(!isSignedIn){ openSignInModal(); }
+    if(!isSignedIn){
+      openSignInModal();
+      return;
+    }
+    openHistoryWithLoader();
   }
 
   function onHeaderProfileClick(){
@@ -1971,7 +2005,7 @@
     var sBtn=document.getElementById('epTabSend'), hBtn=document.getElementById('epTabHist');
     if(sBtn)sBtn.classList.toggle('on',!isH);
     if(hBtn)hBtn.classList.toggle('on',isH);
-    if(isH)go('history');
+    if(isH)openHistoryWithLoader();
   }
   function renderFavs(){var r=document.getElementById('favRow');if(!r)return;r.innerHTML=FAVS.map(function(n){var nm=CONTACTS[n];return '<button class="ep-fav" type="button" data-n="'+n+'" onclick="pickFav(\''+n+'\')"><span class="av">'+initials(nm)+'</span><small>'+nm+'</small></button>';}).join('');}
   function renderBanks(){var s=document.getElementById('bankSel');if(!s)return;s.innerHTML=BANKS.map(function(b){return '<option>'+b+'</option>';}).join('');}
@@ -2197,3 +2231,4 @@
 </script>
 </body>
 </html>
+
