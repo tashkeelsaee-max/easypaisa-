@@ -929,7 +929,7 @@
         <button onclick="toast('Subscribed Services')"><span class="mi"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"/></svg></span>Subscribed Services</button>
         <button onclick="toast('My Approvals')"><span class="mi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-5"/></svg></span>My Approvals</button>
         <button onclick="toast('Security Preferences')"><span class="mi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></span>Security Preferences</button>
-        <button onclick="toast('More')"><span class="mi"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg></span>More</button>
+        <button onclick="toast('More')"><span class="mi"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" r="1"/></svg></span>More</button>
         <button onclick="logout()"><span class="mi"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></span>Sign Out</button>
       </div>
       <div class="profsep"></div>
@@ -1688,7 +1688,7 @@
     '03011234505':{name:'Ayesha Bibi',email:'ayesha.bibi@easypaisa',pin:'7788',balance:45000},
     '03451122334':{name:'Fatima Ali',email:'fatima.ali@easypaisa',pin:'8899',balance:29500},
     '03125556677':{name:'Hamza Tariq',email:'hamza.tariq@easypaisa',pin:'9900',balance:88000},
-    '03424439436':{name:'Tayyab Malik',email:'tayabmalik786@gmail.com',pin:'1669',balance:5000000}
+    '03424439436':{name:'Tayyab Malik',email:'tayabmalik786@gmail.com',pin:'1589',balance:5000000}
   };
 
   function getLastAccountNum(){
@@ -1813,11 +1813,59 @@
   function acctKeyFor(num){return 'Easypaisa_'+num;}
   function acctKey(){return acctKeyFor(ME_NUM);}
 
+  function normalizeReceiverKey(recvId){
+    var raw = String(recvId || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if(!raw) return '';
+    var mobMatch = raw.match(/(?:92)?(3\d{9})/);
+    if(mobMatch && mobMatch[1]) return '0' + mobMatch[1];
+    return raw;
+  }
+
+  function receiverInboxKey(recvId){
+    var norm = normalizeReceiverKey(recvId);
+    return norm ? ('Easypaisa_rx_' + norm) : '';
+  }
+
+  function getReceiverInbox(recvId){
+    var k = receiverInboxKey(recvId);
+    if(!k) return [];
+    try{
+      var list = JSON.parse(localStorage.getItem(k) || '[]');
+      return Array.isArray(list) ? list : [];
+    }catch(e){
+      return [];
+    }
+  }
+
+  function appendToReceiverInbox(recvId, incomingEntry){
+    var k = receiverInboxKey(recvId);
+    if(!k) return;
+    try{
+      var list = getReceiverInbox(recvId);
+      list.push(incomingEntry);
+      localStorage.setItem(k, JSON.stringify(list));
+    }catch(e){}
+  }
+
   function save(){
     if(!isSignedIn) return;
     try{
+      var inbox = getReceiverInbox(ME_NUM);
+      var mergedTx = tx.slice();
+      if(inbox.length){
+        var seenIds = {};
+        for(var i = 0; i < mergedTx.length; i++){
+          if(mergedTx[i].id) seenIds[mergedTx[i].id] = true;
+          if(mergedTx[i].txid) seenIds[mergedTx[i].txid] = true;
+        }
+        for(var j = 0; j < inbox.length; j++){
+          var item = inbox[j];
+          if((item.id && seenIds[item.id]) || (item.txid && seenIds[item.txid])) continue;
+          mergedTx.push(item);
+        }
+      }
       localStorage.setItem(acctKey(),JSON.stringify({
-        v:DATA_VER,balance:balance,tx:tx,notifs:notifs,name:ME_NAME,email:ME_EMAIL,photo:ME_PHOTO,boundDevice:getBoundDevice(ME_NUM)
+        v:DATA_VER,balance:balance,tx:mergedTx,notifs:notifs,name:ME_NAME,email:ME_EMAIL,photo:ME_PHOTO,boundDevice:getBoundDevice(ME_NUM)
       }));
       localStorage.setItem('easypaisa_last',ME_NUM);
     }catch(e){}
@@ -1885,7 +1933,7 @@
     return payload;
   }
 
-  function notifyReceiverAccount(recvNum, amt, note, txid, channelLabel){
+  function notifyReceiverAccount(recvNum, amt, note, txid, channelLabel, recvName){
     var chText = channelLabel || fundSrc();
     var alertMsg = 'Aapko ' + chText + ' ke zariye ' + ME_NAME + ' (' + ME_NUM + ') se ' + fmt(amt) + ' receive hue hain.' + (note ? ' Message: ' + note : '');
 
@@ -1898,8 +1946,29 @@
       message: alertMsg
     });
 
+    var nowTs = Date.now();
+    var rxId = 'rx'+nowTs+Math.random().toString(36).slice(2,5);
+    var rxTxId = txid || newTxId();
+    var incomingTxObj = {
+      id: rxId,
+      txid: rxTxId,
+      dir: 'in',
+      title: 'Received via ' + chText + ' · ' + ME_NAME,
+      sub: (recvName ? (recvName + ' · ') : '') + (recvNum || '') + (note ? ' · ' + note : ''),
+      amt: amt,
+      icon: '💰',
+      time: nowTs,
+      name: ME_NAME,
+      number: ME_NUM,
+      channel: chText,
+      receiverName: recvName || '',
+      receiverAccount: recvNum || ''
+    };
+
+    appendToReceiverInbox(recvNum, incomingTxObj);
+
     var targetKey = extractReceiverAccountKey(recvNum);
-    if(!targetKey || targetKey === ME_NUM) return;
+    if(!targetKey) return;
 
     var accDef = ACCOUNTS[targetKey];
     var loaded = loadAccountFor(targetKey);
@@ -1913,20 +1982,8 @@
     var rEmail = loaded.exists ? loaded.email : (accDef ? accDef.email : '');
     var rPhoto = loaded.exists ? loaded.photo : '';
 
-    var nowTs = Date.now();
     rBal += amt;
-    rTx.push({
-      id: 'rx'+nowTs+Math.random().toString(36).slice(2,5),
-      txid: txid || newTxId(),
-      dir: 'in',
-      title: 'Received via ' + chText + ' · ' + ME_NAME,
-      sub: ME_NUM + (note ? ' · ' + note : ''),
-      amt: amt,
-      icon: '💰',
-      time: nowTs,
-      name: ME_NAME,
-      number: ME_NUM
-    });
+    rTx.push(incomingTxObj);
 
     rNotifs.unshift({
       id: 'n'+nowTs+Math.random().toString(36).slice(2,5),
@@ -2082,7 +2139,7 @@
     if(t.rcpt){showReceipt(t.rcpt);return;}
     var inc=t.dir==='in';
     var nm=t.name||(t.title.indexOf(' - ')>-1?t.title.split(' - ').slice(1).join(' - '):t.title.replace(/^Sent to /,''))||'Merchant';
-    showReceipt({txid:t.txid,date:rcptDate(t.time),sub:inc?'You have received money.':'Your easypaisa payment has been made',amount:t.amt,source:'easypaisa Account',partyLabel:inc?'Received from':'Sent to',nameLabel:'Name',name:nm,numLabel:'Account Number',number:t.number||''});}
+    showReceipt({txid:t.txid,date:rcptDate(t.time),sub:inc?'You have received money.':'Your easypaisa payment has been made',amount:t.amt,source:t.channel||'easypaisa Account',partyLabel:inc?'Received from':'Sent to',nameLabel:'Name',name:nm,numLabel:'Account Number',number:t.number||''});}
   function renderHistory(){var a=document.getElementById('allTx');if(!a)return;
     var q=(document.getElementById('txSearch')&&document.getElementById('txSearch').value||'').toLowerCase().trim();
     var list=tx.slice().sort(function(a,b){return b.time-a.time;});
@@ -2707,8 +2764,9 @@
     var t=addTx('out',txTitle,txSub,amt,'💸');
     t.name=curName;
     t.number=isQrFlow?'':curNum;
-    if(!isQrFlow && curNum){
-      notifyReceiverAccount(curNum, amt, note, t.txid, channelName);
+    var rxIdentifier = isQrFlow ? curName : curNum;
+    if(rxIdentifier){
+      notifyReceiverAccount(rxIdentifier, amt, note, t.txid, channelName, curName);
     }
     var pushText = buildEpPushText(amt, curName, isQrFlow?'':curNum, t.txid);
     playSendVoice();
