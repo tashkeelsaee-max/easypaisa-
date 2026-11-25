@@ -423,7 +423,7 @@
   .recvcard b{display:block;font-size:13px}.recvcard small{color:var(--muted);font-size:11px}
   .wlist{display:flex;flex-direction:column}
   .wrow{display:flex;align-items:center;gap:11px;padding:11px 4px;border-bottom:1px solid var(--line);width:100%;text-align:left;font-size:14px;font-weight:600;color:var(--fg);background:none}
-  .wrow .wav{width:36px;height:36px;border-radius:50%;background:#e8f8ee;color:var(--brand);display:grid;place-items:center;font-weight:700;flex:none;font-size:12px}
+  .wrow .wav{width:36px;height:36px;border-radius:9px;background:#ffffff;border:1px solid var(--line);color:var(--brand);display:grid;place-items:center;font-weight:700;flex:none;font-size:12px;overflow:hidden;padding:3px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
   .wrow .ch{margin-left:auto;color:var(--muted);font-size:17px}
   .wrow:active{background:#e8f8ee}
   .accthead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
@@ -1221,13 +1221,51 @@
   var JC_LOGO_IMG='<img src="jazzcash.webp" alt="JazzCash" style="width:100%;height:100%;object-fit:contain;display:block" onerror="this.onerror=null;this.src=\'icon-192.png\'">';
   var EP_WALLET_ICO_SVG='<svg viewBox="0 0 36 36" width="100%" height="100%" aria-hidden="true"><rect x="4" y="10" width="22" height="17" rx="4" fill="#25b857"/><path d="M4 15h22" stroke="#ffffff" stroke-width="2"/><circle cx="27" cy="21" r="6.5" fill="#f7c948" stroke="#c9931c" stroke-width="1.6"/><text x="27" y="23.5" text-anchor="middle" font-size="7.5" font-weight="800" fill="#7a5200">Rs</text></svg>';
 
+  var REPO_LOGOS_BY_NAME = {
+    'abhi microfinance bank': 'AbhiMicrofinance.png',
+    'abhi microfinance': 'AbhiMicrofinance.png',
+    'al baraka islamic bank limited': 'Albarkaislamic.jpg',
+    'alfa pay': 'Alfapay.png',
+    'allied bank limited': 'Alliedbank.png',
+    'apna microfinance bank': 'ApnaMicrofinance.jpg',
+    'bankislami pakistan limited': 'BankIslamic.png',
+    'digitt': 'Digitt.jpg',
+    'al baraka bank (pakistan) limited': 'albarka.jpg',
+    'askari commercial bank limited': 'askanbank.png',
+    'bank alfalah limited': 'bankalfalah.png',
+    'bank al habib limited': 'bankalhabib.jpg',
+    'finja': 'finja.png',
+    'firstpay': 'firstpay.png',
+    'hbl konnect': 'hblkonnect.png',
+    'jazzcash': 'jazzcash.webp',
+    'js bank zindigi': 'jsbank.png',
+    'keenu': 'keenu.jpg',
+    'nayapay': 'nayapay.jpg',
+    'sadapay': 'sadapay.jpg',
+    'u microfinance bank': 'ubank.png',
+    'u microfinance': 'ubank.png',
+    'upaisa': 'upaisa.png'
+  };
+
+  function getRepoLogoFile(label){
+    var key = String(label || '').trim().toLowerCase();
+    if(REPO_LOGOS_BY_NAME[key]) return REPO_LOGOS_BY_NAME[key];
+    var keys = Object.keys(REPO_LOGOS_BY_NAME);
+    for(var i = 0; i < keys.length; i++){
+      if(key.indexOf(keys[i]) > -1 || keys[i].indexOf(key) > -1){
+        return REPO_LOGOS_BY_NAME[keys[i]];
+      }
+    }
+    return '';
+  }
+
   var BANK_DIRECTORY = [
     {name:'Al Baraka Bank (Pakistan) Limited', code:'AB', bg:'#0057a8', fg:'#ffffff', logo:'albarka.jpg'},
     {name:'Al Baraka Islamic Bank Limited', code:'AI', bg:'#006847', fg:'#ffffff', logo:'Albarkaislamic.jpg'},
     {name:'Alfa Pay', code:'AP', bg:'#c8102e', fg:'#ffffff', logo:'Alfapay.png'},
     {name:'Allied Bank Limited', code:'ABL', bg:'#0b3d91', fg:'#ffffff', logo:'Alliedbank.png'},
     {name:'Apna Microfinance Bank', code:'AMB', bg:'#1b7f43', fg:'#ffffff', logo:'ApnaMicrofinance.jpg'},
-    {name:'Askari Commercial Bank Limited', code:'AKBL', bg:'#004b87', fg:'#ffffff', logo:'askaribank.png'},
+    {name:'Askari Commercial Bank Limited', code:'AKBL', bg:'#004b87', fg:'#ffffff', logo:'askanbank.png'},
     {name:'Bank Al Habib Limited', code:'BAHL', bg:'#005a9c', fg:'#ffffff', logo:'bankalhabib.jpg'},
     {name:'Bank Alfalah Limited', code:'BAFL', bg:'#d91b24', fg:'#ffffff', logo:'bankalfalah.png'},
     {name:'BankIslami Pakistan Limited', code:'BIPL', bg:'#007a4d', fg:'#ffffff', logo:'BankIslamic.png'},
@@ -1238,14 +1276,14 @@
     {name:'Burj Bank Limited', code:'BURJ', bg:'#0f5c4c', fg:'#ffffff'},
     {name:'Citi Bank', code:'CITI', bg:'#056dae', fg:'#ffffff'},
     {name:'CMpay', code:'CM', bg:'#008542', fg:'#ffffff'},
-    {name:'Digitt', code:'DG', bg:'#1f4e78', fg:'#ffffff'},
+    {name:'Digitt', code:'DG', bg:'#1f4e78', fg:'#ffffff', logo:'Digitt.jpg'},
     {name:'Dubai Islamic Bank', code:'DIB', bg:'#007a3d', fg:'#ffffff'},
     {name:'Faysal Bank Limited', code:'FBL', bg:'#1b365d', fg:'#ffffff'},
     {name:'FINCA Microfinance Bank', code:'FINCA', bg:'#0072bc', fg:'#ffffff'},
     {name:'First Microfinance Bank', code:'FMFB', bg:'#006633', fg:'#ffffff'},
     {name:'First Women Bank', code:'FWBL', bg:'#6a1b9a', fg:'#ffffff'},
-    {name:'FirstPay', code:'FP', bg:'#0b6e4f', fg:'#ffffff'},
-    {name:'HBL Konnect', code:'HK', bg:'#006747', fg:'#ffffff'},
+    {name:'FirstPay', code:'FP', bg:'#0b6e4f', fg:'#ffffff', logo:'firstpay.png'},
+    {name:'HBL Konnect', code:'HK', bg:'#006747', fg:'#ffffff', logo:'hblkonnect.png'},
     {name:'HBL Microfinance Bank', code:'HMB', bg:'#006747', fg:'#ffffff'},
     {name:'Habib Bank Limited HBL', code:'HBL', bg:'#006747', fg:'#ffffff'},
     {name:'Habib Metropolitan Bank', code:'HMB', bg:'#004c8c', fg:'#ffffff'},
@@ -1253,17 +1291,17 @@
     {name:'Hubpay', code:'HP', bg:'#0d47a1', fg:'#ffffff'},
     {name:'HugoBank Limited', code:'HB', bg:'#1b5e20', fg:'#ffffff'},
     {name:'ICBC Pakistan', code:'ICBC', bg:'#c62828', fg:'#ffffff'},
-    {name:'JS Bank Zindigi', code:'JS', bg:'#005596', fg:'#ffffff'},
-    {name:'JazzCash', code:'JC', bg:'#ffffff', fg:'#d91b24', useJazzLogo:true},
+    {name:'JS Bank Zindigi', code:'JS', bg:'#005596', fg:'#ffffff', logo:'jsbank.png'},
+    {name:'JazzCash', code:'JC', bg:'#ffffff', fg:'#d91b24', logo:'jazzcash.webp', useJazzLogo:true},
     {name:'KASB Bank', code:'KASB', bg:'#1e3a5f', fg:'#ffffff'},
-    {name:'KEENU', code:'KN', bg:'#00695c', fg:'#ffffff'},
+    {name:'KEENU', code:'KN', bg:'#00695c', fg:'#ffffff', logo:'keenu.jpg'},
     {name:'Khushhali Microfinance Bank KMBL', code:'KMBL', bg:'#00796b', fg:'#ffffff'},
     {name:'MCB Bank Limited', code:'MCB', bg:'#003366', fg:'#ffffff'},
     {name:'MCB Islamic Bank', code:'MCBI', bg:'#00693e', fg:'#ffffff'},
     {name:'Meezan Bank', code:'MBL', bg:'#4a154b', fg:'#ffffff'},
     {name:'Mobilink Microfinance Bank', code:'MMBL', bg:'#b71c1c', fg:'#ffffff'},
     {name:'National Bank of Pakistan', code:'NBP', bg:'#1b5e20', fg:'#ffffff'},
-    {name:'NayaPay', code:'NP', bg:'#1e88e5', fg:'#ffffff'},
+    {name:'NayaPay', code:'NP', bg:'#1e88e5', fg:'#ffffff', logo:'nayapay.jpg'},
     {name:'NRSP Bank Fort Cash', code:'NRSP', bg:'#2e7d32', fg:'#ffffff'},
     {name:'OPay', code:'OP', bg:'#00a86b', fg:'#ffffff'},
     {name:'OneZapp', code:'OZ', bg:'#006064', fg:'#ffffff'},
@@ -1272,7 +1310,7 @@
     {name:'Punjab Provincial Cooperative Bank', code:'PPCBL', bg:'#1b5e20', fg:'#ffffff'},
     {name:'Raqami Islamic Digital Bank', code:'RQ', bg:'#00695c', fg:'#ffffff'},
     {name:'Rupin', code:'RP', bg:'#1565c0', fg:'#ffffff'},
-    {name:'SadaPay', code:'SP', bg:'#e65100', fg:'#ffffff'},
+    {name:'SadaPay', code:'SP', bg:'#e65100', fg:'#ffffff', logo:'sadapay.jpg'},
     {name:'Samba Bank', code:'SAMBA', bg:'#004d40', fg:'#ffffff'},
     {name:'Silk Bank', code:'SILK', bg:'#0056b3', fg:'#ffffff'},
     {name:'SimSim', code:'SS', bg:'#b71c1c', fg:'#ffffff'},
@@ -1281,9 +1319,9 @@
     {name:'Soneri Bank Limited (Alt)', code:'SNBL', bg:'#004b87', fg:'#ffffff'},
     {name:'Standard Chartered Bank', code:'SCB', bg:'#0072aa', fg:'#ffffff'},
     {name:'Summit Bank', code:'SMBL', bg:'#005a9c', fg:'#ffffff'},
-    {name:'U Microfinance Bank', code:'UMB', bg:'#00695c', fg:'#ffffff'},
+    {name:'U Microfinance Bank', code:'UMB', bg:'#00695c', fg:'#ffffff', logo:'ubank.png'},
     {name:'United Bank Limited UBL', code:'UBL', bg:'#0072ce', fg:'#ffffff'},
-    {name:'Upaisa', code:'UP', bg:'#e65100', fg:'#ffffff'},
+    {name:'Upaisa', code:'UP', bg:'#e65100', fg:'#ffffff', logo:'upaisa.png'},
     {name:'YAP', code:'YAP', bg:'#1a237e', fg:'#ffffff'},
     {name:'ZTBL', code:'ZTBL', bg:'#1b5e20', fg:'#ffffff'}
   ];
@@ -1293,13 +1331,23 @@
 
   function renderBankBadgeHtml(item){
     if(!item) return EP_LOGO_SVG;
-    if(item.useJazzLogo || String(item.name || '').toLowerCase().indexOf('jazzcash') > -1){
-      return JC_LOGO_IMG;
-    }
-    var fb = '<span style="width:100%;height:100%;border-radius:7px;background:'+(item.bg||'#199944')+';color:'+(item.fg||'#ffffff')+';display:grid;place-items:center;font-size:'+(item.code.length>3?'8.5px':'10px')+';font-weight:800;letter-spacing:-.3px;line-height:1">'+item.code+'</span>';
-    if(item.logo){
+    var logoFile = item.logo || getRepoLogoFile(item.name);
+    var code = item.code || initials(item.name) || 'BK';
+    var fb = '<span style="width:100%;height:100%;border-radius:7px;background:'+(item.bg||'#199944')+';color:'+(item.fg||'#ffffff')+';display:grid;place-items:center;font-size:'+(code.length>3?'8.5px':'10px')+';font-weight:800;letter-spacing:-.3px;line-height:1">'+code+'</span>';
+    if(logoFile){
       var safeName = String(item.name || '').replace(/"/g,'&quot;');
-      return '<img src="'+item.logo+'" alt="'+safeName+'" style="width:100%;height:100%;object-fit:contain;display:block" onerror="this.outerHTML='+JSON.stringify(fb).replace(/"/g,'&quot;')+'">';
+      return '<img src="'+logoFile+'" alt="'+safeName+'" style="width:100%;height:100%;object-fit:contain;display:block" onerror="this.outerHTML='+JSON.stringify(fb).replace(/"/g,'&quot;')+'">';
+    }
+    return fb;
+  }
+
+  function renderWalletLogoHtml(walletName){
+    var logoFile = getRepoLogoFile(walletName);
+    var code = initials(walletName) || 'WL';
+    var fb = '<span>'+code+'</span>';
+    if(logoFile){
+      var safeName = String(walletName || '').replace(/"/g,'&quot;');
+      return '<img src="'+logoFile+'" alt="'+safeName+'" style="width:100%;height:100%;object-fit:contain;display:block" onerror="this.outerHTML='+JSON.stringify(fb).replace(/"/g,'&quot;')+'">';
     }
     return fb;
   }
@@ -1387,7 +1435,14 @@
     var brandEl = document.getElementById('rcpPaidViaBrand');
     var isJc = isJazzCashContext(sourceOrWallet);
     if(box){
-      box.innerHTML = isJc ? JC_LOGO_IMG : EP_LOGO_SVG;
+      if(isJc){
+        box.innerHTML = JC_LOGO_IMG;
+      }else{
+        var repoLogo = getRepoLogoFile(sourceOrWallet);
+        box.innerHTML = repoLogo
+          ? '<img src="'+repoLogo+'" alt="'+String(sourceOrWallet||'').replace(/"/g,'&quot;')+'" style="width:100%;height:100%;object-fit:contain;display:block" onerror="this.onerror=null;this.src=\'icon-192.png\'">'
+          : EP_LOGO_SVG;
+      }
     }
     if(brandEl){
       brandEl.textContent = isJc ? 'JazzCash' : 'easypaisa';
@@ -1401,6 +1456,11 @@
     var htmlToShow = EP_LOGO_SVG;
     if(returnScreenAfterAmt === 'bankAcct' && selectedBankItem){
       htmlToShow = renderBankBadgeHtml(selectedBankItem);
+    }else if(transferMethod === 'Wallet' && selectedWallet && selectedWallet !== 'Wallet'){
+      var wLogo = getRepoLogoFile(selectedWallet);
+      htmlToShow = wLogo
+        ? '<img src="'+wLogo+'" alt="'+String(selectedWallet).replace(/"/g,'&quot;')+'" style="width:100%;height:100%;object-fit:contain;display:block" onerror="this.onerror=null;this.src=\'icon-192.png\'">'
+        : EP_LOGO_SVG;
     }else if(isJazzCashContext()){
       htmlToShow = JC_LOGO_IMG;
     }
@@ -1414,6 +1474,7 @@
     document.querySelectorAll('[data-ep-logo]').forEach(function(el){el.innerHTML=EP_LOGO_SVG;});
     document.querySelectorAll('[data-ep-wallet-ico]').forEach(function(el){el.innerHTML=EP_WALLET_ICO_SVG;});
     renderBankPickList();
+    renderWalletList();
     updateRecipientBadges();
     setSummaryReceiptLogo();
     updateEpLogosVisibility();
@@ -2041,10 +2102,11 @@
     var q=(document.getElementById('wSearch')&&document.getElementById('wSearch').value||'').toLowerCase().trim();
     var list=WALLETS.filter(function(w){return w.toLowerCase().indexOf(q)>-1;});
     if(!list.length){el.innerHTML='<div class="empty">Koi wallet nahi mila.</div>';return;}
-    el.innerHTML=list.map(function(w){return '<button class="wrow" onclick="selectWallet(\''+w.replace(/'/g,"")+'\')"><span class="wav">'+initials(w)+'</span>'+w+'<span class="ch">›</span></button>';}).join('');}
+    el.innerHTML=list.map(function(w){return '<button class="wrow" onclick="selectWallet(\''+w.replace(/'/g,"")+'\')"><span class="wav">'+renderWalletLogoHtml(w)+'</span>'+w+'<span class="ch">›</span></button>';}).join('');}
   function selectWallet(name){transferMethod='Wallet';selectedWallet=name;selectedBankItem=null;returnScreenAfterAmt='walletAcct';updateEpLogosVisibility();
     document.getElementById('waWallet').textContent=name;
-    document.getElementById('waLogo').innerHTML = isJazzCashContext(name) ? '<img src="jazzcash.webp" alt="JazzCash" style="width:100%;height:100%;object-fit:contain;display:block;border-radius:50%" onerror="this.remove();this.parentNode.textContent=\''+initials(name)+'\'">' : initials(name);
+    var wLogo = getRepoLogoFile(name);
+    document.getElementById('waLogo').innerHTML = wLogo ? '<img src="'+wLogo+'" alt="'+String(name).replace(/"/g,'&quot;')+'" style="width:100%;height:100%;object-fit:contain;display:block;border-radius:50%" onerror="this.remove();this.parentNode.textContent=\''+initials(name)+'\'">' : initials(name);
     document.getElementById('wa_num').value='';document.getElementById('wa_err').textContent='';
     waMode('acc');go('walletAcct');}
   function waMode(m){var acc=m==='acc';
