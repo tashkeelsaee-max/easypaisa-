@@ -137,7 +137,11 @@
   .bp-tab{padding:8px 6px;font-size:13px;font-weight:600;color:#6c7b73;position:relative;text-align:center}
   .bp-tab.on{color:#22b352}
   .bp-tab.on::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:#27c059;border-radius:2px}
-  .bp-list{display:flex;flex-direction:column;margin-top:4px}
+  .bp-search{display:flex;align-items:center;gap:9px;background:#ffffff;border:1px solid #e2ebe5;border-radius:24px;padding:8px 13px;margin-top:11px;margin-bottom:4px;box-shadow:0 1px 4px rgba(0,0,0,.02)}
+  .bp-search svg{width:16px;height:16px;flex:none;stroke:#6c7b73;stroke-width:2;fill:none;stroke-linecap:round}
+  .bp-search input{border:none;outline:none;background:none;color:var(--fg);font-size:13px;width:100%;min-width:0}
+  .bp-search input::placeholder{color:#7c8a82}
+  .bp-list{display:flex;flex-direction:column;margin-top:2px}
   .bp-row{display:flex;align-items:center;gap:12px;padding:12px 2px;border-bottom:1px solid #e8efe9;width:100%;text-align:left;background:transparent;transition:background .12s}
   .bp-row:active{background:#e8f8ee}
   .bp-logo{width:36px;height:36px;border-radius:9px;background:#ffffff;border:1px solid #e2ebe5;display:grid;place-items:center;flex:none;overflow:hidden;padding:3px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
@@ -645,6 +649,10 @@
       <div class="bp-tabs">
         <button class="bp-tab on" id="bpTabSend" type="button" onclick="setBankTab('send')">Send Money</button>
         <button class="bp-tab" id="bpTabHist" type="button" onclick="setBankTab('history')">History</button>
+      </div>
+      <div class="bp-search">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+        <input id="bankSearchInput" type="text" placeholder="Search Bank by Name" oninput="renderBankPickList()">
       </div>
       <div class="bp-list" id="bankPickList"></div>
     </div>
@@ -1192,8 +1200,8 @@
   var EP_WALLET_ICO_SVG='<svg viewBox="0 0 36 36" width="100%" height="100%" aria-hidden="true"><rect x="4" y="10" width="22" height="17" rx="4" fill="#25b857"/><path d="M4 15h22" stroke="#ffffff" stroke-width="2"/><circle cx="27" cy="21" r="6.5" fill="#f7c948" stroke="#c9931c" stroke-width="1.6"/><text x="27" y="23.5" text-anchor="middle" font-size="7.5" font-weight="800" fill="#7a5200">Rs</text></svg>';
 
   var REPO_LOGOS_BY_NAME = {
-    'abhi microfinance bank': 'AchiMicrofinance.png',
-    'abhi microfinance': 'AchiMicrofinance.png',
+    'abhi microfinance bank': 'AbhiMicrofinance.png',
+    'abhi microfinance': 'AbhiMicrofinance.png',
     'al baraka islamic bank limited': 'Abankislamic.jpg',
     'alfa pay': 'Afapay.png',
     'allied bank limited': 'Alliedbank.png',
@@ -1261,6 +1269,8 @@
   }
 
   var BANK_DIRECTORY = [
+    {name:'ABHI Microfinance Bank', code:'ABHI', bg:'#14284b', fg:'#ffffff', logo:'AbhiMicrofinance.png', fallbackLogo:'AchiMicrofinance.png'},
+    {name:'Aik Digital', code:'AIK', bg:'#112233', fg:'#ffffff'},
     {name:'Al Baraka Bank (Pakistan) Limited', code:'AB', bg:'#0057a8', fg:'#ffffff', logo:'elbaraka.jpg'},
     {name:'Al Baraka Islamic Bank Limited', code:'AI', bg:'#006847', fg:'#ffffff', logo:'Abankislamic.jpg'},
     {name:'Alfa Pay', code:'AP', bg:'#c8102e', fg:'#ffffff', logo:'Afapay.png'},
@@ -1333,11 +1343,15 @@
   function renderBankBadgeHtml(item){
     if(!item) return EP_LOGO_SVG;
     var logoFile = item.logo || getRepoLogoFile(item.name);
+    var fallbackFile = item.fallbackLogo || '';
     var code = item.code || initials(item.name) || 'BK';
     var fb = '<span style="width:100%;height:100%;border-radius:7px;background:'+(item.bg||'#199944')+';color:'+(item.fg||'#ffffff')+';display:grid;place-items:center;font-size:'+(code.length>3?'8.5px':'10px')+';font-weight:800;letter-spacing:-.3px;line-height:1">'+code+'</span>';
     if(logoFile){
       var safeName = String(item.name || '').replace(/"/g,'&quot;');
-      return '<img src="'+logoFile+'" alt="'+safeName+'" style="width:100%;height:100%;object-fit:contain;display:block" onerror="this.outerHTML='+JSON.stringify(fb).replace(/"/g,'&quot;')+'">';
+      var onErr = fallbackFile
+        ? 'this.onerror=function(){this.outerHTML='+JSON.stringify(fb).replace(/"/g,'&quot;')+';};this.src=\''+fallbackFile+'\''
+        : 'this.outerHTML='+JSON.stringify(fb).replace(/"/g,'&quot;');
+      return '<img src="'+logoFile+'" alt="'+safeName+'" style="width:100%;height:100%;object-fit:contain;display:block" onerror="'+onErr+'">';
     }
     return fb;
   }
@@ -1348,7 +1362,10 @@
     var fb = '<span>'+code+'</span>';
     if(logoFile){
       var safeName = String(walletName || '').replace(/"/g,'&quot;');
-      return '<img src="'+logoFile+'" alt="'+safeName+'" style="width:100%;height:100%;object-fit:contain;display:block" onerror="this.outerHTML='+JSON.stringify(fb).replace(/"/g,'&quot;')+'">';
+      var onErr = (logoFile === 'AbhiMicrofinance.png')
+        ? 'this.onerror=function(){this.remove();this.parentNode.innerHTML=\''+fb+'\';};this.src=\'AchiMicrofinance.png\''
+        : 'this.outerHTML='+JSON.stringify(fb).replace(/"/g,'&quot;');
+      return '<img src="'+logoFile+'" alt="'+safeName+'" style="width:100%;height:100%;object-fit:contain;display:block" onerror="'+onErr+'">';
     }
     return fb;
   }
@@ -1356,10 +1373,23 @@
   function renderBankPickList(){
     var el = document.getElementById('bankPickList');
     if(!el) return;
-    el.innerHTML = BANK_DIRECTORY.map(function(item, idx){
-      return '<button class="bp-row" type="button" onclick="selectBankForTransfer('+idx+')">' +
-        '<span class="bp-logo">'+renderBankBadgeHtml(item)+'</span>' +
-        '<span class="bp-name">'+item.name+'</span>' +
+    var inp = document.getElementById('bankSearchInput');
+    var q = (inp && inp.value || '').toLowerCase().trim();
+    var rows = BANK_DIRECTORY.map(function(item, idx){ return {item:item, idx:idx}; });
+    if(q){
+      rows = rows.filter(function(entry){
+        var hay = ((entry.item.name || '') + ' ' + (entry.item.code || '')).toLowerCase();
+        return hay.indexOf(q) > -1;
+      });
+    }
+    if(!rows.length){
+      el.innerHTML = '<div class="empty">Koi bank nahi mila.</div>';
+      return;
+    }
+    el.innerHTML = rows.map(function(entry){
+      return '<button class="bp-row" type="button" onclick="selectBankForTransfer('+entry.idx+')">' +
+        '<span class="bp-logo">'+renderBankBadgeHtml(entry.item)+'</span>' +
+        '<span class="bp-name">'+entry.item.name+'</span>' +
       '</button>';
     }).join('');
   }
@@ -2138,6 +2168,8 @@
       selectedBankItem=null;
       var sBtn=document.getElementById('bpTabSend'),hBtn=document.getElementById('bpTabHist');
       if(sBtn)sBtn.classList.add('on');if(hBtn)hBtn.classList.remove('on');
+      var bSearch=document.getElementById('bankSearchInput');
+      if(bSearch)bSearch.value='';
       renderBankPickList();
       go('bankPick');
       return;
@@ -2298,3 +2330,4 @@
 </script>
 </body>
 </html>
+
