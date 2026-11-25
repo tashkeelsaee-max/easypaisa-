@@ -537,13 +537,16 @@
   .scanov{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center}
   .scantop{display:flex;align-items:center;justify-content:space-between;width:100%;color:#fff;font-size:15px;font-weight:600;padding-top:calc(env(safe-area-inset-top,0px) + 12px)}
   .scanx{width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.4);color:#fff;font-size:15px;display:grid;place-items:center}
-  .scanframe{position:relative;width:200px;height:200px;margin-top:20vh}
-  .scanframe i{position:absolute;width:28px;height:28px;border:3px solid #fff}
+  .scanframe{position:relative;width:210px;height:210px;margin-top:18vh;overflow:hidden}
+  .scanframe i{position:absolute;width:28px;height:28px;border:3px solid #28c25b}
   .scanframe i:nth-child(1){left:0;top:0;border-right:none;border-bottom:none;border-radius:7px 0 0 0}
   .scanframe i:nth-child(2){right:0;top:0;border-left:none;border-bottom:none;border-radius:0 7px 0 0}
   .scanframe i:nth-child(3){left:0;bottom:0;border-right:none;border-top:none;border-radius:0 0 0 7px}
   .scanframe i:nth-child(4){right:0;bottom:0;border-left:none;border-top:none;border-radius:0 0 7px 0}
-  .scanhint{color:#fff;font-size:12.5px;margin-top:16px;text-shadow:0 1px 4px rgba(0,0,0,.6);text-align:center;padding:0 18px}
+  .scanline{position:absolute;left:8px;right:8px;height:2.5px;background:linear-gradient(90deg,transparent,#28c25b,#9cebb7,#28c25b,transparent);box-shadow:0 0 10px #28c25b;animation:scanbeam 2s ease-in-out infinite}
+  @keyframes scanbeam{0%,100%{top:10px}50%{top:calc(100% - 12px)}}
+  .scancaptured-name{margin-top:12px;background:rgba(16,28,20,.78);color:#9cebb7;border:1px solid rgba(156,235,183,.45);border-radius:12px;padding:6px 12px;font-size:12.5px;font-weight:700;max-width:85%;text-align:center}
+  .scanhint{color:#fff;font-size:12.5px;margin-top:12px;text-shadow:0 1px 4px rgba(0,0,0,.6);text-align:center;padding:0 18px}
   .scanmanual{position:absolute;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);padding:10px 20px;border-radius:24px;background:#fff;color:var(--brand-deep,#199944);font-weight:700;font-size:13px}
 
   .nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--surface);border-top:1px solid var(--line);display:flex;width:100%;max-width:440px;margin:0 auto;padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -4px 14px rgba(0,0,0,.04)}
@@ -552,6 +555,7 @@
   .nav button.on{color:#1eb552;font-weight:600}
   .nav button.on svg{stroke:#1eb552;fill:rgba(37,184,87,.16)}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 </head>
 <body>
 
@@ -880,8 +884,9 @@
         <span>Scan QR Code</span>
         <span style="width:32px"></span>
       </div>
-      <div class="scanframe"><i></i><i></i><i></i><i></i></div>
-      <div class="scanhint" id="scanHint">QR code ko frame ke andar rakhein</div>
+      <div class="scanframe"><i></i><i></i><i></i><i></i><div class="scanline"></div></div>
+      <div class="scancaptured-name" id="scanDetectedName" hidden></div>
+      <div class="scanhint" id="scanHint">QR code ko frame ke andar rakhein — automatic scan hoga</div>
       <button class="scanmanual" onclick="closeScanner();openSheet()">Number se bhejein</button>
     </div>
   </section>
@@ -1167,7 +1172,12 @@
     if(!ctx) return;
     try{
       var now = ctx.currentTime;
-      var tones = (type === 'notif')
+      var tones = (type === 'scan')
+        ? [
+            {f: 1174.66, t: 0.00, d: 0.065},
+            {f: 1567.98, t: 0.075, d: 0.09}
+          ]
+        : (type === 'notif')
         ? [
             {f: 784, t: 0.00, d: 0.08},
             {f: 1046.5, t: 0.09, d: 0.11}
@@ -1179,10 +1189,10 @@
       tones.forEach(function(item){
         var osc = ctx.createOscillator();
         var gain = ctx.createGain();
-        osc.type = 'triangle';
+        osc.type = type === 'scan' ? 'sine' : 'triangle';
         osc.frequency.setValueAtTime(item.f, now + item.t);
         gain.gain.setValueAtTime(0.001, now + item.t);
-        gain.gain.exponentialRampToValueAtTime(0.18, now + item.t + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.2, now + item.t + 0.012);
         gain.gain.exponentialRampToValueAtTime(0.0008, now + item.t + item.d);
         osc.connect(gain);
         gain.connect(ctx.destination);
@@ -1194,6 +1204,7 @@
 
   function playSendVoice(){ playVideoStyleTone('send'); }
   function playNotifVoice(){ playVideoStyleTone('notif'); }
+  function playScanBeep(){ playVideoStyleTone('scan'); }
 
   var EP_LOGO_SVG='<img src="icon-192.png" alt="easypaisa" style="width:100%;height:100%;object-fit:contain;display:block">';
   var JC_LOGO_IMG='<img src="jazzcash.webp" alt="JazzCash" style="width:100%;height:100%;object-fit:contain;display:block" onerror="this.onerror=null;this.src=\'icon-192.png\'">';
@@ -2085,12 +2096,185 @@
 
   function toggleBal(){hidden=!hidden;renderBal();}
   function toggleMacc(){var s=document.getElementById('maccSub'),b=document.getElementById('maccBtn');s.hidden=!s.hidden;b.classList.toggle('open',!s.hidden);}
+
   var camStream=null;
-  function openScanner(){if(!isSignedIn){openSignInModal();return;}go('scanner');startCamera();}
-  function startCamera(){var hint=document.getElementById('scanHint');hint.textContent='QR code ko frame ke andar rakhein';
-    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){hint.textContent='Is browser mein camera support nahi. Neeche se number se bhejein.';return;}
-    navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false}).then(function(s){camStream=s;var v=document.getElementById('camFeed');v.srcObject=s;v.play&&v.play();}).catch(function(){hint.textContent='Camera open nahi hua — permission allow karein, ya neeche se number se bhejein.';});}
-  function stopCamera(){if(camStream){camStream.getTracks().forEach(function(t){t.stop();});camStream=null;}var v=document.getElementById('camFeed');if(v)v.srcObject=null;}
+  var scanRafId=null;
+  var scanBusy=false;
+  var barcodeDetectorInst=null;
+  var qrCanvasEl=null;
+  var qrCanvasCtx=null;
+
+  function openScanner(){
+    getAudioCtx();
+    if(!isSignedIn){openSignInModal();return;}
+    go('scanner');
+    startCamera();
+  }
+
+  function parseQrPayload(rawText){
+    var clean = String(rawText || '').trim();
+    var extractedName = '';
+    var extractedNum = '';
+
+    var mobMatch = clean.match(/(?:\+92|0092|0)?(3\d{9})/);
+    if(mobMatch){
+      extractedNum = '0' + mobMatch[1];
+    }
+
+    var nameMatch = clean.match(/(?:name|merchant|payee|to|nm|holder|account)[\s:=_-]*([A-Za-z][A-Za-z0-9 .&'-]{1,40})/i);
+    if(nameMatch && nameMatch[1]){
+      extractedName = nameMatch[1].trim();
+    }else if(clean.indexOf('|') > -1){
+      var parts = clean.split('|').map(function(p){ return p.trim(); }).filter(Boolean);
+      for(var i=0;i<parts.length;i++){
+        if(/[A-Za-z]{2,}/.test(parts[i]) && !/^(qr|ep|easypaisa|raast|pk|http|https)$/i.test(parts[i])){
+          extractedName = parts[i];
+          break;
+        }
+      }
+    }
+
+    if(!extractedName && extractedNum && CONTACTS[extractedNum]){
+      extractedName = CONTACTS[extractedNum];
+    }
+
+    if(!extractedName){
+      var withoutUrl = clean.replace(/https?:\/\/\S+/gi,'').replace(/[^A-Za-z0-9 .&'-]/g,' ').trim();
+      var words = withoutUrl.split(/\s+/).filter(function(w){ return /[A-Za-z]{2,}/.test(w) && !/^(qr|pay|payment|send|money|easypaisa|raast|pk)$/i.test(w); });
+      if(words.length){
+        extractedName = words.slice(0, 4).join(' ');
+      }
+    }
+
+    if(!extractedName){
+      extractedName = 'QR Merchant';
+    }
+
+    if(!extractedNum){
+      var digitsOnly = clean.replace(/[^0-9]/g,'');
+      extractedNum = digitsOnly.length >= 6 ? digitsOnly.slice(0, 16) : '03001234501';
+    }
+
+    return { name: extractedName, num: extractedNum, raw: clean };
+  }
+
+  function handleQrDetected(rawText){
+    if(scanBusy || !rawText) return;
+    scanBusy = true;
+    stopScanLoop();
+    playScanBeep();
+
+    var parsed = parseQrPayload(rawText);
+    var nameBadge = document.getElementById('scanDetectedName');
+    var hint = document.getElementById('scanHint');
+    if(nameBadge){
+      nameBadge.textContent = parsed.name;
+      nameBadge.hidden = false;
+    }
+    if(hint){
+      hint.textContent = 'QR scan ho gaya: ' + parsed.name;
+    }
+
+    transferMethod = 'Easypaisa';
+    selectedWallet = '';
+    selectedBankItem = null;
+    curName = parsed.name;
+    curNum = parsed.num;
+    curPurpose = 'QR Payment';
+    returnScreenAfterAmt = 'scanner';
+
+    setTimeout(function(){
+      stopCamera();
+      openAmountScreen();
+      scanBusy = false;
+    }, 320);
+  }
+
+  function scanFrameTick(){
+    if(!scanBusy && camStream){
+      var v = document.getElementById('camFeed');
+      if(v && v.readyState >= 2 && v.videoWidth > 0 && v.videoHeight > 0){
+        if(barcodeDetectorInst){
+          barcodeDetectorInst.detect(v).then(function(barcodes){
+            if(!scanBusy && barcodes && barcodes.length > 0 && barcodes[0].rawValue){
+              handleQrDetected(barcodes[0].rawValue);
+            }
+          }).catch(function(){});
+        }
+        if(!scanBusy && typeof window.jsQR === 'function'){
+          if(!qrCanvasEl){
+            qrCanvasEl = document.createElement('canvas');
+            qrCanvasCtx = qrCanvasEl.getContext('2d', {willReadFrequently:true});
+          }
+          var targetW = Math.min(480, v.videoWidth);
+          var targetH = Math.round((v.videoHeight / v.videoWidth) * targetW);
+          if(targetW > 0 && targetH > 0){
+            qrCanvasEl.width = targetW;
+            qrCanvasEl.height = targetH;
+            qrCanvasCtx.drawImage(v, 0, 0, targetW, targetH);
+            var imgData = qrCanvasCtx.getImageData(0, 0, targetW, targetH);
+            var code = window.jsQR(imgData.data, imgData.width, imgData.height, {inversionAttempts: 'attemptBoth'});
+            if(code && code.data){
+              handleQrDetected(code.data);
+              return;
+            }
+          }
+        }
+      }
+    }
+    if(camStream && !scanBusy){
+      scanRafId = requestAnimationFrame(scanFrameTick);
+    }
+  }
+
+  function startScanLoop(){
+    stopScanLoop();
+    if('BarcodeDetector' in window){
+      try{
+        barcodeDetectorInst = new window.BarcodeDetector({formats: ['qr_code']});
+      }catch(e){
+        barcodeDetectorInst = null;
+      }
+    }
+    scanRafId = requestAnimationFrame(scanFrameTick);
+  }
+
+  function stopScanLoop(){
+    if(scanRafId){
+      cancelAnimationFrame(scanRafId);
+      scanRafId = null;
+    }
+  }
+
+  function startCamera(){
+    scanBusy = false;
+    var nameBadge = document.getElementById('scanDetectedName');
+    if(nameBadge){ nameBadge.hidden = true; nameBadge.textContent = ''; }
+    var hint=document.getElementById('scanHint');
+    hint.textContent='QR code ko frame ke andar rakhein — automatic scan hoga';
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+      hint.textContent='Is browser mein camera support nahi. Neeche se number se bhejein.';
+      return;
+    }
+    navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false}).then(function(s){
+      camStream=s;
+      var v=document.getElementById('camFeed');
+      v.srcObject=s;
+      var p = v.play && v.play();
+      if(p && p.then){ p.then(startScanLoop).catch(startScanLoop); }
+      else{ startScanLoop(); }
+    }).catch(function(){
+      hint.textContent='Camera open nahi hua — permission allow karein, ya neeche se number se bhejein.';
+    });
+  }
+
+  function stopCamera(){
+    stopScanLoop();
+    if(camStream){camStream.getTracks().forEach(function(t){t.stop();});camStream=null;}
+    var v=document.getElementById('camFeed');
+    if(v)v.srcObject=null;
+  }
+
   function closeScanner(){stopCamera();go('home');}
 
   function setAmt(id,v){document.getElementById(id).value=v;}
@@ -2339,4 +2523,3 @@
 </script>
 </body>
 </html>
-
