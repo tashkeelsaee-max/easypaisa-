@@ -1222,15 +1222,15 @@
   var EP_WALLET_ICO_SVG='<svg viewBox="0 0 36 36" width="100%" height="100%" aria-hidden="true"><rect x="4" y="10" width="22" height="17" rx="4" fill="#25b857"/><path d="M4 15h22" stroke="#ffffff" stroke-width="2"/><circle cx="27" cy="21" r="6.5" fill="#f7c948" stroke="#c9931c" stroke-width="1.6"/><text x="27" y="23.5" text-anchor="middle" font-size="7.5" font-weight="800" fill="#7a5200">Rs</text></svg>';
 
   var BANK_DIRECTORY = [
-    {name:'Al Baraka Bank (Pakistan) Limited', code:'AB', bg:'#0057a8', fg:'#ffffff'},
-    {name:'Al Baraka Islamic Bank Limited', code:'AI', bg:'#006847', fg:'#ffffff'},
-    {name:'Alfa Pay', code:'AP', bg:'#c8102e', fg:'#ffffff'},
-    {name:'Allied Bank Limited', code:'ABL', bg:'#0b3d91', fg:'#ffffff'},
-    {name:'Apna Microfinance Bank', code:'AMB', bg:'#1b7f43', fg:'#ffffff'},
-    {name:'Askari Commercial Bank Limited', code:'AKBL', bg:'#004b87', fg:'#ffffff'},
-    {name:'Bank Al Habib Limited', code:'BAHL', bg:'#005a9c', fg:'#ffffff'},
-    {name:'Bank Alfalah Limited', code:'BAFL', bg:'#d91b24', fg:'#ffffff'},
-    {name:'BankIslami Pakistan Limited', code:'BIPL', bg:'#007a4d', fg:'#ffffff'},
+    {name:'Al Baraka Bank (Pakistan) Limited', code:'AB', bg:'#0057a8', fg:'#ffffff', logo:'albarka.jpg'},
+    {name:'Al Baraka Islamic Bank Limited', code:'AI', bg:'#006847', fg:'#ffffff', logo:'Albarkaislamic.jpg'},
+    {name:'Alfa Pay', code:'AP', bg:'#c8102e', fg:'#ffffff', logo:'Alfapay.png'},
+    {name:'Allied Bank Limited', code:'ABL', bg:'#0b3d91', fg:'#ffffff', logo:'Alliedbank.png'},
+    {name:'Apna Microfinance Bank', code:'AMB', bg:'#1b7f43', fg:'#ffffff', logo:'ApnaMicrofinance.jpg'},
+    {name:'Askari Commercial Bank Limited', code:'AKBL', bg:'#004b87', fg:'#ffffff', logo:'askaribank.png'},
+    {name:'Bank Al Habib Limited', code:'BAHL', bg:'#005a9c', fg:'#ffffff', logo:'bankalhabib.jpg'},
+    {name:'Bank Alfalah Limited', code:'BAFL', bg:'#d91b24', fg:'#ffffff', logo:'bankalfalah.png'},
+    {name:'BankIslami Pakistan Limited', code:'BIPL', bg:'#007a4d', fg:'#ffffff', logo:'BankIslamic.png'},
     {name:'Bank Makramah Limited BML', code:'BML', bg:'#143d73', fg:'#ffffff'},
     {name:'Bank of China', code:'BOC', bg:'#b71c1c', fg:'#ffffff'},
     {name:'Bank of Khyber', code:'BOK', bg:'#006b3f', fg:'#ffffff'},
@@ -1296,7 +1296,11 @@
     if(item.useJazzLogo || String(item.name || '').toLowerCase().indexOf('jazzcash') > -1){
       return JC_LOGO_IMG;
     }
-    return '<span style="width:100%;height:100%;border-radius:7px;background:'+(item.bg||'#199944')+';color:'+(item.fg||'#ffffff')+';display:grid;place-items:center;font-size:'+(item.code.length>3?'8.5px':'10px')+';font-weight:800;letter-spacing:-.3px;line-height:1">'+item.code+'</span>';
+    var fb = '<span style="width:100%;height:100%;border-radius:7px;background:'+(item.bg||'#199944')+';color:'+(item.fg||'#ffffff')+';display:grid;place-items:center;font-size:'+(item.code.length>3?'8.5px':'10px')+';font-weight:800;letter-spacing:-.3px;line-height:1">'+item.code+'</span>';
+    if(item.logo){
+      return '<img src="'+item.logo+'" alt="'+item.name+'" style="width:100%;height:100%;object-fit:contain;display:block" onerror="this.outerHTML='+JSON.stringify(fb)+'">';
+    }
+    return fb;
   }
 
   function renderBankPickList(){
@@ -2231,4 +2235,3 @@
 </script>
 </body>
 </html>
-
