@@ -124,7 +124,6 @@
   .story{flex:none;width:84px;height:84px;border-radius:50%;padding:2.5px;background:linear-gradient(145deg,var(--brand),var(--brand-deep));display:grid;place-items:center}
   .story .inner{width:100%;height:100%;border-radius:50%;background:linear-gradient(160deg,#22b554,#149440);display:grid;place-items:center;text-align:center;color:#eafff0;font-size:9.5px;font-weight:600;padding:7px;border:2px solid var(--bg);line-height:1.2}
 
-  /* Hubs Section (Dashboard Bottom) */
   .hubs-wrap{margin-top:14px;padding-bottom:6px;width:100%}
   .hubs-heading{font-size:15.5px;font-weight:700;color:#1b241f;margin:0 0 10px 1px;letter-spacing:-.2px}
   .hubs-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;width:100%}
@@ -425,20 +424,250 @@
   @keyframes up{from{transform:translateY(100%)}to{transform:none}}
   .sheet h3{text-align:center;font-size:16px;font-weight:700;margin-bottom:12px;color:#1b241f}
 
-  .signin-modal{border-radius:18px;width:calc(100% - 28px);max-width:390px;margin:auto;padding:16px 15px 18px;animation:fade .2s ease}
-  .signin-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
-  .signin-head .brand-row{display:flex;align-items:center;gap:8px}
-  .signin-head .slogo{width:32px;height:32px;border-radius:9px;background:#ffffff;border:1px solid #e2ece6;display:grid;place-items:center;padding:4px;overflow:hidden}
-  .signin-head h3{margin:0;text-align:left;font-size:16px}
-  .signin-x{width:28px;height:28px;border-radius:50%;background:#eef3f0;color:#232f28;font-size:14px;display:grid;place-items:center}
-  .signin-sub{font-size:11.5px;color:#5d6b63;margin-bottom:12px}
-  .signin-field{margin-bottom:11px}
-  .signin-field label{display:block;font-size:11.5px;font-weight:600;color:#23332a;margin-bottom:4px}
-  .signin-field input{width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid #d5e3db;background:#ffffff;color:#17241d;font-size:14px;outline:none}
-  .signin-field input:focus{border-color:var(--brand)}
-  .signin-submit{width:100%;padding:11px;border-radius:11px;background:var(--brand);color:#ffffff;font-weight:700;font-size:14px;margin-top:4px;box-shadow:var(--shadow)}
-  .signin-submit:active{background:var(--brand-deep)}
-  .signin-note{text-align:center;font-size:10.5px;color:#6c7b73;margin-top:9px;line-height:1.35}
+  /* 5-Digit PIN Lock Dashboard (Matches Reference Screenshot) */
+  .pin-sheet-back{background:rgba(15,24,18,.42);backdrop-filter:blur(1.5px)}
+  .pin-dashboard{
+    background:#ffffff;
+    border-radius:24px 24px 0 0;
+    padding:0;
+    overflow:hidden;
+    box-shadow:0 -10px 32px rgba(0,0,0,.18);
+  }
+  .pin-upper{
+    position:relative;
+    padding:26px 20px 22px;
+    background:#ffffff;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  .pin-close-btn{
+    position:absolute;
+    top:14px;
+    right:14px;
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    background:#e9ecea;
+    color:#ffffff;
+    font-size:13px;
+    font-weight:700;
+    display:grid;
+    place-items:center;
+  }
+  .pin-close-btn:active{background:#d4dad7}
+  .pin-lock-art{
+    width:98px;
+    height:112px;
+    margin:2px auto 12px;
+    display:grid;
+    place-items:center;
+    filter:drop-shadow(0 8px 14px rgba(24,148,66,.16));
+  }
+  .pin-title{
+    font-size:17.5px;
+    font-weight:500;
+    color:#2b332e;
+    text-align:center;
+    letter-spacing:-.1px;
+  }
+  .pin-boxes{
+    display:grid;
+    grid-template-columns:repeat(5, 1fr);
+    gap:10px;
+    width:100%;
+    max-width:336px;
+    margin:18px auto 0;
+  }
+  .pin-box{
+    height:50px;
+    border-radius:11px;
+    border:1.5px solid #e2e7e4;
+    background:#ffffff;
+    display:grid;
+    place-items:center;
+    font-size:21px;
+    font-weight:600;
+    color:#1ea349;
+    transition:border-color .14s, box-shadow .14s;
+  }
+  .pin-box.active{
+    border:2px solid #28c25b;
+    box-shadow:0 0 0 2px rgba(40,194,91,.10);
+  }
+  .pin-box .pin-dash{
+    color:#9ca8a1;
+    font-size:16px;
+    font-weight:600;
+  }
+  .pin-box .pin-dot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:#22b352;
+  }
+  .pin-box.shake{
+    border-color:#e0493d!important;
+    animation:pinShake .32s ease;
+  }
+  @keyframes pinShake{
+    0%,100%{transform:translateX(0)}
+    25%{transform:translateX(-5px)}
+    50%{transform:translateX(5px)}
+    75%{transform:translateX(-4px)}
+  }
+  .pin-fp-row{
+    margin-top:13px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+  }
+  .pin-fp-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    padding:7px 14px;
+    border-radius:99px;
+    background:#eaf8ef;
+    border:1px solid #bde6cb;
+    color:#178a3e;
+    font-size:12.5px;
+    font-weight:600;
+  }
+  .pin-fp-btn:active{background:#d6f2e0}
+  .pin-fp-btn svg{
+    width:18px;
+    height:18px;
+    stroke:#1ea349;
+    stroke-width:1.9;
+    fill:none;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+  }
+
+  .pin-kbd{
+    background:#eceff1;
+    border-top:1px solid #dfe4e7;
+    padding:7px 7px calc(12px + env(safe-area-inset-bottom,0px));
+  }
+  .pin-kbd-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:2px 6px 8px;
+  }
+  .pin-kbd-icons{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .pin-k-badge{
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    background:#5a6570;
+    color:#ffffff;
+    font-size:11.5px;
+    font-weight:700;
+    display:grid;
+    place-items:center;
+  }
+  .pin-kbd-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:6px;
+  }
+  .pin-key{
+    height:48px;
+    border-radius:7px;
+    background:#f7f8f9;
+    color:#23282c;
+    font-size:21px;
+    font-weight:400;
+    display:grid;
+    place-items:center;
+    box-shadow:0 1px 0 rgba(0,0,0,.14);
+    user-select:none;
+    transition:background .08s, transform .06s;
+  }
+  .pin-key:active{
+    background:#dfe4e8;
+    transform:scale(.98);
+  }
+  .pin-key.fn{
+    background:#e2e6ea;
+    font-size:16px;
+    font-weight:500;
+    color:#2b3136;
+  }
+  .pin-key.fn:active{
+    background:#cfd5db;
+  }
+
+  /* Security / Fingerprint Settings Card */
+  .sec-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:16px;
+    margin-top:14px;
+    box-shadow:var(--shadow);
+  }
+  .sec-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .sec-info{display:flex;align-items:center;gap:12px;min-width:0}
+  .sec-fp-ico{
+    width:44px;
+    height:44px;
+    border-radius:12px;
+    background:#e8f8ee;
+    color:var(--brand);
+    display:grid;
+    place-items:center;
+    flex:none;
+  }
+  .sec-fp-ico svg{width:24px;height:24px;stroke:var(--brand);stroke-width:1.85;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .sec-info b{display:block;font-size:14.5px;color:var(--fg)}
+  .sec-info small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+  .ep-switch{
+    width:48px;
+    height:28px;
+    border-radius:99px;
+    background:#d5ded9;
+    padding:3px;
+    position:relative;
+    flex:none;
+    transition:background .2s;
+  }
+  .ep-switch.on{background:var(--brand)}
+  .ep-switch::after{
+    content:"";
+    position:absolute;
+    top:3px;
+    left:3px;
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:#ffffff;
+    box-shadow:0 1px 4px rgba(0,0,0,.2);
+    transition:transform .2s;
+  }
+  .ep-switch.on::after{transform:translateX(20px)}
+  .sec-status{
+    margin-top:12px;
+    padding:10px 12px;
+    border-radius:10px;
+    background:#f2faf5;
+    border:1px solid #d5eedd;
+    font-size:12px;
+    color:#1e6e3a;
+    line-height:1.4;
+  }
 
   .mgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
   .mopt{background:#ffffff;border:1px solid #e7ece9;border-radius:13px;padding:12px 9px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;font-size:12.5px;font-weight:600;color:#1f2b24;box-shadow:0 2px 6px rgba(0,0,0,.03);min-height:78px;transition:transform .1s,border-color .15s,background .15s}
@@ -693,7 +922,6 @@
       <div class="story"><div class="inner">refer a friend &amp; earn rewards</div></div>
     </div>
 
-    <!-- Hubs Section at Bottom of Main Dashboard -->
     <div class="gut hubs-wrap">
       <h2 class="hubs-heading">Hubs</h2>
       <div class="hubs-grid">
@@ -1073,12 +1301,65 @@
         </div>
         <button onclick="toast('Subscribed Services')"><span class="mi"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"/></svg></span>Subscribed Services</button>
         <button onclick="toast('My Approvals')"><span class="mi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-5"/></svg></span>My Approvals</button>
-        <button onclick="toast('Security Preferences')"><span class="mi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></span>Security Preferences</button>
+        <button onclick="openSecuritySettings()"><span class="mi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></span>Security Preferences</button>
         <button onclick="toast('More')"><span class="mi"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg></span>More</button>
         <button onclick="logout()"><span class="mi"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg></span>Sign Out</button>
       </div>
       <div class="profsep"></div>
       <div class="proffoot"><span>Version V.2.10.11</span><span class="lang"><b>English</b> | اردو</span></div>
+    </div>
+  </section>
+
+  <section class="screen" id="securityPrefs">
+    <div class="cleanhead gut">
+      <button class="cback" onclick="go('profile')">‹</button>
+      <h1 class="edth1">Security Preferences</h1>
+    </div>
+    <div class="gut">
+      <div class="sec-card">
+        <div class="sec-row">
+          <div class="sec-info">
+            <div class="sec-fp-ico">
+              <svg viewBox="0 0 24 24">
+                <path d="M2 12C2 6.5 6.5 2 12 2a10 10 0 0 1 8 4"/>
+                <path d="M5 19.5C5.5 18 6 15 6 12c0-.7.12-1.37.34-2"/>
+                <path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/>
+                <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/>
+                <path d="M8.65 22c.21-.66.45-1.32.57-2"/>
+                <path d="M14 13.12c0 2.38 0 6.38-1 8.88"/>
+                <path d="M2 16h.01"/>
+                <path d="M21.8 16c.2-2 .131-5.354 0-6"/>
+                <path d="M9 6.8a6 6 0 0 1 9 5.2c0 .47 0 1.17-.02 2"/>
+              </svg>
+            </div>
+            <div>
+              <b>Fingerprint Login</b>
+              <small id="fpSubTxt">Touch ID / Biometric se direct sign in karein</small>
+            </div>
+          </div>
+          <button type="button" class="ep-switch" id="fpToggleSwitch" onclick="toggleFingerprintSetting()" aria-label="Toggle Fingerprint Login"></button>
+        </div>
+        <div class="sec-status" id="fpStatusBox">
+          Fingerprint add karne ke liye switch ON karein — agli dafa PIN screen par direct fingerprint se login ho jayega.
+        </div>
+      </div>
+
+      <div class="sec-card">
+        <div class="sec-row">
+          <div class="sec-info">
+            <div class="sec-fp-ico">
+              <svg viewBox="0 0 24 24">
+                <rect x="4" y="11" width="16" height="10" rx="2"/>
+                <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+              </svg>
+            </div>
+            <div>
+              <b>5-Digit Account PIN</b>
+              <small id="secPinHint">Har account ka apna 5-digit PIN hai</small>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -1141,26 +1422,102 @@
   </nav>
 </div>
 
-<div class="sheet-back" id="signInModal" onclick="closeSignInModal()">
-  <div class="sheet signin-modal" onclick="event.stopPropagation()">
-    <div class="signin-head">
-      <div class="brand-row">
-        <div class="slogo"><img src="icon-192.png" alt="easypaisa" style="width:100%;height:100%;object-fit:contain;display:block"></div>
-        <h3>Sign in</h3>
+<!-- 5-Digit PIN Lock Dashboard Modal -->
+<div class="sheet-back pin-sheet-back" id="signInModal" onclick="closeSignInModal()">
+  <div class="sheet pin-dashboard" onclick="event.stopPropagation()">
+    <div class="pin-upper">
+      <button class="pin-close-btn" type="button" onclick="closeSignInModal()" aria-label="Close">✕</button>
+
+      <div class="pin-lock-art" aria-hidden="true">
+        <svg viewBox="0 0 110 124" width="98" height="112">
+          <defs>
+            <linearGradient id="goldShackle" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#b88435"/>
+              <stop offset="28%" stop-color="#f6d893"/>
+              <stop offset="55%" stop-color="#d29f4d"/>
+              <stop offset="85%" stop-color="#fae1a6"/>
+              <stop offset="100%" stop-color="#a57329"/>
+            </linearGradient>
+            <linearGradient id="greenPadlock" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#20b84b"/>
+              <stop offset="55%" stop-color="#0b9b34"/>
+              <stop offset="100%" stop-color="#067a26"/>
+            </linearGradient>
+            <linearGradient id="yellowBadge" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#f7de79"/>
+              <stop offset="100%" stop-color="#e3bc4b"/>
+            </linearGradient>
+          </defs>
+          <!-- Metallic Gold Shackle -->
+          <path d="M35 50 V34 C35 20, 75 20, 75 34 V50" fill="none" stroke="url(#goldShackle)" stroke-width="11" stroke-linecap="round"/>
+          <!-- Main 3D Green Body -->
+          <rect x="20" y="46" width="70" height="62" rx="7" fill="url(#greenPadlock)"/>
+          <!-- Subtle Side Bevel -->
+          <rect x="83" y="47" width="7" height="60" rx="3" fill="#056c21" opacity="0.55"/>
+          <!-- Inner Yellow PIN Bar -->
+          <rect x="28" y="69" width="54" height="16" rx="4" fill="url(#yellowBadge)"/>
+          <!-- 4 Green Asterisks + Underscore -->
+          <text x="55" y="81.5" text-anchor="middle" font-family="monospace, sans-serif" font-size="13.5" font-weight="900" fill="#0e9f37" letter-spacing="1.2">****_</text>
+        </svg>
       </div>
-      <button class="signin-x" type="button" onclick="closeSignInModal()" aria-label="Close">✕</button>
+
+      <h3 class="pin-title">Enter Your 5 Digit PIN</h3>
+
+      <div class="pin-boxes" id="pinBoxes">
+        <div class="pin-box active" id="pinSlot0"><span class="pin-dash">-</span></div>
+        <div class="pin-box" id="pinSlot1"><span class="pin-dash">-</span></div>
+        <div class="pin-box" id="pinSlot2"><span class="pin-dash">-</span></div>
+        <div class="pin-box" id="pinSlot3"><span class="pin-dash">-</span></div>
+        <div class="pin-box" id="pinSlot4"><span class="pin-dash">-</span></div>
+      </div>
+
+      <div class="pin-fp-row" id="pinFpRow" hidden>
+        <button type="button" class="pin-fp-btn" onclick="loginWithFingerprint()">
+          <svg viewBox="0 0 24 24">
+            <path d="M2 12C2 6.5 6.5 2 12 2a10 10 0 0 1 8 4"/>
+            <path d="M5 19.5C5.5 18 6 15 6 12c0-.7.12-1.37.34-2"/>
+            <path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/>
+            <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/>
+            <path d="M8.65 22c.21-.66.45-1.32.57-2"/>
+            <path d="M14 13.12c0 2.38 0 6.38-1 8.88"/>
+            <path d="M2 16h.01"/>
+            <path d="M21.8 16c.2-2 .131-5.354 0-6"/>
+            <path d="M9 6.8a6 6 0 0 1 9 5.2c0 .47 0 1.17-.02 2"/>
+          </svg>
+          <span>Use Fingerprint</span>
+        </button>
+      </div>
     </div>
-    <p class="signin-sub">Apna registered mobile number aur password daalein</p>
-    <div class="signin-field">
-      <label for="loginNum">Mobile Number</label>
-      <input id="loginNum" inputmode="numeric" placeholder="03XX-XXXXXXX" maxlength="12" autocomplete="off" onkeydown="if(event.key==='Enter')document.getElementById('loginPin').focus()">
+
+    <div class="pin-kbd">
+      <div class="pin-kbd-bar">
+        <div class="pin-kbd-icons">
+          <span class="pin-k-badge">k</span>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="#4f5861">
+            <path d="M16 3l5 3-2 4-3-1.5V21H8V8.5L5 10 3 6l5-3c1 1.5 2.5 2.2 4 2.2S15 4.5 16 3z"/>
+          </svg>
+        </div>
+      </div>
+      <div class="pin-kbd-grid">
+        <button type="button" class="pin-key num" onclick="pressPinKey('1')">1</button>
+        <button type="button" class="pin-key num" onclick="pressPinKey('2')">2</button>
+        <button type="button" class="pin-key num" onclick="pressPinKey('3')">3</button>
+        <button type="button" class="pin-key num" onclick="pressPinKey('4')">4</button>
+        <button type="button" class="pin-key num" onclick="pressPinKey('5')">5</button>
+        <button type="button" class="pin-key num" onclick="pressPinKey('6')">6</button>
+        <button type="button" class="pin-key num" onclick="pressPinKey('7')">7</button>
+        <button type="button" class="pin-key num" onclick="pressPinKey('8')">8</button>
+        <button type="button" class="pin-key num" onclick="pressPinKey('9')">9</button>
+        <button type="button" class="pin-key fn" onclick="backspacePinKey()" aria-label="Backspace">
+          <svg width="22" height="18" viewBox="0 0 24 20" fill="none" stroke="#2b3136" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 2h13a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H8l-6-8 6-8z"/>
+            <path d="M12 7l6 6M18 7l-6 6"/>
+          </svg>
+        </button>
+        <button type="button" class="pin-key num" onclick="pressPinKey('0')">0</button>
+        <button type="button" class="pin-key fn" onclick="submitPinEntry()">Done</button>
+      </div>
     </div>
-    <div class="signin-field">
-      <label for="loginPin">Password</label>
-      <input id="loginPin" type="password" inputmode="numeric" placeholder="Enter Password" maxlength="6" autocomplete="off" onkeydown="if(event.key==='Enter')login()">
-    </div>
-    <button class="signin-submit" type="button" onclick="login()">Sign in</button>
-    <p class="signin-note">Sirf registered numbers aur unka sahi password accept hoga</p>
   </div>
 </div>
 
@@ -1812,23 +2169,35 @@
   }
 
   var balance = 9995624, tx = [], notifs = [], hidden = false, isSignedIn = false;
-  var DATA_VER = 20;
+  var DATA_VER = 21;
   var SMS_API_URL = 'https://wallet-sms-backend.onrender.com/api/send-sms';
 
   var ME_NAME='Mrs Tashkeel Saee',ME_NUM='03445488142',ME_EMAIL='Mrstashkeelsaee@gmail.com',ME_PHOTO='';
 
+  /* Har account ka unique 5-Digit PIN: jis ka PIN enter hoga, automatic uski screen khul jayegi */
   var ACCOUNTS={
-    '03445488142':{name:'Mrs Tashkeel Saee',email:'Mrstashkeelsaee@gmail.com',pin:'1122',balance:9995624},
-    '03239099954':{name:'Tashkeel Ahmad',email:'tashkeelsaee@gmail.com',pin:'2233',balance:10000000},
-    '03001234501':{name:'Nasir Jamal',email:'nasir.jamal@easypaisa',pin:'3344',balance:52000},
-    '03262879808':{name:'Muhammad Taha Shahid',email:'tahashahid@gmail.com',pin:'0786',balance:28000},
-    '03331234503':{name:'Shazaib Gillani',email:'shazaib.g@easypaisa',pin:'5566',balance:7300},
-    '03451234504':{name:'Noman Hamza',email:'noman.hamza@easypaisa',pin:'6677',balance:134000},
-    '03011234505':{name:'Ayesha Bibi',email:'ayesha.bibi@easypaisa',pin:'7788',balance:45000},
-    '03451122334':{name:'Fatima Ali',email:'fatima.ali@easypaisa',pin:'8899',balance:29500},
-    '03125556677':{name:'Hamza Tariq',email:'hamza.tariq@easypaisa',pin:'9900',balance:88000},
-    '03424439436':{name:'Tayyab Malik',email:'tayabmalik786@gmail.com',pin:'1669',balance:5000000}
+    '03445488142':{name:'Mrs Tashkeel Saee',email:'Mrstashkeelsaee@gmail.com',pin:'11223',balance:9995624},
+    '03239099954':{name:'Tashkeel Ahmad',email:'tashkeelsaee@gmail.com',pin:'22334',balance:10000000},
+    '03001234501':{name:'Nasir Jamal',email:'nasir.jamal@easypaisa',pin:'33445',balance:52000},
+    '03262879808':{name:'Muhammad Taha Shahid',email:'tahashahid@gmail.com',pin:'07860',balance:28000},
+    '03331234503':{name:'Shazaib Gillani',email:'shazaib.g@easypaisa',pin:'55667',balance:7300},
+    '03451234504':{name:'Noman Hamza',email:'noman.hamza@easypaisa',pin:'66778',balance:134000},
+    '03011234505':{name:'Ayesha Bibi',email:'ayesha.bibi@easypaisa',pin:'77889',balance:45000},
+    '03451122334':{name:'Fatima Ali',email:'fatima.ali@easypaisa',pin:'88990',balance:29500},
+    '03125556677':{name:'Hamza Tariq',email:'hamza.tariq@easypaisa',pin:'99001',balance:88000},
+    '03424439436':{name:'Tayyab Malik',email:'tayabmalik786@gmail.com',pin:'16690',balance:5000000}
   };
+
+  function findAccountByPin(pin5){
+    var keys = Object.keys(ACCOUNTS);
+    for(var i = 0; i < keys.length; i++){
+      var num = keys[i];
+      if(ACCOUNTS[num] && ACCOUNTS[num].pin === pin5){
+        return { num: num, acc: ACCOUNTS[num] };
+      }
+    }
+    return null;
+  }
 
   function getLastAccountNum(){
     try{
@@ -1862,19 +2231,312 @@
     if(authBody) authBody.hidden = !isSignedIn;
   }
 
+  /* 5-Digit PIN & Fingerprint Biometric State */
+  var pinBuffer = '';
+  var FP_STORE_KEY = 'easypaisa_fp_setup_v1';
+
+  function getFpConfig(){
+    try{
+      var raw = JSON.parse(localStorage.getItem(FP_STORE_KEY) || 'null');
+      if(raw && raw.enabled && raw.num && ACCOUNTS[raw.num]) return raw;
+    }catch(e){}
+    return null;
+  }
+
+  function saveFpConfig(cfg){
+    try{
+      if(!cfg) localStorage.removeItem(FP_STORE_KEY);
+      else localStorage.setItem(FP_STORE_KEY, JSON.stringify(cfg));
+    }catch(e){}
+  }
+
+  function updateFpUi(){
+    var cfg = getFpConfig();
+    var fpRow = document.getElementById('pinFpRow');
+    if(fpRow) fpRow.hidden = !cfg;
+
+    var sw = document.getElementById('fpToggleSwitch');
+    var subTxt = document.getElementById('fpSubTxt');
+    var statusBox = document.getElementById('fpStatusBox');
+    if(sw){
+      var isOnForMe = !!(cfg && (!isSignedIn || cfg.num === ME_NUM));
+      sw.classList.toggle('on', isOnForMe);
+      if(subTxt){
+        subTxt.textContent = isOnForMe
+          ? ('Active for ' + ME_NAME + ' (' + ME_NUM + ')')
+          : 'Touch ID / Biometric se direct sign in karein';
+      }
+      if(statusBox){
+        statusBox.textContent = isOnForMe
+          ? 'Fingerprint enabled hai! Sign in screen par "Use Fingerprint" button se direct aapka account khul jayega.'
+          : 'Fingerprint add karne ke liye switch ON karein — agli dafa PIN screen par direct fingerprint se login ho jayega.';
+      }
+    }
+  }
+
+  function openSecuritySettings(){
+    if(!isSignedIn){ openSignInModal(); return; }
+    var acc = ACCOUNTS[ME_NUM];
+    var pinHint = document.getElementById('secPinHint');
+    if(pinHint && acc){
+      pinHint.textContent = 'Aapka 5-digit PIN: ' + acc.pin + ' (Sign in par sirf yeh PIN daalein)';
+    }
+    updateFpUi();
+    go('securityPrefs');
+  }
+
+  function bufToBase64(buf){
+    var bytes = new Uint8Array(buf);
+    var bin = '';
+    for(var i = 0; i < bytes.byteLength; i++) bin += String.fromCharCode(bytes[i]);
+    return btoa(bin);
+  }
+
+  function base64ToBuf(b64){
+    var bin = atob(b64);
+    var len = bin.length;
+    var bytes = new Uint8Array(len);
+    for(var i = 0; i < len; i++) bytes[i] = bin.charCodeAt(i);
+    return bytes.buffer;
+  }
+
+  function toggleFingerprintSetting(){
+    if(!isSignedIn) return;
+    var existing = getFpConfig();
+    if(existing && existing.num === ME_NUM){
+      saveFpConfig(null);
+      updateFpUi();
+      toast('Fingerprint login band kar diya gaya');
+      return;
+    }
+
+    var finishEnable = function(credId){
+      saveFpConfig({
+        enabled: true,
+        num: ME_NUM,
+        name: ME_NAME,
+        credId: credId || ''
+      });
+      updateFpUi();
+      toast('Fingerprint add ho gaya!');
+    };
+
+    if(window.PublicKeyCredential && navigator.credentials && navigator.credentials.create){
+      var challenge = new Uint8Array(32);
+      var userId = new Uint8Array(16);
+      if(window.crypto && window.crypto.getRandomValues){
+        window.crypto.getRandomValues(challenge);
+        window.crypto.getRandomValues(userId);
+      }
+      navigator.credentials.create({
+        publicKey: {
+          challenge: challenge,
+          rp: { name: 'Easypaisa Wallet' },
+          user: {
+            id: userId,
+            name: ME_NUM,
+            displayName: ME_NAME
+          },
+          pubKeyCredParams: [
+            { type: 'public-key', alg: -7 },
+            { type: 'public-key', alg: -257 }
+          ],
+          authenticatorSelection: {
+            authenticatorAttachment: 'platform',
+            userVerification: 'required'
+          },
+          timeout: 30000
+        }
+      }).then(function(cred){
+        var cid = (cred && cred.rawId) ? bufToBase64(cred.rawId) : '';
+        finishEnable(cid);
+      }).catch(function(){
+        finishEnable('');
+      });
+    }else{
+      finishEnable('');
+    }
+  }
+
+  function loginWithFingerprint(){
+    getAudioCtx();
+    var cfg = getFpConfig();
+    if(!cfg || !ACCOUNTS[cfg.num]){
+      toast('Pehle Profile > Security Preferences mein fingerprint add karein');
+      return;
+    }
+
+    var doFpComplete = function(){
+      var matched = { num: cfg.num, acc: ACCOUNTS[cfg.num] };
+      completeAccountLogin(matched.num, matched.acc);
+    };
+
+    if(cfg.credId && window.PublicKeyCredential && navigator.credentials && navigator.credentials.get){
+      var challenge = new Uint8Array(32);
+      if(window.crypto && window.crypto.getRandomValues){
+        window.crypto.getRandomValues(challenge);
+      }
+      navigator.credentials.get({
+        publicKey: {
+          challenge: challenge,
+          allowCredentials: [{
+            type: 'public-key',
+            id: base64ToBuf(cfg.credId)
+          }],
+          userVerification: 'required',
+          timeout: 30000
+        }
+      }).then(function(){
+        doFpComplete();
+      }).catch(function(){
+        toast('Fingerprint verify nahi hua');
+      });
+    }else{
+      doFpComplete();
+    }
+  }
+
+  function renderPinBoxes(isError){
+    for(var i = 0; i < 5; i++){
+      var slot = document.getElementById('pinSlot' + i);
+      if(!slot) continue;
+      slot.classList.remove('active', 'shake');
+      if(isError){
+        slot.classList.add('shake');
+      }
+      if(i < pinBuffer.length){
+        slot.innerHTML = '<span class="pin-dot"></span>';
+      }else{
+        slot.innerHTML = '<span class="pin-dash">-</span>';
+        if(i === pinBuffer.length && !isError){
+          slot.classList.add('active');
+        }
+      }
+    }
+  }
+
+  function playKeyTick(){
+    var ctx = getAudioCtx();
+    if(!ctx) return;
+    try{
+      var now = ctx.currentTime;
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(520, now);
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.exponentialRampToValueAtTime(0.06, now + 0.006);
+      gain.gain.exponentialRampToValueAtTime(0.0005, now + 0.032);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.035);
+    }catch(e){}
+  }
+
+  function pressPinKey(digit){
+    getAudioCtx();
+    if(pinBuffer.length >= 5) return;
+    playKeyTick();
+    pinBuffer += String(digit);
+    renderPinBoxes(false);
+    if(pinBuffer.length === 5){
+      setTimeout(function(){
+        submitPinEntry();
+      }, 130);
+    }
+  }
+
+  function backspacePinKey(){
+    if(!pinBuffer.length) return;
+    playKeyTick();
+    pinBuffer = pinBuffer.slice(0, -1);
+    renderPinBoxes(false);
+  }
+
+  function submitPinEntry(){
+    if(pinBuffer.length < 5){
+      toast('5-digit PIN mukammal daalein');
+      renderPinBoxes(true);
+      return;
+    }
+    var matched = findAccountByPin(pinBuffer);
+    if(!matched){
+      renderPinBoxes(true);
+      toast('Galat 5-digit PIN hai — dobara koshish karein');
+      setTimeout(function(){
+        pinBuffer = '';
+        renderPinBoxes(false);
+      }, 360);
+      return;
+    }
+    completeAccountLogin(matched.num, matched.acc);
+  }
+
+  function completeAccountLogin(num, acc){
+    var currentDev = getDeviceId();
+    var boundDev = getBoundDevice(num);
+    if(boundDev && boundDev !== currentDev){
+      toast('Ye account pehle hi kisi aur device par active hai — 2 jagah login allowed nahi');
+      pinBuffer = '';
+      renderPinBoxes(false);
+      return;
+    }
+    if(!boundDev){
+      bindDeviceToNumber(num);
+    }
+
+    isSignedIn = true;
+    ME_NUM = num;
+    ME_NAME = acc.name;
+    ME_EMAIL = acc.email;
+    ME_PHOTO = '';
+    notifs = [];
+    if(!loadAccount()){ balance = acc.balance; seed(); }
+    pinBuffer = '';
+    renderPinBoxes(false);
+    closeSignInModal();
+    applyProfile();
+    refresh();
+    go('home');
+    toast('Welcome, ' + ME_NAME);
+    var unread = 0;
+    for(var i = 0; i < notifs.length; i++){ if(notifs[i].unread) unread++; }
+    if(unread > 0){
+      setTimeout(function(){ toast('Aapko ' + unread + ' nayi payment notification aayi hai'); }, 450);
+    }
+  }
+
   function openSignInModal(){
     getAudioCtx();
-    var ln = document.getElementById('loginNum');
-    var pn = document.getElementById('loginPin');
-    if(ln) ln.value = '';
-    if(pn) pn.value = '';
+    pinBuffer = '';
+    renderPinBoxes(false);
+    updateFpUi();
     document.getElementById('signInModal').classList.add('show');
-    setTimeout(function(){ if(ln) ln.focus(); }, 120);
   }
 
   function closeSignInModal(){
+    pinBuffer = '';
     document.getElementById('signInModal').classList.remove('show');
   }
+
+  document.addEventListener('keydown', function(ev){
+    var modal = document.getElementById('signInModal');
+    if(!modal || !modal.classList.contains('show')) return;
+    if(ev.key >= '0' && ev.key <= '9'){
+      ev.preventDefault();
+      pressPinKey(ev.key);
+    }else if(ev.key === 'Backspace' || ev.key === 'Delete'){
+      ev.preventDefault();
+      backspacePinKey();
+    }else if(ev.key === 'Enter'){
+      ev.preventDefault();
+      submitPinEntry();
+    }else if(ev.key === 'Escape'){
+      ev.preventDefault();
+      closeSignInModal();
+    }
+  });
 
   var histLoaderTimer = null;
   function openHistoryWithLoader(){
@@ -2239,7 +2901,7 @@
   function addTx(dir,title,sub,amt,icon){var t={id:'t'+Date.now()+Math.random().toString(36).slice(2,6),txid:newTxId(),dir:dir,title:title,sub:sub,amt:amt,icon:icon,time:Date.now()};tx.push(t);if(dir==='in')balance+=amt;else balance-=amt;return t;}
 
   function go(id){if(id!=='scanner'&&typeof stopCamera==='function')stopCamera();
-    if(!isSignedIn && (id==='send'||id==='bankPick'||id==='bankAcct'||id==='walletPick'||id==='walletAcct'||id==='sendAmt'||id==='sendConfirm'||id==='load'||id==='bill'||id==='addmoney'||id==='history'||id==='profile'||id==='editProfile')){
+    if(!isSignedIn && (id==='send'||id==='bankPick'||id==='bankAcct'||id==='walletPick'||id==='walletAcct'||id==='sendAmt'||id==='sendConfirm'||id==='load'||id==='bill'||id==='addmoney'||id==='history'||id==='profile'||id==='editProfile'||id==='securityPrefs')){
       openSignInModal();
       return;
     }
@@ -2319,45 +2981,6 @@
     save();
     toast('Information save ho gayi');
     go('profile');
-  }
-
-  function login(){
-    getAudioCtx();
-    var num=document.getElementById('loginNum').value.replace(/[^0-9]/g,'');
-    var pin=document.getElementById('loginPin').value.trim();
-    if(num.length<11){toast('Sahi mobile number daalein');return;}
-    if(!pin){toast('Password daalein');return;}
-    var acc=ACCOUNTS[num];
-    if(!acc){toast('Ye number registered nahi hai — sirf registered numbers se sign in karein');return;}
-    if(pin!==acc.pin){toast('Galat password hai — sahi password daalein');return;}
-
-    var currentDev = getDeviceId();
-    var boundDev = getBoundDevice(num);
-    if(boundDev && boundDev !== currentDev){
-      toast('Ye number pehle hi kisi aur device par active hai — 2 jagah login allowed nahi');
-      return;
-    }
-    if(!boundDev){
-      bindDeviceToNumber(num);
-    }
-
-    isSignedIn = true;
-    ME_NUM=num;
-    ME_NAME=acc.name;
-    ME_EMAIL=acc.email;
-    ME_PHOTO='';
-    notifs=[];
-    if(!loadAccount()){ balance=acc.balance; seed(); }
-    closeSignInModal();
-    applyProfile();
-    refresh();
-    go('home');
-    toast('Signed in: ' + ME_NAME);
-    var unread = 0;
-    for(var i=0;i<notifs.length;i++){ if(notifs[i].unread) unread++; }
-    if(unread > 0){
-      setTimeout(function(){ toast('Aapko ' + unread + ' nayi payment notification aayi hai'); }, 450);
-    }
   }
 
   function logout(){
@@ -2728,216 +3351,234 @@
     document.getElementById('wa_num').placeholder=acc?'Enter Here':'PK00 XXXX 0000 0000 0000 0000';}
   function walletProceed(){var acc=document.getElementById('wa_num').value.trim();
     if(acc.length<6)return setErr('wa_err','Sahi account number / IBAN daalein');
-    setErr('wa_err','');var digits=acc.replace(/[^0-9]/g,'');
+    setErr('wa_err','');
     isQrFlow=false;qrBankInfo=null;
-    curNum=acc;curName=CONTACTS[digits]||'Account Holder';curPurpose=document.getElementById('wa_purpose').value;
+    curNum=acc;var d=acc.replace(/[^0-9]/g,'');
+    var matchedKey = CONTACTS[d] ? d : (d.match(/03\d{9}/) && CONTACTS[d.match(/03\d{9}/)[0]] ? d.match(/03\d{9}/)[0] : '');
+    curName=matchedKey?CONTACTS[matchedKey]:(selectedWallet+' Account');
+    curPurpose=document.getElementById('wa_purpose').value;
     returnScreenAfterAmt='walletAcct';
     openAmountScreen();}
-  function pickFav2(n){isQrFlow=false;qrBankInfo=null;transferMethod='Wallet';selectedWallet='Wallet';selectedBankItem=null;returnScreenAfterAmt='send';updateEpLogosVisibility();resetSend();
-    document.getElementById('bankWrap').hidden=true;setMode('mobile');
-    document.getElementById('sendTitle').textContent='Wallet Transfer';go('send');
-    document.getElementById('s_num').value=n;resolveRecv();}
-  function openSheet(){getAudioCtx();if(!isSignedIn){openSignInModal();return;}document.getElementById('sheet').classList.add('show');}
-  function closeSheet(){document.getElementById('sheet').classList.remove('show');}
-  function isBankMethod(){return transferMethod==='Bank'||transferMethod==='Raast';}
-  function fundSrc(){
-    if(isQrFlow && qrBankInfo && qrBankInfo.name) return qrBankInfo.name;
-    if(selectedBankItem && selectedBankItem.name) return selectedBankItem.name;
-    if(transferMethod==='Wallet'&&selectedWallet&&selectedWallet!=='Wallet')return selectedWallet;
-    return isBankMethod()?document.getElementById('bankSel').value:'Easypaisa Wallet';
+  function pickFav2(n){isQrFlow=false;qrBankInfo=null;transferMethod='Wallet';selectedWallet='Wallet';selectedBankItem=null;updateEpLogosVisibility();curNum=n;curName=CONTACTS[n];curPurpose='Others';returnScreenAfterAmt='walletPick';openAmountScreen();}
+
+  function openAmountScreen(){var a=document.getElementById('s_amt');a.value='';a.classList.remove('hasval');a.style.width='34px';
+    document.getElementById('amPayTo').textContent=curName;
+    updateRecipientBadges();
+    document.getElementById('s_note').value='';document.getElementById('msgBox').hidden=true;
+    setErr('am_err','');document.getElementById('btnAmtNext').classList.remove('ready');
+    renderBal();go('sendAmt');setTimeout(function(){a.focus();},200);}
+
+  function toggleMsgBox(){
+    var b=document.getElementById('msgBox');
+    b.hidden=!b.hidden;
+    if(!b.hidden){document.getElementById('s_note').focus();}
   }
+
+  function resizeAmtInput(a){
+    if(!a) return;
+    var len = Math.max(1, (a.value || '0').length);
+    a.style.width = Math.min(200, Math.max(34, len * 26)) + 'px';
+  }
+
+  function syncAmt(){var a=document.getElementById('s_amt'),v=val('s_amt');
+    a.classList.toggle('hasval',v>0);
+    resizeAmtInput(a);
+    setErr('am_err',v>balance?'Balance nakafi hai (Mojood: '+fmt(balance)+')':'');
+    document.getElementById('btnAmtNext').classList.toggle('ready',v>0&&v<=balance);}
+  function setBig(v){var a=document.getElementById('s_amt');a.value=v;syncAmt();}
+  function isBankMethod(){return transferMethod==='Bank'||transferMethod==='Raast';}
+  function goAmount(){var raw=document.getElementById('s_num').value.replace(/[^0-9]/g,'');
+    if(raw.length<minNumLen())return setErr('s_err',sendMode==='account'?'Kam az kam 10 digits daalein':'11 digits ka mobile number daalein');
+    var matchedKey = CONTACTS[raw] ? raw : (raw.match(/03\d{9}/) && CONTACTS[raw.match(/03\d{9}/)[0]] ? raw.match(/03\d{9}/)[0] : '');
+    var nm=matchedKey?CONTACTS[matchedKey]:document.getElementById('s_name').value.trim();
+    if(!nm)return setErr('s_err','Receiver ka naam likhein');
+    setErr('s_err','');isQrFlow=false;qrBankInfo=null;curNum=raw;curName=nm;returnScreenAfterAmt='send';openAmountScreen();}
+  function fundSrc(){
+    if(isQrFlow) return (qrBankInfo && qrBankInfo.name) ? qrBankInfo.name : 'QR Payment';
+    if(returnScreenAfterAmt==='bankAcct'&&selectedBankItem) return selectedBankItem.name;
+    if(transferMethod==='Wallet'&&selectedWallet) return selectedWallet;
+    if(isBankMethod()) return document.getElementById('bankSel').value;
+    return transferMethod;
+  }
+  function goConfirm(){var amt=val('s_amt');
+    if(amt<=0)return setErr('am_err','Sahi raqam daalein');
+    if(amt>balance)return setErr('am_err','Balance nakafi hai');
+    setErr('am_err','');
+    document.getElementById('cf_src').textContent='Easypaisa Wallet';
+    document.getElementById('cf_bal').textContent='Balance: '+(hidden?'Rs. ••••••':fmt(balance));
+    document.getElementById('cf_name').textContent=curName;
+    document.getElementById('cf_num').textContent=isQrFlow
+      ? ((qrBankInfo && qrBankInfo.name) ? qrBankInfo.name : 'QR Payment')
+      : (curNum || 'QR Payment');
+    document.getElementById('cf_amt').textContent=fmtNoDec(amt);
+    document.getElementById('cf_total').textContent=fmt(amt);
+    updateRecipientBadges();
+    cfFav=false;
+    document.getElementById('cfFavRow').classList.remove('on');
+    document.getElementById('cfFavBox').textContent='';
+    setErr('cf_err','');go('sendConfirm');}
+  function toggleCfFav(){cfFav=!cfFav;
+    document.getElementById('cfFavRow').classList.toggle('on',cfFav);
+    document.getElementById('cfFavBox').textContent=cfFav?'✓':'';}
+  function doSend(){var amt=val('s_amt'),note=(document.getElementById('s_note').value||'').trim();
+    if(amt<=0)return setErr('cf_err','Sahi raqam daalein');
+    if(amt>balance)return setErr('cf_err','Balance nakafi hai');
+    var src=fundSrc();
+    var txTitle = isQrFlow
+      ? ('QR Payment - ' + curName)
+      : ('Sent via '+src+' to '+curName);
+    var txSub = isQrFlow
+      ? ('QR Payment'+(qrBankInfo&&qrBankInfo.name?' · '+qrBankInfo.name:'')+(note?' · '+note:''))
+      : (curNum+(note?' · '+note:''));
+    var t=addTx('out', txTitle, txSub, amt, isQrFlow ? '📷' : '📤');
+    t.name=curName;
+    t.number=curNum;
+    if(isQrFlow) t.qrBank = qrBankInfo || null;
+    if(cfFav&&!CONTACTS[curNum]){CONTACTS[curNum]=curName;if(FAVS.indexOf(curNum)===-1)FAVS.unshift(curNum);renderFavs();renderFavs2();}
+    t.rcpt={txid:t.txid,date:rcptDate(t.time),sub:'Your easypaisa payment has been made',amount:amt,source:'easypaisa Account',partyLabel:'Sent to',nameLabel:'Name',name:curName,numLabel:numLbl(),number:curNum,qrBank:isQrFlow?(qrBankInfo||null):null};
+    refresh();
+    playSendVoice();
+
+    var isExternalChannel = (!isQrFlow) && ((returnScreenAfterAmt === 'bankAcct' && !!selectedBankItem) || (transferMethod === 'Wallet') || isBankMethod());
+    var externalBrand = isExternalChannel ? src : '';
+
+    if(!isQrFlow && curNum){
+      notifyReceiverAccount(curNum, amt, note, t.txid, isExternalChannel ? externalBrand : 'easypaisa');
+    }
+
+    var liveNotifText = isQrFlow
+      ? ('You have paid ' + fmt(amt) + ' via QR' + (qrBankInfo && qrBankInfo.name ? ' (' + qrBankInfo.name + ')' : '') + ' to ' + curName + '. Tx ID: ' + t.txid.replace(/^#/, '') + '.')
+      : isExternalChannel
+      ? ('You have transferred ' + fmt(amt) + ' to ' + externalBrand + ' A/C ' + curNum + ' (' + curName + '). Tx ID: ' + t.txid.replace(/^#/, '') + '.')
+      : ('You have sent ' + fmt(amt) + ' to ' + curName + ' (' + curNum + '). Tx ID: ' + t.txid.replace(/^#/, '') + '.');
+    showEpNotif(liveNotifText);
+
+    showSummary({
+      amount:amt,
+      sub:'Successfully Sent to',
+      name:curName,
+      number: isQrFlow ? ((qrBankInfo && qrBankInfo.name) ? qrBankInfo.name : 'QR Payment') : curNum,
+      rcpt:t.rcpt,
+      source:src
+    });
+    selectedWallet='';}
+
+  function openSheet(){
+    if(!isSignedIn){openSignInModal();return;}
+    document.getElementById('sheet').classList.add('show');
+  }
+  function closeSheet(){document.getElementById('sheet').classList.remove('show');}
   function pickMethod(m){
     closeSheet();
-    isQrFlow=false;qrBankInfo=null;
+    isQrFlow=false;
+    qrBankInfo=null;
+    if(m==='Wallet'){
+      selectedWallet='';selectedBankItem=null;
+      document.getElementById('wSearch').value='';
+      renderFavs2();renderWalletList();
+      go('walletPick');
+      return;
+    }
     if(m==='Bank'){
+      transferMethod='Bank';
+      selectedWallet='';
       selectedBankItem=null;
+      var inp=document.getElementById('bankSearchInput');
+      if(inp)inp.value='';
       var sBtn=document.getElementById('bpTabSend'),hBtn=document.getElementById('bpTabHist');
-      if(sBtn)sBtn.classList.add('on');if(hBtn)hBtn.classList.remove('on');
-      var bSearch=document.getElementById('bankSearchInput');
-      if(bSearch)bSearch.value='';
+      if(sBtn)sBtn.classList.add('on');
+      if(hBtn)hBtn.classList.remove('on');
       renderBankPickList();
       go('bankPick');
       return;
     }
-    selectedBankItem=null;
-    returnScreenAfterAmt='send';
-    transferMethod=m;selectedWallet='';updateEpLogosVisibility();
-    if(m==='Wallet'){resetSend();renderFavs2();var ws=document.getElementById('wSearch');if(ws)ws.value='';renderWalletList();go('walletPick');return;}
-    resetSend();
-    var isBank=(m==='Bank'||m==='Raast');document.getElementById('bankWrap').hidden=!isBank;setMode(isBank?'account':'mobile');
-    document.getElementById('sendTitle').textContent=isBank?(m+' Transfer'):'easypaisa Transfer';
-    if(m==='CNIC')document.getElementById('s_num').placeholder='Enter CNIC Number';go('send');}
-
-  function resizeAmtInput(inp){
-    if(!inp) return;
-    var txt = inp.value || inp.placeholder || '0';
-    var len = String(txt).length;
-    inp.style.width = Math.max(32, Math.min(190, len * 26 + 6)) + 'px';
-  }
-  function openAmountScreen(){
-    updateEpLogosVisibility();
-    document.getElementById('amPayTo').textContent = curName;
-    renderBal();
-    var inp = document.getElementById('s_amt');
-    inp.value = ''; inp.classList.remove('hasval');
-    resizeAmtInput(inp);
-    document.getElementById('s_note').value = '';
-    document.getElementById('msgBox').hidden = true;
-    document.getElementById('btnAmtNext').classList.remove('ready');
-    setErr('am_err','');
-    go('sendAmt');
-    setTimeout(function(){inp.focus();},200);
-  }
-  function goAmount(){var raw=document.getElementById('s_num').value.replace(/[^0-9]/g,'');
-    if(raw.length<minNumLen())return setErr('s_err',(sendMode==='account'||isBankMethod())?'Sahi account number daalein (10-20 digits)':'Sahi number daalein');
-    curNum=raw;
-    var typedName=document.getElementById('s_name').value.trim();
-    var matchedKey = CONTACTS[raw] ? raw : (raw.match(/03\d{9}/) && CONTACTS[raw.match(/03\d{9}/)[0]] ? raw.match(/03\d{9}/)[0] : '');
-    curName=typedName||(matchedKey?CONTACTS[matchedKey]:'');
-    if(!curName)return setErr('s_err','Is number / account ka naam likhein');setErr('s_err','');
-    isQrFlow=false;qrBankInfo=null;
-    returnScreenAfterAmt='send';
-    openAmountScreen();}
-  function syncAmt(){var a=val('s_amt'),inp=document.getElementById('s_amt');
-    inp.classList.toggle('hasval',a>0);
-    resizeAmtInput(inp);
-    document.getElementById('btnAmtNext').classList.toggle('ready',a>0&&a<=balance);}
-  function setBig(v){document.getElementById('s_amt').value=v;syncAmt();}
-  function toggleMsgBox(){var mb=document.getElementById('msgBox');mb.hidden=!mb.hidden;if(!mb.hidden)document.getElementById('s_note').focus();}
-
-  function toggleCfFav(){cfFav=!cfFav;
-    document.getElementById('cfFavRow').classList.toggle('on',cfFav);
-    document.getElementById('cfFavBox').textContent=cfFav?'✓':'';}
-
-  function goConfirm(){var amt=val('s_amt');
-    if(amt<1)return setErr('am_err','Amount daalein');if(amt>balance)return setErr('am_err','Balance kaafi nahi hai');setErr('am_err','');
-    updateEpLogosVisibility();
-    cfFav = false;
-    document.getElementById('cfFavRow').classList.remove('on');
-    document.getElementById('cfFavBox').textContent = '';
-    document.getElementById('cf_src').textContent = isQrFlow ? 'Easypaisa Wallet' : fundSrc();
-    document.getElementById('cf_bal').textContent = 'Balance: ' + (hidden ? 'Rs. ••••••' : fmtNoDec(balance));
-    document.getElementById('cf_name').textContent = curName;
-    document.getElementById('cf_num').textContent = isQrFlow ? '' : curNum;
-    document.getElementById('cf_amt').textContent = fmtNoDec(amt);
-    document.getElementById('cf_total').textContent = fmt(amt);
-    setErr('cf_err','');
-    go('sendConfirm');}
-
-  function formatNotifAmt(amt){
-    var n = Number(amt);
-    return Number.isInteger(n) ? n.toFixed(1) : String(n);
+    transferMethod=m;selectedWallet='';selectedBankItem=null;returnScreenAfterAmt='send';updateEpLogosVisibility();resetSend();
+    document.getElementById('bankWrap').hidden=!isBankMethod();
+    setMode(m==='CNIC'?'account':'mobile');
+    var titles={Easypaisa:'easypaisa Transfer',Raast:'Raast Payment',CNIC:'CNIC Transfer'};
+    document.getElementById('sendTitle').textContent=titles[m]||m;
+    go('send');
   }
 
-  function buildEpPushText(amt, name, num, txid){
-    var cleanId = String(txid || '').replace(/^#/, '');
-    var acctPart = num ? (' with easypaisa account ' + String(num)) : ' via QR';
-    return 'Rs. ' + formatNotifAmt(amt) + ' sent to ' + String(name || '').toUpperCase() +
-      acctPart + '. Fee: Rs. 0.0. Trx ID ' + cleanId + '.';
-  }
+  function doLoad(){var num=document.getElementById('l_num').value.replace(/[^0-9]/g,''),amt=val('l_amt'),net=document.getElementById('l_net').value;
+    if(num.length<11)return setErr('l_err','11 digits ka mobile number daalein');if(amt<50)return setErr('l_err','Kam az kam Rs 50 load karein');if(amt>balance)return setErr('l_err','Balance nakafi hai');
+    setErr('l_err','');isQrFlow=false;qrBankInfo=null;var t=addTx('out',net+' Mobile Load',num,amt,'📱');
+    t.rcpt={txid:t.txid,date:rcptDate(t.time),sub:'Your easypaisa payment has been made',amount:amt,source:'easypaisa Account',partyLabel:'Sent to',nameLabel:'Network',name:net+' Load',numLabel:'Mobile Number',number:num};
+    refresh();reset(['l_num','l_amt']);showSummary({amount:amt,sub:'Successfully Sent to',name:net+' Load',number:num,rcpt:t.rcpt,source:'Easypaisa'});}
 
-  function doSend(){
-    var amt=val('s_amt');
-    if(amt<1)return setErr('cf_err','Amount daalein');
-    if(amt>balance)return setErr('cf_err','Balance kaafi nahi hai');
-    setErr('cf_err','');
-    if(!isQrFlow && cfFav && /^03\d{9}$/.test(curNum) && !CONTACTS[curNum]){CONTACTS[curNum]=curName;}
-    var note=document.getElementById('s_note').value.trim();
-    if((transferMethod==='Wallet'||transferMethod==='Bank')&&curPurpose&&!note)note=curPurpose;
-    var channelName = isQrFlow ? ((qrBankInfo && qrBankInfo.name) ? (qrBankInfo.name + ' QR') : 'QR Payment') : fundSrc();
-    var isJc = !isQrFlow && isJazzCashContext(channelName);
-    var txTitle = isQrFlow ? ('QR Payment - ' + curName) : ('Money Transfer - ' + curName.toUpperCase());
-    var txSub = isQrFlow ? (note || channelName) : (curNum + (note ? ' · ' + note : ''));
-    var t=addTx('out',txTitle,txSub,amt,'💸');
-    t.name=curName;
-    t.number=isQrFlow?'':curNum;
-    if(!isQrFlow && curNum){
-      notifyReceiverAccount(curNum, amt, note, t.txid, channelName);
-    }
-    var pushText = buildEpPushText(amt, curName, isQrFlow?'':curNum, t.txid);
-    playSendVoice();
-    setTimeout(function(){ showEpNotif(pushText); }, 10000);
-    var o={
-      txid:t.txid,
-      date:rcptDate(t.time),
-      sub:isQrFlow?('Your ' + ((qrBankInfo && qrBankInfo.name) ? qrBankInfo.name : 'QR') + ' payment has been made'):(isJc?'Your JazzCash payment has been made':'Your '+channelName+' payment has been made'),
-      amount:amt,
-      source:isQrFlow?'easypaisa Account':channelName,
-      partyLabel:'Sent to',
-      nameLabel:'Name',
-      name:curName,
-      numLabel:numLbl(),
-      number:isQrFlow?'':curNum,
-      note:note
-    };
-    t.rcpt=o;
-    showReceipt(o);
-  }
-
-  function doLoad(){var net=document.getElementById('l_net').value,num=document.getElementById('l_num').value.trim(),amt=val('l_amt');
-    if(num.replace(/[^0-9]/g,'').length<11)return setErr('l_err','Sahi mobile number daalein');
-    if(amt<10)return setErr('l_err','Kam az kam Rs 10');if(amt>balance)return setErr('l_err','Balance kaafi nahi hai');
-    setErr('l_err','');var t=addTx('out','Mobile Load · '+net,num,amt,'📱');t.name=net;t.number=num;
-    var o={txid:t.txid,date:rcptDate(t.time),sub:'Mobile load successful.',amount:amt,source:'easypaisa Account',partyLabel:'Loaded to',nameLabel:'Network',name:net,numLabel:'Account Number',number:num};
-    t.rcpt=o;showReceipt(o);reset(['l_num','l_amt']);}
-  var selectedBiller='';
-  function selBill(b){document.querySelectorAll('#billGrid button').forEach(function(x){x.classList.remove('sel');});b.classList.add('sel');selectedBiller=b.dataset.b;}
+  var biller='K-Electric';
+  function selBill(b){document.querySelectorAll('#billGrid button').forEach(function(x){x.classList.remove('sel');});b.classList.add('sel');biller=b.dataset.b;}
   function doBill(){var acc=document.getElementById('b_acc').value.trim(),amt=val('b_amt');
-    if(!selectedBiller)return setErr('b_err','Pehle biller select karein');
-    if(!acc)return setErr('b_err','Consumer / account number daalein');
-    if(amt<1)return setErr('b_err','Bill amount daalein');if(amt>balance)return setErr('b_err','Balance kaafi nahi hai');
-    setErr('b_err','');var ic=document.querySelector('#billGrid button.sel .bg-ico').textContent;
-    var t=addTx('out',selectedBiller+' Bill','Ref #'+acc,amt,ic);t.name=selectedBiller;t.number=acc;
-    var o={txid:t.txid,date:rcptDate(t.time),sub:'Bill paid successfully.',amount:amt,source:'easypaisa Account',partyLabel:'Paid to',nameLabel:'Biller',name:selectedBiller,numLabel:'Consumer No.',number:acc};
-    t.rcpt=o;showReceipt(o);
-    reset(['b_acc','b_amt']);selectedBiller='';document.querySelectorAll('#billGrid button').forEach(function(x){x.classList.remove('sel');});}
-  function doAdd(){var src=document.getElementById('a_src').value,amt=val('a_amt');
-    if(amt<1)return setErr('a_err','Amount daalein');setErr('a_err','');
-    var t=addTx('in','Added from '+src,'Instant transfer',amt,'➕');t.name=src;
-    var o={txid:t.txid,date:rcptDate(t.time),sub:'Money added to wallet.',amount:amt,source:src,partyLabel:'Added from',nameLabel:'Source',name:src};
-    t.rcpt=o;showReceipt(o);reset(['a_amt']);}
+    if(acc.length<4)return setErr('b_err','Consumer number daalein');if(amt<=0)return setErr('b_err','Bill ki raqam daalein');if(amt>balance)return setErr('b_err','Balance nakafi hai');
+    setErr('b_err','');isQrFlow=false;qrBankInfo=null;var t=addTx('out',biller+' Bill',acc,amt,'🧾');
+    t.rcpt={txid:t.txid,date:rcptDate(t.time),sub:'Your easypaisa payment has been made',amount:amt,source:'easypaisa Account',partyLabel:'Sent to',nameLabel:'Biller',name:biller,numLabel:'Consumer Number',number:acc};
+    refresh();reset(['b_acc','b_amt']);showSummary({amount:amt,sub:'Successfully Paid to',name:biller,number:acc,rcpt:t.rcpt,source:'Easypaisa'});}
 
-  function showReceipt(o){
-    updateEpLogosVisibility();
-    setSummaryReceiptLogo(o.source || '');
-    document.getElementById('sumAmt').textContent=fmt(o.amount);
-    document.getElementById('sumSub').textContent='Successfully '+(o.partyLabel||'Sent to');
-    document.getElementById('sumName').textContent=o.name||'—';
-    var sn=document.getElementById('sumNum');
-    if(o.number){sn.hidden=false;sn.textContent=o.number;}else sn.hidden=true;
+  function doAdd(){var amt=val('a_amt'),src=document.getElementById('a_src').value;
+    if(amt<=0)return setErr('a_err','Raqam daalein');
+    setErr('a_err','');isQrFlow=false;qrBankInfo=null;var t=addTx('in','Added via '+src,'Wallet top-up',amt,'💰');
+    t.rcpt={txid:t.txid,date:rcptDate(t.time),sub:'Money added to your account.',amount:amt,source:src,partyLabel:'Added to',nameLabel:'Name',name:ME_NAME,numLabel:'Account Number',number:ME_NUM};
+    refresh();reset(['a_amt']);showSummary({amount:amt,sub:'Successfully Added from',name:src,number:ME_NUM,rcpt:t.rcpt,source:'Easypaisa'});}
 
-    document.getElementById('rcpTitle').textContent=o.title||'Transaction Successful';
-    document.getElementById('rcpSub').textContent=o.sub||'Your easypaisa payment has been made';
-    document.getElementById('rcpId').textContent=o.txid||('#'+Math.floor(1000000000+Math.random()*9000000000));
-    document.getElementById('rcpDate').textContent=o.date||rcptDate();
-    document.getElementById('rcpSrc').textContent=o.source||'easypaisa Account';
-    document.getElementById('rcpAmt').textContent=fmt(o.amount);
-    document.getElementById('rcpFee').textContent='Rs. 0.00';
-    document.getElementById('rcpTotal').textContent=fmt(o.amount);
-    document.getElementById('rcpPartyLbl').textContent=o.partyLabel||'Sent to';
-    document.getElementById('rcpNameLbl').textContent=o.nameLabel||'Name';
-    document.getElementById('rcpName').textContent=o.name||'—';
-    var nr=document.getElementById('rcpNumRow');
-    if(o.number){nr.hidden=false;document.getElementById('rcpNumLbl').textContent=o.numLabel||'Account Number';document.getElementById('rcpNum').textContent=o.number;}
-    else nr.hidden=true;
-    document.getElementById('rcpByName').textContent=ME_NAME;
-    document.getElementById('rcpByNum').textContent=ME_NUM||'—';
+  var curRcpt=null;
+  function showSummary(d){curRcpt=d.rcpt;
+    setSummaryReceiptLogo(d.source);
+    document.getElementById('sumAmt').textContent=fmt(d.amount);
+    document.getElementById('sumSub').textContent=d.sub||'Successfully Sent to';
+    document.getElementById('sumName').textContent=d.name||'—';
+    document.getElementById('sumNum').textContent=d.number||'';
+    document.getElementById('success').classList.add('show');}
+  function closeSuccess(){document.getElementById('success').classList.remove('show');go('home');}
+  function openFullReceipt(){if(!curRcpt)return;document.getElementById('success').classList.remove('show');showReceipt(curRcpt);}
+  function showReceipt(r){
+    var prevQr = isQrFlow;
+    var prevBank = qrBankInfo;
+    if(r && r.qrBank){
+      isQrFlow = true;
+      qrBankInfo = r.qrBank;
+    }else if(r && r.numLabel === 'QR Payment'){
+      isQrFlow = true;
+      qrBankInfo = null;
+    }
+    setSummaryReceiptLogo(r.source);
+    isQrFlow = prevQr;
+    qrBankInfo = prevBank;
 
-    document.getElementById('receipt').classList.remove('show');
-    var s=document.getElementById('success');
-    s.classList.add('show');
-    s.scrollTop=0;
-    refresh();
-  }
-  function openFullReceipt(){var r=document.getElementById('receipt');r.classList.add('show');r.scrollTop=0;}
-  function closeFullReceipt(){document.getElementById('receipt').classList.remove('show');}
-  function closeSuccess(){document.getElementById('receipt').classList.remove('show');document.getElementById('success').classList.remove('show');resetSend();go('home');}
+    document.getElementById('rcpTitle').textContent=r.title||'Transaction Successful';
+    document.getElementById('rcpSub').textContent=r.sub||'Your easypaisa payment has been made';
+    document.getElementById('rcpId').textContent=r.txid||newTxId();
+    document.getElementById('rcpDate').textContent=r.date||rcptDate();
+    document.getElementById('rcpSrc').textContent=r.source||'easypaisa Account';
+    document.getElementById('rcpPartyLbl').textContent=r.partyLabel||'Sent to';
+    document.getElementById('rcpNameLbl').textContent=r.nameLabel||'Name';
+    document.getElementById('rcpName').textContent=r.name||'—';
 
-  var tt;function toast(m){var e=document.getElementById('toast');e.textContent=m;e.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){e.classList.remove('show');},2200);}
+    var rNumRow = document.getElementById('rcpNumRow');
+    var hasNum = !!(r.number && String(r.number).trim());
+    if(rNumRow) rNumRow.hidden = !hasNum;
+    document.getElementById('rcpNumLbl').textContent=r.numLabel||'Account Number';
+    document.getElementById('rcpNum').textContent=r.number||'';
 
-  mountEpLogos();renderFavs();renderBanks();setMode('mobile');resizeAmtInput(document.getElementById('s_amt'));updateAuthUI();renderNotifBadge();
-  if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}
+    document.getElementById('rcpByLbl').textContent=r.byLabel||'Paid by';
+    document.getElementById('rcpByName').textContent=r.byName||ME_NAME;
+    document.getElementById('rcpByNum').textContent=r.byNum||ME_NUM;
+    document.getElementById('rcpAmt').textContent=fmt(r.amount||0);
+    document.getElementById('rcpFee').textContent=fmt(r.fee||0);
+    document.getElementById('rcpTotal').textContent=fmt((r.amount||0)+(r.fee||0));
+    document.getElementById('receipt').classList.add('show');}
+  function closeFullReceipt(){document.getElementById('receipt').classList.remove('show');go('home');}
+  var tt;function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){t.classList.remove('show');},2200);}
+
+  document.querySelector('#billGrid button').classList.add('sel');
+  mountEpLogos();renderFavs();renderFavs2();renderBanks();
+  (function(){
+    isSignedIn = false;
+    applyProfile();
+    updateAuthUI();
+    renderNotifBadge();
+    updateFpUi();
+  })();
+  if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}
 </script>
 </body>
 </html>
-
