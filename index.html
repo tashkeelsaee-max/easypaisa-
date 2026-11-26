@@ -430,22 +430,6 @@
   .htx-amt.neg{color:#232527}
   .htx-repeat{font-size:11.5px;font-weight:600;color:#24b453;padding:1px 0;line-height:1.2}
 
-  .ep-notif-banner{
-    position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);left:50%;
-    transform:translateX(-50%) translateY(-140%);width:calc(100% - 20px);max-width:416px;
-    background:#ececee;color:#26282a;border-radius:15px;padding:11px 13px;
-    box-shadow:0 10px 24px rgba(0,0,0,.2);z-index:95;opacity:0;
-    transition:transform .28s cubic-bezier(.22,1,.36,1), opacity .25s ease;pointer-events:none;
-  }
-  .ep-notif-banner.show{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto}
-  .ep-notif-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px}
-  .ep-notif-brand{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:#3a3d40}
-  .ep-notif-logo{width:19px;height:19px;border-radius:5px;background:#ffffff;display:grid;place-items:center;flex:none;padding:2px;box-shadow:0 1px 3px rgba(0,0,0,.1)}
-  .ep-notif-right{display:flex;align-items:center;gap:7px;font-size:11.5px;color:#54585c}
-  .ep-notif-chev{font-size:11.5px;color:#54585c;line-height:1}
-  .ep-notif-title{font-size:13.5px;font-weight:700;color:#232527;margin-bottom:2px;line-height:1.2}
-  .ep-notif-body{font-size:12.5px;line-height:1.35;color:#3b3e42;word-break:break-word}
-
   .toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%) translateY(16px);opacity:0;background:var(--fg);color:var(--bg);padding:9px 16px;border-radius:24px;font-size:12px;font-weight:600;z-index:80;transition:all .28s;pointer-events:none;max-width:90%;text-align:center}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
@@ -684,22 +668,7 @@
 </head>
 <body>
 
-<div class="ep-notif-banner" id="epNotifBanner" onclick="hideEpNotif()">
-  <div class="ep-notif-head">
-    <div class="ep-notif-brand">
-      <span class="ep-notif-logo" id="epNotifMiniLogo"></span>
-      <span>easypaisa</span>
-    </div>
-    <div class="ep-notif-right">
-      <span>Just now</span>
-      <span class="ep-notif-chev">^</span>
-    </div>
-  </div>
-  <div class="ep-notif-title">easypaisa</div>
-  <div class="ep-notif-body" id="epNotifBody"></div>
-</div>
-
-<!-- Sending Money — Please wait transition overlay -->
+<!-- Sending Money — Please wait transition overlay (#video transition) -->
 <div class="sending-overlay" id="sendingOverlay" aria-live="polite">
   <div class="sending-coin-stage" aria-hidden="true">
     <span class="sending-e-mark">e</span>
@@ -1956,8 +1925,6 @@
   }
 
   function mountEpLogos(){
-    var mini = document.getElementById('epNotifMiniLogo');
-    if(mini) mini.innerHTML = EP_LOGO_SVG;
     document.querySelectorAll('[data-ep-logo]').forEach(function(el){el.innerHTML=EP_LOGO_SVG;});
     document.querySelectorAll('[data-ep-wallet-ico]').forEach(function(el){el.innerHTML=EP_WALLET_ICO_SVG;});
     renderBankPickList();
@@ -2402,30 +2369,90 @@
     go('profile');
   }
 
-  var epNotifTimer = null;
+  /* Mobile System Notification (5s after transaction) */
   var epNotifDelayTimer = null;
-  function showEpNotif(text){
-    clearTimeout(epNotifDelayTimer);
-    var banner = document.getElementById('epNotifBanner');
-    var body = document.getElementById('epNotifBody');
-    if(!banner || !body) return;
-    clearTimeout(epNotifTimer);
-    body.textContent = text;
-    banner.classList.add('show');
-    playNotifVoice();
-    epNotifTimer = setTimeout(function(){ hideEpNotif(); }, 60000);
+  var pendingMobileNotifText = '';
+
+  function requestMobileNotificationPermission(){
+    if(!('Notification' in window)) return Promise.resolve('unsupported');
+    if(Notification.permission === 'granted') return Promise.resolve('granted');
+    if(Notification.permission === 'denied') return Promise.resolve('denied');
+    try{
+      return Notification.requestPermission();
+    }catch(e){
+      return new Promise(function(resolve){
+        try{
+          Notification.requestPermission(function(perm){ resolve(perm || 'default'); });
+        }catch(err){
+          resolve('default');
+        }
+      });
+    }
   }
+
+  function dispatchSystemNotificationNow(text){
+    playNotifVoice();
+    if(!('Notification' in window)) return;
+
+    var opts = {
+      body: text,
+      icon: 'icon-192.png',
+      badge: 'icon-192.png',
+      tag: 'easypaisa-tx-' + Date.now(),
+      renotify: true
+    };
+
+    var showViaSwOrWindow = function(){
+      if('serviceWorker' in navigator && navigator.serviceWorker.getRegistration){
+        navigator.serviceWorker.getRegistration().then(function(reg){
+          if(reg && typeof reg.showNotification === 'function'){
+            return reg.showNotification('easypaisa', opts);
+          }
+          new Notification('easypaisa', opts);
+        }).catch(function(){
+          try{ new Notification('easypaisa', opts); }catch(err){}
+        });
+      }else{
+        try{ new Notification('easypaisa', opts); }catch(err){}
+      }
+    };
+
+    if(Notification.permission === 'granted'){
+      showViaSwOrWindow();
+    }else if(Notification.permission !== 'denied'){
+      requestMobileNotificationPermission().then(function(perm){
+        if(perm === 'granted'){
+          showViaSwOrWindow();
+        }
+      });
+    }
+  }
+
+  function showEpNotif(text){
+    pendingMobileNotifText = text;
+    if('Notification' in window && Notification.permission === 'default'){
+      requestMobileNotificationPermission().then(function(){
+        dispatchSystemNotificationNow(text);
+      });
+      return;
+    }
+    dispatchSystemNotificationNow(text);
+  }
+
   function scheduleEpNotifAfterTx(text){
+    pendingMobileNotifText = text;
     clearTimeout(epNotifDelayTimer);
+    if('Notification' in window && Notification.permission === 'default'){
+      requestMobileNotificationPermission().catch(function(){});
+    }
     epNotifDelayTimer = setTimeout(function(){
       showEpNotif(text);
     }, 5000);
   }
+
   function hideEpNotif(){
     clearTimeout(epNotifDelayTimer);
-    clearTimeout(epNotifTimer);
-    var banner = document.getElementById('epNotifBanner');
-    if(banner) banner.classList.remove('show');
+    pendingMobileNotifText = '';
   }
 
   function getDeviceId(){
@@ -3024,453 +3051,637 @@
     }
     scanRafId = requestAnimationFrame(scanFrameTick);
   }
-  function stopScanLoop(){ if(scanRafId){cancelAnimationFrame(scanRafId);scanRafId=null;} }
+
+  function stopScanLoop(){
+    if(scanRafId){ cancelAnimationFrame(scanRafId); scanRafId = null; }
+  }
 
   function startCamera(){
-    var v=document.getElementById('camFeed'),hint=document.getElementById('scanHint'),detBox=document.getElementById('scanDetectedBox');
-    scanBusy=false;if(detBox)detBox.hidden=true;
-    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
-      if(hint)hint.textContent='Is browser mein camera support nahi hai — "Upload QR" use karein';
+    stopCamera(); scanBusy = false;
+    var detBox = document.getElementById('scanDetectedBox'); if(detBox) detBox.hidden = true;
+    var hint = document.getElementById('scanHint');
+    var v = document.getElementById('camFeed');
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      if(hint) hint.textContent = 'Camera available nahi hai — Upload QR se image chunein';
       return;
     }
-    stopCamera();
-    if(hint)hint.textContent='Camera start ho raha hai...';
+    if(hint) hint.textContent = 'QR code ko frame ke andar rakhein — ya gallery se QR image upload karein';
     navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false}).then(function(stream){
-      camStream=stream;v.srcObject=stream;v.play();
-      if(hint)hint.textContent='QR code ko frame ke andar rakhein — ya gallery se QR image upload karein';
+      camStream = stream;
+      if(v){ v.srcObject = stream; v.play().catch(function(){}); }
       startScanLoop();
     }).catch(function(){
-      if(hint)hint.textContent='Camera permission allow karein ya "Upload QR" se image chunein';
+      if(hint) hint.textContent = 'Camera permission nahi mili — Upload QR se image chunein';
     });
   }
+
   function stopCamera(){
     stopScanLoop();
-    if(camStream){camStream.getTracks().forEach(function(t){t.stop();});camStream=null;}
-    var v=document.getElementById('camFeed');if(v)v.srcObject=null;
+    if(camStream){ camStream.getTracks().forEach(function(t){t.stop();}); camStream = null; }
+    var v = document.getElementById('camFeed'); if(v) v.srcObject = null;
   }
+
   function closeScanner(){stopCamera();go('home');}
 
-  function openSheet(){if(!isSignedIn){openSignInModal();return;}document.getElementById('sheet').classList.add('show');}
-  function closeSheet(){document.getElementById('sheet').classList.remove('show');}
+  var CONTACTS={
+    '03445488142':'Mrs Tashkeel Saee',
+    '03239099954':'Tashkeel Ahmad',
+    '03001234501':'Nasir Jamal',
+    '03262879808':'Muhammad Taha Shahid',
+    '03331234503':'Shazaib Gillani',
+    '03451234504':'Noman Hamza',
+    '03011234505':'Ayesha Bibi',
+    '03451122334':'Fatima Ali',
+    '03125556677':'Hamza Tariq',
+    '03424439436':'Tayyab Malik'
+  };
 
   var FAVS=[
     {name:'Nasir Jamal',num:'03001234501'},
     {name:'Muhammad Taha Shahid',num:'03262879808'},
     {name:'Shazaib Gillani',num:'03331234503'},
     {name:'Noman Hamza',num:'03451234504'},
-    {name:'Ayesha Bibi',num:'03011234505'},
-    {name:'Fatima Ali',num:'03451122334'},
-    {name:'Hamza Tariq',num:'03125556677'},
-    {name:'Tayyab Malik',num:'03424439436'}
+    {name:'Ayesha Bibi',num:'03011234505'}
   ];
-  var CONTACTS={};FAVS.forEach(function(f){CONTACTS[f.num]=f.name;});
-  CONTACTS[ME_NUM]=ME_NAME;
 
-  var BANKS=['Meezan Bank','HBL','MCB','UBL','Allied Bank','Bank Alfalah','Faysal Bank','Askari Bank','BankIslami','JS Bank','Standard Chartered'];
-  var WALLETS=['JazzCash','SadaPay','NayaPay','UPaisa','Zindigi','HBL Konnect'];
+  var WALLETS=['JazzCash','SadaPay','NayaPay','Zindigi','UPaisa','Alfa Pay','MCB Live','HBL Konnect'];
 
-  function initials(n){return(n||'').trim().split(/\s+/).map(function(w){return w[0];}).join('').slice(0,2).toUpperCase()||'?';}
-  function setErr(id,m){document.getElementById(id).textContent=m||'';}
-  function getNumVal(id){return parseFloat(String(document.getElementById(id).value||'').replace(/[^0-9.]/g,''))||0;}
-  function setAmt(id,v){var el=document.getElementById(id);el.value=v;el.dispatchEvent(new Event('input'));}
+  var NETWORK_PACKAGES = {
+    'Jazz': [
+      {title:'Weekly Mega Plus', desc:'40 GB Internet · 5000 Jazz Mins · 300 Other Mins · 7 Days', price:599},
+      {title:'Monthly Super Duper', desc:'30 GB Internet · 3000 Jazz Mins · 300 Other Mins · 30 Days', price:1499},
+      {title:'Daily Extreme', desc:'2 GB Internet · Unlimited Jazz Mins · 24 Hours', price:65}
+    ],
+    'Zong': [
+      {title:'Weekly All-in-One', desc:'25 GB Internet · Unlimited Zong Mins · 150 Other Mins · 7 Days', price:520},
+      {title:'Monthly Supreme Offer', desc:'50 GB Internet · 10000 Zong Mins · 600 Other Mins · 30 Days', price:1599},
+      {title:'Good Night Offer', desc:'15 GB Night Data (12AM - 9AM) · 5 Days', price:90}
+    ],
+    'Telenor': [
+      {title:'Mahana Dhamaka', desc:'35 GB Internet · Unlimited Telenor Mins · 350 Other Mins · 30 Days', price:1350},
+      {title:'Haftawar Sahulat', desc:'15 GB Internet · Unlimited Telenor Mins · 100 Other Mins · 7 Days', price:450},
+      {title:'3-Day Social Pack', desc:'5 GB WhatsApp & Social Data · 3 Days', price:75}
+    ],
+    'Ufone': [
+      {title:'Super Card Gold', desc:'20 GB Internet · Unlimited Ufone Mins · 250 Other Mins · 30 Days', price:1199},
+      {title:'Power Hour', desc:'1 GB Internet + 100 Ufone Mins · 1 Hour', price:35},
+      {title:'Weekly Asli Chappar Phaar', desc:'12 GB Internet · Unlimited Ufone Mins · 100 Other Mins · 7 Days', price:420}
+    ],
+    'Onic': [
+      {title:'Onic Go 100', desc:'100 GB Data · Unlimited Calls & SMS · 30 Days', price:2490},
+      {title:'Onic Lite 30', desc:'30 GB Data · 1000 Mins · 30 Days', price:1490}
+    ]
+  };
 
-  var transferMethod='Easypaisa',sendMode='mobile',selectedFav='',curNum='',curName='',curPurpose='Others',selectedWallet='',waModeType='acc';
-  function setEpTab(tab){
-    var isH = tab === 'history';
-    var sBtn = document.getElementById('epTabSend');
-    var hBtn = document.getElementById('epTabHist');
-    if(sBtn) sBtn.classList.toggle('on', !isH);
-    if(hBtn) hBtn.classList.toggle('on', isH);
-    if(isH) openHistoryWithLoader();
+  function renderPackagesList(){
+    var netSel = document.getElementById('l_net');
+    var listEl = document.getElementById('pkgList');
+    var titleEl = document.getElementById('pkgSecTitle');
+    if(!netSel || !listEl) return;
+    var net = netSel.value || 'Jazz';
+    if(titleEl) titleEl.textContent = net + ' Popular Bundles';
+    var pkgs = NETWORK_PACKAGES[net] || NETWORK_PACKAGES['Jazz'];
+    listEl.innerHTML = pkgs.map(function(p, idx){
+      return '<div class="pkg-card">' +
+        '<div class="pkg-info"><b>'+p.title+'</b><small>'+p.desc+'</small></div>' +
+        '<button type="button" class="pkg-buy num" onclick="buyBundle('+idx+')">Rs. '+p.price+'</button>' +
+      '</div>';
+    }).join('');
   }
+
+  function buyBundle(idx){
+    if(!isSignedIn){ openSignInModal(); return; }
+    var net = (document.getElementById('l_net') && document.getElementById('l_net').value) || 'Jazz';
+    var num = (document.getElementById('l_num').value || '').trim();
+    var pkgs = NETWORK_PACKAGES[net] || NETWORK_PACKAGES['Jazz'];
+    var pkg = pkgs[idx];
+    if(!pkg) return;
+    if(!/^03\d{9}$/.test(num)){
+      setErr('l_err', 'Pehle 11-digit mobile number (03XXXXXXXXX) likhein');
+      return;
+    }
+    if(pkg.price > balance){
+      setErr('l_err', 'Balance kam hai');
+      return;
+    }
+    setErr('l_err', '');
+    isQrFlow = false; qrBankInfo = null;
+    addTx('out', net + ' Bundle - ' + pkg.title, num, pkg.price, '📱');
+    refresh();
+    var nowStr = rcptDate(Date.now());
+    var txid = tx[tx.length-1].txid;
+    lastReceiptData = {
+      txid:txid, date:nowStr, sub:'Your '+net+' bundle has been activated', amount:pkg.price,
+      source:fundSrc(), partyLabel:'Bundle Activated For', nameLabel:'Package', name:net+' - '+pkg.title,
+      numLabel:'Mobile Number', number:num, mode:'load', isWallet:false
+    };
+    showSummaryScreen({
+      amount:pkg.price, subText:'Bundle Activated for', name:net+' - '+pkg.title, number:num, source:net
+    });
+    scheduleEpNotifAfterTx(net+' bundle ('+pkg.title+') Rs. '+Number(pkg.price).toLocaleString('en-PK')+' active ho gaya.');
+  }
+
+  var transferMethod='Easypaisa',selectedWallet='',mode='mobile',curNum='',curName='',curPurpose='Others',lastReceiptData=null,cfFavSelected=false;
+
+  function initials(n){return (n||'').trim().split(/\s+/).map(function(w){return w[0];}).join('').slice(0,2).toUpperCase()||'?';}
+  function setErr(id,m){var e=document.getElementById(id);if(e)e.textContent=m||'';}
+  function setAmt(id,v){var el=document.getElementById(id);el.value=v;el.dispatchEvent(new Event('input'));}
+  function setBig(v){setAmt('s_amt',v);checkAmtNext();}
+
+  function toggleMsgBox(){
+    var box=document.getElementById('msgBox');
+    if(!box)return;
+    box.hidden=!box.hidden;
+    if(!box.hidden){
+      var inp=document.getElementById('s_note');
+      if(inp)setTimeout(function(){inp.focus();},120);
+    }
+  }
+
+  function syncAmt(){
+    var inp=document.getElementById('s_amt');
+    if(!inp)return;
+    var clean=inp.value.replace(/[^0-9]/g,'');
+    inp.value=clean;
+    var len=Math.max(1,clean.length);
+    inp.style.width=(len*25+10)+'px';
+    inp.classList.toggle('hasval',clean.length>0&&Number(clean)>0);
+    setErr('am_err','');
+    checkAmtNext();
+  }
+
+  function checkAmtNext(){
+    var amt=Number((document.getElementById('s_amt')&&document.getElementById('s_amt').value)||0);
+    var btn=document.getElementById('btnAmtNext');
+    if(btn)btn.classList.toggle('ready',amt>=1);
+  }
+
+  function openSheet(){if(!isSignedIn){openSignInModal();return;}document.getElementById('sheet').classList.add('show');}
+  function closeSheet(){document.getElementById('sheet').classList.remove('show');}
+
   function pickMethod(m){
     closeSheet();
     if(!isSignedIn){openSignInModal();return;}
-    isQrFlow=false; qrBankInfo=null; transferMethod=m; selectedBankItem=null;
+    isQrFlow=false; qrBankInfo=null;
+    transferMethod=m; selectedBankItem=null;
     updateEpLogosVisibility();
-    if(m==='Wallet'){selectedWallet='';renderFavs('favRow2');document.getElementById('wSearch').value='';renderWalletList();go('walletPick');return;}
-    if(m==='Bank'){var sb=document.getElementById('bankSearchInput');if(sb)sb.value='';renderBankPickList();setBankTab('send');go('bankPick');return;}
-    resetSend();
-    var bw=document.getElementById('bankWrap');
-    var t=document.getElementById('sendTitle');
-    var mobBtn=document.getElementById('segMob');
-    var accBtn=document.getElementById('segAcc');
-    if(mobBtn) mobBtn.hidden=false;
-    if(accBtn) accBtn.hidden=false;
-    setEpTab('send');
-    if(m==='Easypaisa'){t.textContent='easypaisa Transfer';bw.hidden=true;setMode('mobile');}
-    else if(m==='Raast'){t.textContent='Raast Transfer';bw.hidden=false;setMode('account');}
-    else{t.textContent='CNIC Transfer';bw.hidden=true;setMode('mobile');}
-    go('send');
+    if(m==='Bank'){
+      selectedWallet='';
+      var sbInp=document.getElementById('bankSearchInput'); if(sbInp)sbInp.value='';
+      var bpTabS=document.getElementById('bpTabSend'); if(bpTabS)bpTabS.classList.add('on');
+      var bpTabH=document.getElementById('bpTabHist'); if(bpTabH)bpTabH.classList.remove('on');
+      renderBankPickList();
+      go('bankPick');
+      return;
+    }
+    if(m==='Wallet'){selectedWallet='';renderFavs('favRow2');renderWalletList();go('walletPick');return;}
+    selectedWallet=''; resetSend();
+    var bw=document.getElementById('bankWrap'); bw.hidden=true; setMode('mobile');
+    var titles={'Easypaisa':'easypaisa Transfer','Raast':'Raast Transfer','CNIC':'CNIC Transfer'};
+    document.getElementById('sendTitle').textContent=titles[m]||'Send Money'; go('send');
   }
-  function resetSend(){selectedFav='';document.getElementById('s_num').value='';document.getElementById('s_name').value='';document.getElementById('recvNameWrap').hidden=true;document.getElementById('recvCard').hidden=true;setErr('s_err','');checkNext();renderFavs('favRow');renderFavs('favRow2');}
-  function setMode(m){
-    sendMode=m;document.getElementById('segMob').classList.toggle('on',m==='mobile');document.getElementById('segAcc').classList.toggle('on',m==='account');
-    var inp=document.getElementById('s_num');
-    if(m==='mobile'){inp.inputMode='numeric';inp.maxLength=12;inp.placeholder='Enter or Select Receiver Number';}
-    else{inp.inputMode='text';inp.maxLength=28;inp.placeholder=transferMethod==='Raast'?'Raast ID ya IBAN (PK...)':'Account number likhein';}
-    resolveRecv();
+
+  function setEpTab(tab){
+    var isH=tab==='history';
+    document.getElementById('epTabSend').classList.toggle('on',!isH);
+    document.getElementById('epTabHist').classList.toggle('on',isH);
+    if(isH)openHistoryWithLoader();
   }
-  function renderFavs(rowId){var row=document.getElementById(rowId);if(!row)return;
-    row.innerHTML=FAVS.map(function(f){var sel=selectedFav===f.num?' sel':'';
-      return '<div class="ep-fav'+sel+'" onclick="pickFav(\''+f.num+'\')"><div class="av">'+initials(f.name)+'</div><small>'+f.name+'</small></div>';}).join('');}
-  function pickFav(num){if(selectedFav===num){selectedFav='';document.getElementById('s_num').value='';document.getElementById('recvCard').hidden=true;document.getElementById('recvNameWrap').hidden=true;checkNext();}
-    else{selectedFav=num;setMode('mobile');document.getElementById('s_num').value=num;resolveRecv();}
-    renderFavs('favRow');renderFavs('favRow2');}
-  function resolveRecv(){var raw=document.getElementById('s_num').value.trim(),digits=raw.replace(/[^0-9]/g,'');
-    if(selectedFav&&digits!==selectedFav){selectedFav='';renderFavs('favRow');renderFavs('favRow2');}
-    setErr('s_err','');var card=document.getElementById('recvCard'),nw=document.getElementById('recvNameWrap');
-    var accMatch = ACCOUNTS[digits] || (digits.match(/03\d{9}/) && ACCOUNTS[digits.match(/03\d{9}/)[0]]);
-    var known=CONTACTS[digits]||(accMatch&&accMatch.name)||(digits.match(/03\d{9}/)&&CONTACTS[digits.match(/03\d{9}/)[0]]);
-    if(known){card.hidden=false;nw.hidden=true;document.getElementById('recvAv').textContent=initials(known);document.getElementById('recvName').textContent=known;document.getElementById('recvNum').textContent=raw;}
-    else{card.hidden=true;nw.hidden=!(digits.length>=6||raw.length>=8);}
-    checkNext();}
-  function checkNext(){var raw=document.getElementById('s_num').value.trim(),digits=raw.replace(/[^0-9]/g,'');
-    var accMatch = ACCOUNTS[digits] || (digits.match(/03\d{9}/) && ACCOUNTS[digits.match(/03\d{9}/)[0]]);
-    var known=CONTACTS[digits]||(accMatch&&accMatch.name)||(digits.match(/03\d{9}/)&&CONTACTS[digits.match(/03\d{9}/)[0]]);
-    var typed=document.getElementById('s_name').value.trim();
-    var ok=sendMode==='mobile'?(digits.length>=10&&(known||typed.length>=2)):(raw.length>=6&&(known||typed.length>=2));
-    document.getElementById('btnNext').disabled=!ok;}
-  function goAmount(){var raw=document.getElementById('s_num').value.trim(),digits=raw.replace(/[^0-9]/g,'');
-    if(sendMode==='mobile'&&digits.length<10)return setErr('s_err','10-11 digit mobile number daalein');
-    if(sendMode==='account'&&raw.length<6)return setErr('s_err','Sahi account number ya Raast ID daalein');
-    var accMatch = ACCOUNTS[digits] || (digits.match(/03\d{9}/) && ACCOUNTS[digits.match(/03\d{9}/)[0]]);
-    var known=CONTACTS[digits]||(accMatch&&accMatch.name)||(digits.match(/03\d{9}/)&&CONTACTS[digits.match(/03\d{9}/)[0]]);
-    var typed=document.getElementById('s_name').value.trim();
-    if(!known&&typed.length<2){document.getElementById('recvNameWrap').hidden=false;return setErr('s_err','Receiver ka naam likhein');}
-    isQrFlow=false; qrBankInfo=null; curNum=raw; curName=known||typed;
-    curPurpose=document.getElementById('bankWrap').hidden?transferMethod:(document.getElementById('bankSel').value+' '+transferMethod);
-    returnScreenAfterAmt='send';
-    openAmountScreen();}
 
   function renderWalletList(){
+    var el=document.getElementById('wList');if(!el)return;
     var q=(document.getElementById('wSearch')&&document.getElementById('wSearch').value||'').toLowerCase().trim();
-    var list=WALLETS.filter(function(w){return !q||w.toLowerCase().indexOf(q)>-1;});
-    document.getElementById('wList').innerHTML=list.map(function(w){
-      return '<button class="wrow" onclick="selectWallet(\''+w+'\')"><div class="wav">'+renderWalletLogoHtml(w)+'</div><span>'+w+'</span></button>';
+    var list=WALLETS.filter(function(w){return w.toLowerCase().indexOf(q)>-1;});
+    el.innerHTML=list.map(function(w){
+      var safeW=w.replace(/'/g,"\\'");
+      return '<button class="wrow" type="button" onclick="pickWallet(\''+safeW+'\')"><div class="wav">'+renderWalletLogoHtml(w)+'</div><span>'+w+'</span></button>';
     }).join('');
   }
-  function selectWallet(w){isQrFlow=false; qrBankInfo=null; selectedWallet=w;selectedBankItem=null;waModeType='acc';document.getElementById('waWallet').textContent=w;document.getElementById('waLogo').innerHTML=renderWalletLogoHtml(w);document.getElementById('waAcc').classList.add('on');document.getElementById('waIban').classList.remove('on');document.getElementById('waNumLbl').textContent="Enter Receiver's Account Number";document.getElementById('wa_num').value='';setErr('wa_err','');updateEpLogosVisibility();go('walletAcct');}
-  function waMode(m){waModeType=m;document.getElementById('waAcc').classList.toggle('on',m==='acc');document.getElementById('waIban').classList.toggle('on',m==='iban');document.getElementById('waNumLbl').textContent=m==='iban'?"Enter Receiver's IBAN":"Enter Receiver's Account Number";document.getElementById('wa_num').value='';setErr('wa_err','');}
-  function walletProceed(){var val=document.getElementById('wa_num').value.trim();if(waModeType==='iban'){if(!/^PK\d{2}[A-Z0-9]{10,24}$/i.test(val))return setErr('wa_err','Sahi IBAN likhein (e.g. PK36...)');curNum=val.toUpperCase();}else{var d=val.replace(/[^0-9]/g,'');if(d.length<10)return setErr('wa_err','10-11 digit account number daalein');curNum=d;}
-    var accM = ACCOUNTS[curNum] || (curNum.match(/03\d{9}/) && ACCOUNTS[curNum.match(/03\d{9}/)[0]]);
-    isQrFlow=false; qrBankInfo=null; curName=CONTACTS[curNum]||(accM&&accM.name)||(curNum.match(/03\d{9}/)&&CONTACTS[curNum.match(/03\d{9}/)[0]])||(selectedWallet+' User');
-    curPurpose=selectedWallet+' ('+document.getElementById('wa_purpose').value+')';
-    returnScreenAfterAmt='walletAcct';
-    openAmountScreen();}
 
-  function toggleMsgBox(){var box=document.getElementById('msgBox');if(!box)return;box.hidden=!box.hidden;if(!box.hidden){var inp=document.getElementById('s_note');if(inp)inp.focus();}}
-  function formatAmtInputEl(inp){if(!inp)return;var raw=String(inp.value||'').replace(/[^0-9]/g,'');if(!raw){inp.value='';return;}var num=parseInt(raw,10);inp.value=isNaN(num)?'':num.toLocaleString('en-US');}
-  function resizeAmtInput(){var inp=document.getElementById('s_amt');if(!inp)return;var txt=(inp.value||'').trim()||'0';var chars=txt.length;var pxSize=chars<=4?42:chars<=6?35:chars<=8?29:24;inp.style.fontSize=pxSize+'px';var chWidth=pxSize*0.62;inp.style.width=Math.max(34,Math.min(205,Math.ceil(chars*chWidth+8)))+'px';inp.classList.toggle('hasval',Boolean((inp.value||'').trim()&&getNumVal('s_amt')>0));}
+  function pickWallet(w){
+    isQrFlow=false; qrBankInfo=null; selectedBankItem=null;
+    selectedWallet=w; updateRecipientBadges();
+    document.getElementById('waWallet').textContent=w;
+    document.getElementById('waLogo').innerHTML=renderWalletLogoHtml(w);
+    document.getElementById('wa_num').value=''; setErr('wa_err',''); waMode('acc'); go('walletAcct');
+  }
+
+  function waMode(m){
+    var acc=m==='acc';
+    document.getElementById('waAcc').classList.toggle('on',acc); document.getElementById('waIban').classList.toggle('on',!acc);
+    document.getElementById('waNumLbl').textContent=acc?"Enter Receiver's Account Number":"Enter Receiver's IBAN";
+    var inp=document.getElementById('wa_num'); inp.placeholder=acc?'03XXXXXXXXX':'PK..XXXX0000000000000000'; inp.value='';
+  }
+
+  function walletProceed(){
+    var raw=(document.getElementById('wa_num').value||'').trim();
+    var purpose=document.getElementById('wa_purpose').value||'Others';
+    var digits=raw.replace(/[^0-9A-Za-z]/g,'');
+    if(digits.length<6)return setErr('wa_err','Sahi account number ya IBAN likhein');
+    setErr('wa_err','');
+    var onlyNum=raw.replace(/[^0-9]/g,'');
+    isQrFlow=false; qrBankInfo=null;
+    curNum=raw; curName=CONTACTS[onlyNum]||(selectedWallet+' User'); curPurpose=purpose;
+    returnScreenAfterAmt='walletAcct';
+    openAmountScreen();
+  }
+
+  function setMode(m){
+    mode=m;
+    document.getElementById('segMob').classList.toggle('on',m==='mobile'); document.getElementById('segAcc').classList.toggle('on',m==='account');
+    var inp=document.getElementById('s_num');
+    inp.placeholder=m==='mobile'?'Enter or Select Receiver Number':'Enter Account Number';
+    inp.maxLength=m==='mobile'?11:20;
+    inp.value=''; document.getElementById('recvCard').hidden=true;
+    document.getElementById('recvNameWrap').hidden=true; document.getElementById('s_name').value='';
+    setErr('s_err',''); checkNext();
+  }
+
+  function renderFavs(targetId){
+    var el=document.getElementById(targetId||'favRow');if(!el)return;
+    var curVal=(document.getElementById('s_num')&&document.getElementById('s_num').value)||'';
+    el.innerHTML=FAVS.map(function(f){
+      var sel=curVal===f.num?' sel':'';
+      return '<button class="fav ep-fav'+sel+'" type="button" onclick="pickFav(\''+f.num+'\')"><div class="av">'+initials(f.name)+'</div><small>'+f.name+'</small></button>';
+    }).join('');
+  }
+
+  function pickFav(num){
+    if(document.getElementById('walletPick').classList.contains('active')){
+      selectedWallet='JazzCash';
+      document.getElementById('waWallet').textContent='JazzCash';
+      document.getElementById('waLogo').innerHTML=renderWalletLogoHtml('JazzCash');
+      waMode('acc'); go('walletAcct');
+      var wInp=document.getElementById('wa_num'); if(wInp)wInp.value=num;
+      return;
+    }
+    setMode('mobile'); document.getElementById('s_num').value=num; resolveRecv();
+  }
+
+  function resolveRecv(){
+    var v=document.getElementById('s_num').value.replace(/[^0-9]/g,'');
+    document.getElementById('s_num').value=v; setErr('s_err',''); renderFavs('favRow');
+    var card=document.getElementById('recvCard'),nameWrap=document.getElementById('recvNameWrap'),nameInp=document.getElementById('s_name');
+    var showCard=function(nm,num){card.hidden=false;nameWrap.hidden=true;nameInp.value='';document.getElementById('recvAv').textContent=initials(nm);document.getElementById('recvName').textContent=nm;document.getElementById('recvNum').textContent=num;};
+    if(mode==='mobile'){
+      if(v.length===11){
+        if(CONTACTS[v]){showCard(CONTACTS[v],v);}
+        else{card.hidden=true;nameWrap.hidden=false;if(!nameInp.value.trim())nameInp.value='';}
+      }else{card.hidden=true;nameWrap.hidden=true;nameInp.value='';}
+    }else{
+      if(v.length>=6){
+        if(CONTACTS[v]){showCard(CONTACTS[v],v);}
+        else{card.hidden=true;nameWrap.hidden=false;}
+      }else{card.hidden=true;nameWrap.hidden=true;nameInp.value='';}
+    }
+    checkNext();
+  }
+
+  function checkNext(){
+    var v=document.getElementById('s_num').value;
+    var okNum=mode==='mobile'?/^03\d{9}$/.test(v):v.length>=6;
+    var cardVisible=!document.getElementById('recvCard').hidden;
+    var typedName=document.getElementById('s_name').value.trim();
+    document.getElementById('btnNext').disabled=!(okNum&&(cardVisible||typedName.length>=2));
+  }
+
+  function resetSend(){
+    document.getElementById('s_num').value=''; document.getElementById('s_name').value='';
+    document.getElementById('recvCard').hidden=true; document.getElementById('recvNameWrap').hidden=true;
+    setErr('s_err',''); checkNext(); renderFavs('favRow');
+  }
+
+  function goAmount(){
+    var num=document.getElementById('s_num').value.trim();
+    var ok=mode==='mobile'?/^03\d{9}$/.test(num):num.length>=6;
+    if(!ok)return setErr('s_err',mode==='mobile'?'11-digit number (03XXXXXXXXX) likhein':'Account number likhein');
+    var name=CONTACTS[num]||document.getElementById('s_name').value.trim();
+    if(!name)return setErr('s_err','Receiver ka naam likhein');
+    setErr('s_err','');
+    isQrFlow=false; qrBankInfo=null;
+    curNum=num; curName=name; curPurpose='Others';
+    returnScreenAfterAmt='send';
+    openAmountScreen();
+  }
 
   function openAmountScreen(){
+    updateRecipientBadges();
     document.getElementById('amPayTo').textContent=curName;
-    var amtInp=document.getElementById('s_amt');amtInp.value='';resizeAmtInput();
-    var noteInp=document.getElementById('s_note');if(noteInp)noteInp.value='';
-    var msgBox=document.getElementById('msgBox');if(msgBox)msgBox.hidden=true;
-    setErr('am_err','');renderBal();updateRecipientBadges();go('sendAmt');
-    setTimeout(function(){amtInp.focus();},180);
+    var amtInp=document.getElementById('s_amt');
+    amtInp.value=''; amtInp.style.width='34px'; amtInp.classList.remove('hasval');
+    var noteInp=document.getElementById('s_note'); if(noteInp)noteInp.value='';
+    var msgBox=document.getElementById('msgBox'); if(msgBox)msgBox.hidden=true;
+    setErr('am_err',''); checkAmtNext(); renderBal(); go('sendAmt');
+    setTimeout(function(){amtInp.focus();},200);
   }
-  function syncAmt(){formatAmtInputEl(document.getElementById('s_amt'));resizeAmtInput();setErr('am_err','');var v=getNumVal('s_amt');document.getElementById('btnAmtNext').classList.toggle('ready',v>0&&v<=balance);}
-  function setBig(n){var inp=document.getElementById('s_amt');inp.value=n;formatAmtInputEl(inp);resizeAmtInput();syncAmt();}
+
   function goConfirm(){
-    var v=getNumVal('s_amt');
-    if(!v||v<=0)return setErr('am_err','Amount daalein');
-    if(v>balance)return setErr('am_err','Balance kam hai ('+fmt(balance)+')');
-    setErr('am_err','');setErr('cf_err','');
+    var amt=Number(document.getElementById('s_amt').value);
+    if(!amt||amt<1)return setErr('am_err','Kam az kam Rs. 1 likhein');
+    if(amt>balance)return setErr('am_err','Balance kam hai');
+    setErr('am_err','');
+    updateRecipientBadges();
     document.getElementById('cf_src').textContent=fundSrc();
+    renderBal();
     document.getElementById('cf_name').textContent=curName;
-    document.getElementById('cf_num').textContent=curNum || (isQrFlow ? 'QR Merchant' : '—');
-    document.getElementById('cf_amt').textContent=fmtNoDec(v);
-    document.getElementById('cf_total').textContent=fmt(v);
-    renderBal();updateRecipientBadges();
-    var favRow=document.getElementById('cfFavRow'),favBox=document.getElementById('cfFavBox');
-    var cleanDigits=(curNum||'').replace(/[^0-9]/g,'');
-    var alreadyFav=Boolean(cleanDigits&&CONTACTS[cleanDigits]);
-    if(favRow){favRow.style.display=(cleanDigits.length>=10)?'flex':'none';favRow.classList.toggle('on',alreadyFav);}
-    if(favBox)favBox.textContent=alreadyFav?'✓':'';
-    go('sendConfirm');
+    if(isQrFlow){
+      document.getElementById('cf_num').textContent=(qrBankInfo && qrBankInfo.name) ? (qrBankInfo.name + ' QR') : 'QR Merchant';
+    }else{
+      document.getElementById('cf_num').textContent=curNum;
+    }
+    document.getElementById('cf_amt').textContent='Rs. '+Number(amt).toLocaleString('en-PK');
+    document.getElementById('cf_total').textContent=fmt(amt);
+    cfFavSelected=false; updateCfFavUI();
+    setErr('cf_err',''); go('sendConfirm');
   }
-  function toggleCfFav(){
-    var cleanDigits=(curNum||'').replace(/[^0-9]/g,'');if(cleanDigits.length<10)return;
+
+  function toggleCfFav(){cfFavSelected=!cfFavSelected;updateCfFavUI();}
+  function updateCfFavUI(){
     var row=document.getElementById('cfFavRow'),box=document.getElementById('cfFavBox');
-    var isOn=row.classList.contains('on');
-    if(isOn){row.classList.remove('on');box.textContent='';delete CONTACTS[cleanDigits];for(var i=FAVS.length-1;i>=0;i--){if(FAVS[i].num===cleanDigits)FAVS.splice(i,1);}toast('Favourite se hata diya gaya');}
-    else{row.classList.add('on');box.textContent='✓';CONTACTS[cleanDigits]=curName;var exists=FAVS.some(function(f){return f.num===cleanDigits;});if(!exists)FAVS.unshift({name:curName,num:cleanDigits});toast('Favourite mein add ho gaya');}
-    renderFavs('favRow');renderFavs('favRow2');
+    if(row)row.classList.toggle('on',cfFavSelected);
+    if(box)box.textContent=cfFavSelected?'✓':'';
   }
 
   function fundSrc(){
-    if(isQrFlow) return 'QR Payment';
-    if(returnScreenAfterAmt==='bankAcct'&&selectedBankItem) return selectedBankItem.name;
-    if(transferMethod==='Easypaisa') return 'easypaisa Account';
-    if(transferMethod==='Wallet') return selectedWallet;
-    if(transferMethod==='Raast') return 'Raast Transfer';
-    if(transferMethod==='Bank') return (selectedBankItem&&selectedBankItem.name)||'Bank Transfer';
-    return 'CNIC Transfer';
+    if(isQrFlow)return 'QR Payment';
+    if(transferMethod==='Bank')return selectedBankItem?selectedBankItem.name:'Bank Transfer';
+    if(transferMethod==='Wallet'&&selectedWallet)return selectedWallet;
+    if(transferMethod==='Raast')return 'Raast';
+    if(transferMethod==='CNIC')return 'CNIC';
+    return 'easypaisa Account';
   }
 
-  var lastReceiptData = null;
-
   function doSend(){
-    if(!isSignedIn){openSignInModal();return;}
     getAudioCtx();
-    var v=getNumVal('s_amt');if(!v||v<=0)return setErr('cf_err','Amount daalein');if(v>balance)return setErr('cf_err','Balance kam hai');
-    var noteEl=document.getElementById('s_note');var note=noteEl?noteEl.value.trim():'';
-    var src=fundSrc();
-    var isQr = isQrFlow;
-    var qrBankName = (isQrFlow && qrBankInfo && qrBankInfo.name) ? qrBankInfo.name : '';
+    var amt=Number(document.getElementById('s_amt').value);
+    var note=(document.getElementById('s_note')&&document.getElementById('s_note').value.trim())||'';
+    if(!amt||amt<1)return setErr('cf_err','Kam az kam Rs. 1 likhein');
+    if(amt>balance)return setErr('cf_err','Balance kam hai');
+    setErr('cf_err','');
+
+    if(cfFavSelected&&curNum&&!FAVS.some(function(f){return f.num===curNum;})){
+      FAVS.unshift({name:curName,num:curNum});
+      if(FAVS.length>8)FAVS.pop();
+    }
+
+    var wasQr=isQrFlow, activeQrBank=qrBankInfo;
+    var activeBank=selectedBankItem, activeWallet=selectedWallet, activeMethod=transferMethod;
+    var src=fundSrc(), nowStr=rcptDate(Date.now());
+    var txTitle=wasQr?'QR Payment - '+curName:('Sent via '+src+' to '+curName);
+    var txSub=wasQr?(activeQrBank&&activeQrBank.name?activeQrBank.name+' QR':'QR Payment'):(curNum+(note?' · '+note:''));
+    addTx('out',txTitle,txSub,amt,'💸');
+    var txid=tx[tx.length-1].txid;
+    tx[tx.length-1].name=curName; tx[tx.length-1].number=curNum;
+    tx[tx.length-1].rcpt={
+      txid:txid,date:nowStr,sub:'Your easypaisa payment has been made',amount:amt,
+      source:src,partyLabel:'Sent to',nameLabel:'Name',name:curName,
+      numLabel:wasQr?'Merchant':'Account Number',number:wasQr?'':curNum,
+      mode:wasQr?'qr':'send',isWallet:false,walletName:activeWallet,bankItem:activeBank,
+      isQr:wasQr,qrBank:activeQrBank
+    };
+    refresh();
+    notifyReceiverAccount(curNum,amt,note,txid,src);
+
+    lastReceiptData=tx[tx.length-1].rcpt;
+    var summaryName=curName;
+    var summaryNumber=wasQr?(activeQrBank&&activeQrBank.name?activeQrBank.name+' QR':''):curNum;
 
     runSendingTransition(function(){
-      var t=addTx('out',(isQr?'QR Payment - ':'Sent via '+src+' to ')+curName,curNum+(note?' · '+note:''),v,isQr?'📷':'💸');
-      t.name=curName;t.number=curNum;
-      var nowStr=rcptDate(t.time);
-      var rData={
-        txid:t.txid,date:nowStr,
-        sub:isQr?'Your easypaisa QR payment has been made':'Your easypaisa payment has been made',
-        amount:v,source:'easypaisa Account',partyLabel:isQr?'Paid to':'Sent to',
-        nameLabel:isQr?'Merchant Name':'Name',name:curName,
-        numLabel:isQr?'Merchant ID':'Account Number',number:curNum,
-        isQr:isQr,qrBankName:qrBankName,channel:src
-      };
-      t.rcpt=rData;
-      notifyReceiverAccount(curNum,v,note,t.txid,src);
-      refresh();
       playSendVoice();
-      showSummary(rData);
-      scheduleEpNotifAfterTx(
-        'You have sent ' + fmt(v) + ' to ' + curName +
-        (curNum ? ' (' + curNum + ')' : '') +
-        ' via ' + src + '. Tx ID ' + t.txid + '.'
-      );
+      showSummaryScreen({
+        amount:amt,subText:'Successfully Sent to',name:summaryName,
+        number:summaryNumber,source:src,isQr:wasQr,qrBank:activeQrBank,
+        bankItem:activeBank,walletName:activeWallet
+      });
+      scheduleEpNotifAfterTx('Aapne '+summaryName+' ko '+fmtNoDec(amt)+' bhej diye hain.');
     });
   }
 
-  function openLoadScreen(){if(!isSignedIn){openSignInModal();return;}renderPackagesList();go('load');}
-  var BUNDLE_CATALOG={
-    'Jazz':[
-      {title:'Monthly Super Duper',detail:'30 Days · 12 GB Data · 3000 Jazz Mins · 300 Other Mins · 3000 SMS',price:1199},
-      {title:'Weekly Mega Plus',detail:'7 Days · 20 GB Data · 1000 Jazz Mins · 500 SMS',price:499},
-      {title:'Daily Extreme',detail:'1 Day · 2 GB Data · Unlimited Jazz Mins',price:65}
-    ],
-    'Zong':[
-      {title:'Monthly Supreme Offer',detail:'30 Days · 40 GB Data · Unlimited Zong Mins · 300 Other Mins',price:1399},
-      {title:'Weekly Super Star',detail:'7 Days · 15 GB Data · Unlimited Zong Mins · 200 Other Mins',price:450},
-      {title:'Good Night Offer',detail:'12 AM - 9 AM · 12 GB Data',price:35}
-    ],
-    'Telenor':[
-      {title:'Monthly Easycard',detail:'30 Days · 25 GB Data · Unlimited Telenor Mins · 400 Other Mins',price:1150},
-      {title:'Weekly Sahulat Offer',detail:'7 Days · 10 GB Data · Unlimited Telenor Mins',price:390},
-      {title:'Din Bhar Offer',detail:'1 Day · 1.5 GB Data · On-net Mins',price:55}
-    ],
-    'Ufone':[
-      {title:'Monthly Power Hour',detail:'30 Days · 18 GB Data · 2000 Ufone Mins · 250 Other Mins',price:1050},
-      {title:'Weekly Mega Offer',detail:'7 Days · 8 GB Data · Unlimited Ufone Mins',price:360},
-      {title:'Super Daily Offer',detail:'1 Day · 1 GB Data · On-net Mins',price:45}
-    ],
-    'Onic':[
-      {title:'Onic Monthly Unlimited',detail:'30 Days · 50 GB Data · Unlimited Calls & SMS',price:1499},
-      {title:'Onic Weekly Starter',detail:'7 Days · 12 GB Data · 500 Mins',price:499}
-    ]
-  };
-  function renderPackagesList(){
-    var netEl=document.getElementById('l_net'),listEl=document.getElementById('pkgList'),titleEl=document.getElementById('pkgSecTitle');
-    if(!netEl||!listEl)return;
-    var net=netEl.value||'Jazz';
-    if(titleEl)titleEl.textContent=net+' Popular Bundles';
-    var items=BUNDLE_CATALOG[net]||BUNDLE_CATALOG['Jazz'];
-    listEl.innerHTML=items.map(function(b,idx){
-      return '<div class="pkg-card"><div class="pkg-info"><b>'+b.title+'</b><small>'+b.detail+'</small></div><button type="button" class="pkg-buy" onclick="buyBundlePackage('+idx+')">Rs. '+b.price+' · Buy</button></div>';
-    }).join('');
-  }
-  function buyBundlePackage(idx){
-    if(!isSignedIn){openSignInModal();return;}
-    getAudioCtx();
-    var net=document.getElementById('l_net').value||'Jazz';
-    var items=BUNDLE_CATALOG[net]||BUNDLE_CATALOG['Jazz'];
-    var pkg=items[idx];if(!pkg)return;
-    var n=document.getElementById('l_num').value.replace(/[^0-9]/g,'');
-    if(n.length<10)return setErr('l_err','Bundle activate karne ke liye 10-11 digit number likhein');
-    if(pkg.price>balance)return setErr('l_err','Balance kam hai');
-    setErr('l_err','');
-    var t=addTx('out',pkg.title+' ('+net+')',n,pkg.price,'📦');t.name=pkg.title;t.number=n;
-    var rData={txid:t.txid,date:rcptDate(t.time),sub:'Your bundle package has been activated',amount:pkg.price,source:'easypaisa Account',partyLabel:'Activated for',nameLabel:'Package',name:pkg.title+' ('+net+')',numLabel:'Mobile Number',number:n};
-    t.rcpt=rData;
-    notifyReceiverAccount(n,pkg.price,pkg.title,t.txid,'Bundle Package');
-    refresh();playSendVoice();showSummary(rData);
-    scheduleEpNotifAfterTx(pkg.title + ' (' + net + ') activated for ' + n + ' (' + fmt(pkg.price) + '). Tx ID ' + t.txid + '.');
-  }
-  function doLoad(){if(!isSignedIn){openSignInModal();return;}getAudioCtx();var n=document.getElementById('l_num').value.replace(/[^0-9]/g,''),v=getNumVal('l_amt'),net=document.getElementById('l_net').value;if(n.length<10)return setErr('l_err','10-11 digit mobile number daalein');if(!v||v<=0)return setErr('l_err','Amount daalein');if(v>balance)return setErr('l_err','Balance kam hai');setErr('l_err','');var t=addTx('out',net+' Load - '+n,'Mobile Load',v,'📱');t.name=net+' Load';t.number=n;var rData={txid:t.txid,date:rcptDate(t.time),sub:'Your easypaisa load has been sent',amount:v,source:'easypaisa Account',partyLabel:'Sent to',nameLabel:'Operator',name:net+' Prepaid',numLabel:'Mobile Number',number:n};t.rcpt=rData;notifyReceiverAccount(n,v,net+' Load',t.txid,'Mobile Load');refresh();playSendVoice();showSummary(rData);scheduleEpNotifAfterTx(net + ' load of ' + fmt(v) + ' sent to ' + n + '. Tx ID ' + t.txid + '.');}
-
-  var biller='';
-  function selBill(btn){document.querySelectorAll('#billGrid button').forEach(function(b){b.classList.remove('sel');});btn.classList.add('sel');biller=btn.getAttribute('data-b');setErr('b_err','');}
-  function doBill(){if(!isSignedIn){openSignInModal();return;}getAudioCtx();var acc=document.getElementById('b_acc').value.trim(),v=getNumVal('b_amt');if(!biller)return setErr('b_err','Biller chunein');if(!acc)return setErr('b_err','Consumer number daalein');if(!v||v<=0)return setErr('b_err','Amount daalein');if(v>balance)return setErr('b_err','Balance kam hai');setErr('b_err','');var t=addTx('out',biller+' Bill','Ref '+acc,v,'🧾');t.name=biller;t.number=acc;var rData={txid:t.txid,date:rcptDate(t.time),sub:'Your bill payment has been made',amount:v,source:'easypaisa Account',partyLabel:'Paid to',nameLabel:'Biller',name:biller,numLabel:'Consumer No.',number:acc};t.rcpt=rData;refresh();playSendVoice();showSummary(rData);scheduleEpNotifAfterTx(biller + ' bill of ' + fmt(v) + ' paid for ref ' + acc + '. Tx ID ' + t.txid + '.');}
-
-  function doAdd(){if(!isSignedIn){openSignInModal();return;}getAudioCtx();var v=getNumVal('a_amt'),src=document.getElementById('a_src').value;if(!v||v<=0)return setErr('a_err','Amount daalein');setErr('a_err','');var t=addTx('in','Added from '+src,'Wallet Top-up',v,'➕');t.name=src;t.number='';var rData={txid:t.txid,date:rcptDate(t.time),sub:'Money has been added to your wallet',amount:v,source:src,partyLabel:'Added to',nameLabel:'Account',name:ME_NAME,numLabel:'Mobile Number',number:ME_NUM};t.rcpt=rData;refresh();playSendVoice();showSummary(rData);scheduleEpNotifAfterTx(fmt(v) + ' added to your easypaisa account from ' + src + '. Tx ID ' + t.txid + '.');}
-
-  function showSummary(d){
-    lastReceiptData = d;
-    var isIncoming = (d.partyLabel === 'Received from' || d.partyLabel === 'Added to');
-    var isQr = Boolean(d.isQr);
-    setSummaryReceiptLogo(d.channel || d.source);
-    document.getElementById('sumAmt').textContent = (isIncoming ? '+' : '') + fmt(d.amount);
-    document.getElementById('sumSub').textContent = isIncoming
-      ? (d.partyLabel === 'Added to' ? 'Successfully Added to' : 'Successfully Received from')
-      : (isQr ? 'Successfully Paid to' : 'Successfully Sent to');
-    document.getElementById('sumName').textContent = d.name || '—';
-    var numEl = document.getElementById('sumNum');
-    if(numEl){
-      if(d.number){
-        numEl.textContent = d.number;
-        numEl.style.display = '';
-      }else{
-        numEl.textContent = '';
-        numEl.style.display = 'none';
-      }
-    }
-    document.getElementById('receipt').classList.remove('show');
+  function showSummaryScreen(opts){
+    document.getElementById('sumAmt').textContent=fmt(opts.amount);
+    document.getElementById('sumSub').textContent=opts.subText||'Successfully Sent to';
+    document.getElementById('sumName').textContent=opts.name||'—';
+    var numEl=document.getElementById('sumNum');
+    if(opts.number){numEl.hidden=false;numEl.textContent=opts.number;}
+    else{numEl.hidden=true;numEl.textContent='';}
+    var prevQr=isQrFlow,prevQrBank=qrBankInfo,prevBank=selectedBankItem,prevWallet=selectedWallet;
+    if(typeof opts.isQr==='boolean')isQrFlow=opts.isQr;
+    if(opts.qrBank!==undefined)qrBankInfo=opts.qrBank;
+    if(opts.bankItem!==undefined)selectedBankItem=opts.bankItem;
+    if(opts.walletName!==undefined)selectedWallet=opts.walletName;
+    setSummaryReceiptLogo(opts.source);
+    isQrFlow=prevQr; qrBankInfo=prevQrBank; selectedBankItem=prevBank; selectedWallet=prevWallet;
     document.getElementById('success').classList.add('show');
   }
 
-  function openFullReceipt(){
-    if(!lastReceiptData) return;
-    showReceipt(lastReceiptData);
+  function openFullReceipt(){if(!lastReceiptData)return;showReceipt(lastReceiptData);}
+  function closeFullReceipt(){document.getElementById('receipt').classList.remove('show');}
+
+  function openLoadScreen(){
+    if(!isSignedIn){openSignInModal();return;}
+    renderPackagesList();
+    go('load');
   }
 
-  function closeFullReceipt(){
-    document.getElementById('receipt').classList.remove('show');
+  function doLoad(){
+    var net=document.getElementById('l_net').value,num=document.getElementById('l_num').value.trim(),amt=Number(document.getElementById('l_amt').value);
+    if(!/^03\d{9}$/.test(num))return setErr('l_err','11-digit number (03XXXXXXXXX) likhein');
+    if(!amt||amt<10)return setErr('l_err','Kam az kam Rs. 10 likhein');
+    if(amt>balance)return setErr('l_err','Balance kam hai');
+    setErr('l_err','');
+    isQrFlow=false; qrBankInfo=null;
+    addTx('out',net+' Mobile Load',num,amt,'📱');refresh();
+    var nowStr=rcptDate(Date.now()),txid=tx[tx.length-1].txid;
+    lastReceiptData={
+      txid:txid,date:nowStr,sub:'Your '+net+' mobile load has been made',amount:amt,
+      source:fundSrc(),partyLabel:'Recharged to',nameLabel:'Network',name:net+' Prepaid',
+      numLabel:'Mobile Number',number:num,mode:'load',isWallet:false
+    };
+    showSummaryScreen({
+      amount:amt,subText:'Mobile Load Sent to',name:net+' Prepaid',number:num,source:net
+    });
+    scheduleEpNotifAfterTx(net+' load Rs. '+Number(amt).toLocaleString('en-PK')+' ('+num+') mukammal ho gaya.');
+  }
+
+  var selBiller='';
+  function selBill(btn){document.querySelectorAll('#billGrid button').forEach(function(b){b.classList.remove('sel');});btn.classList.add('sel');selBiller=btn.dataset.b;setErr('b_err','');}
+  function doBill(){
+    var acc=document.getElementById('b_acc').value.trim(),amt=Number(document.getElementById('b_amt').value);
+    if(!selBiller)return setErr('b_err','Pehle biller chunein');
+    if(!acc)return setErr('b_err','Consumer number likhein');
+    if(!amt||amt<1)return setErr('b_err','Sahi bill amount likhein');
+    if(amt>balance)return setErr('b_err','Balance kam hai');
+    setErr('b_err','');
+    isQrFlow=false; qrBankInfo=null;
+    addTx('out',selBiller+' Bill',acc,amt,'⚡');refresh();
+    var nowStr=rcptDate(Date.now()),txid=tx[tx.length-1].txid;
+    lastReceiptData={
+      txid:txid,date:nowStr,sub:'Your '+selBiller+' bill payment has been made',amount:amt,
+      source:fundSrc(),partyLabel:'Paid to',nameLabel:'Biller',name:selBiller,
+      numLabel:'Consumer No.',number:acc,mode:'bill',isWallet:false
+    };
+    showSummaryScreen({
+      amount:amt,subText:'Bill Paid to',name:selBiller,number:acc,source:selBiller
+    });
+    scheduleEpNotifAfterTx(selBiller+' bill Rs. '+Number(amt).toLocaleString('en-PK')+' ada ho gaya.');
+  }
+
+  function doAdd(){
+    var src=document.getElementById('a_src').value,amt=Number(document.getElementById('a_amt').value);
+    if(!amt||amt<1)return setErr('a_err','Kam az kam Rs. 1 likhein');
+    setErr('a_err','');
+    isQrFlow=false; qrBankInfo=null;
+    addTx('in','Added Money - '+src,src,amt,'➕');refresh();
+    var nowStr=rcptDate(Date.now()),txid=tx[tx.length-1].txid;
+    lastReceiptData={
+      txid:txid,date:nowStr,sub:'Money has been added to your easypaisa account',amount:amt,
+      source:src,partyLabel:'Added to',nameLabel:'Account Holder',name:ME_NAME,
+      numLabel:'Account Number',number:ME_NUM,mode:'add',isWallet:false
+    };
+    showSummaryScreen({
+      amount:amt,subText:'Money Added to',name:ME_NAME,number:ME_NUM,source:src
+    });
+    scheduleEpNotifAfterTx('Aapke account mein '+fmtNoDec(amt)+' add ho gaye hain.');
   }
 
   function showReceipt(d){
-    lastReceiptData = d;
-    var isIncoming = (d.partyLabel === 'Received from' || d.partyLabel === 'Added to');
-    document.getElementById('rcpTitle').textContent = isIncoming ? 'Payment Received' : 'Transaction Successful';
-    document.getElementById('rcpSub').textContent = d.sub;
-    document.getElementById('rcpId').textContent = d.txid;
-    document.getElementById('rcpDate').textContent = d.date;
-    document.getElementById('rcpSrc').textContent = d.source;
-    document.getElementById('rcpPartyLbl').textContent = d.partyLabel;
-    document.getElementById('rcpNameLbl').textContent = d.nameLabel;
-    document.getElementById('rcpName').textContent = d.name;
-    var numRow = document.getElementById('rcpNumRow');
-    if(d.number){
-      if(numRow) numRow.style.display = '';
-      document.getElementById('rcpNumLbl').textContent = d.numLabel;
-      document.getElementById('rcpNum').textContent = d.number;
-    }else if(numRow){
-      numRow.style.display = 'none';
-    }
-    document.getElementById('rcpByLbl').textContent = isIncoming ? 'Credited to' : 'Paid by';
-    document.getElementById('rcpByName').textContent = ME_NAME;
-    document.getElementById('rcpByNum').textContent = ME_NUM;
-    document.getElementById('rcpAmt').textContent = fmt(d.amount);
-    document.getElementById('rcpFee').textContent = fmt(0);
-    document.getElementById('rcpTotal').textContent = fmt(d.amount);
-    setSummaryReceiptLogo(d.channel || d.source);
+    document.getElementById('rcpTitle').textContent='Transaction Successful';
+    document.getElementById('rcpSub').textContent=d.sub||'Your easypaisa payment has been made';
+    document.getElementById('rcpId').textContent=d.txid||newTxId();
+    document.getElementById('rcpDate').textContent=d.date||rcptDate(Date.now());
+    document.getElementById('rcpSrc').textContent=d.source||'easypaisa Account';
+    document.getElementById('rcpPartyLbl').textContent=d.partyLabel||'Sent to';
+    document.getElementById('rcpNameLbl').textContent=d.nameLabel||'Name';
+    document.getElementById('rcpName').textContent=d.name||'—';
+    var numRow=document.getElementById('rcpNumRow');
+    if(d.number){numRow.style.display='';document.getElementById('rcpNumLbl').textContent=d.numLabel||'Account Number';document.getElementById('rcpNum').textContent=d.number;}
+    else{numRow.style.display='none';}
+    document.getElementById('rcpByName').textContent=ME_NAME;
+    document.getElementById('rcpByNum').textContent=ME_NUM;
+    document.getElementById('rcpAmt').textContent=fmt(d.amount);
+    document.getElementById('rcpFee').textContent=fmt(0);
+    document.getElementById('rcpTotal').textContent=fmt(d.amount);
+
+    var prevQr=isQrFlow,prevQrBank=qrBankInfo,prevBank=selectedBankItem,prevWallet=selectedWallet;
+    if(typeof d.isQr==='boolean')isQrFlow=d.isQr;
+    if(d.qrBank!==undefined)qrBankInfo=d.qrBank;
+    if(d.bankItem!==undefined)selectedBankItem=d.bankItem;
+    if(d.walletName!==undefined)selectedWallet=d.walletName;
+    setSummaryReceiptLogo(d.source);
+    isQrFlow=prevQr; qrBankInfo=prevQrBank; selectedBankItem=prevBank; selectedWallet=prevWallet;
+
     document.getElementById('receipt').classList.add('show');
   }
 
-  function buildReceiptCanvas(){
-    var d = lastReceiptData;
-    if(!d) return null;
-    var c = document.createElement('canvas');
-    c.width = 720; c.height = 1040;
-    var ctx = c.getContext('2d');
-    var grad = ctx.createLinearGradient(0, 0, 0, c.height);
-    grad.addColorStop(0, '#e5f5ec'); grad.addColorStop(1, '#f4faf6');
-    ctx.fillStyle = grad; ctx.fillRect(0, 0, c.width, c.height);
+  function closeSuccess(){
+    document.getElementById('receipt').classList.remove('show');
+    document.getElementById('success').classList.remove('show');
+    isQrFlow=false; qrBankInfo=null; selectedBankItem=null;
+    returnScreenAfterAmt='send'; updateEpLogosVisibility(); go('home');
+  }
 
-    ctx.fillStyle = '#ffffff';
-    ctx.beginPath(); ctx.roundRect(42, 42, c.width - 84, c.height - 84, 32); ctx.fill();
+  function buildReceiptCanvas(d){
+    var canvas=document.createElement('canvas');
+    canvas.width=720;canvas.height=1080;
+    var ctx=canvas.getContext('2d');
+    var bgGrad=ctx.createLinearGradient(0,0,0,1080);
+    bgGrad.addColorStop(0,'#e7f6ee');bgGrad.addColorStop(0.55,'#eef8f2');bgGrad.addColorStop(1,'#f4faf6');
+    ctx.fillStyle=bgGrad;ctx.fillRect(0,0,720,1080);
 
-    ctx.fillStyle = '#f5c542';
-    ctx.beginPath(); ctx.arc(c.width/2, 130, 48, 0, Math.PI*2); ctx.fill();
-    ctx.strokeStyle = '#149e3e'; ctx.lineWidth = 7; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    ctx.beginPath(); ctx.moveTo(c.width/2 - 18, 131); ctx.lineTo(c.width/2 - 5, 145); ctx.lineTo(c.width/2 + 20, 115); ctx.stroke();
+    var cx=360,cy=135,r=62;
+    ctx.strokeStyle='#18b148';ctx.lineWidth=6;ctx.lineCap='round';
+    var rays=[[-48,-76,-42,-50],[48,-76,42,-50],[-98,-26,-74,-16],[98,-26,74,-16],[-96,36,-72,26],[96,36,72,26],[-54,84,-46,58],[54,84,46,58]];
+    rays.forEach(function(pt){ctx.beginPath();ctx.moveTo(cx+pt[0],cy+pt[1]);ctx.lineTo(cx+pt[2],cy+pt[3]);ctx.stroke();});
+    var cg=ctx.createRadialGradient(cx-18,cy-22,8,cx,cy,r);
+    cg.addColorStop(0,'#f9df88');cg.addColorStop(0.6,'#e7be58');cg.addColorStop(1,'#cf9d36');
+    ctx.fillStyle=cg;ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='#149e3e';ctx.lineWidth=10;ctx.beginPath();ctx.moveTo(cx-24,cy+2);ctx.lineTo(cx-7,cy+19);ctx.lineTo(cx+26,cy-16);ctx.stroke();
 
-    ctx.fillStyle = '#111312'; ctx.font = 'bold 34px Inter, sans-serif'; ctx.textAlign = 'center';
-    ctx.fillText('Transaction Successful', c.width/2, 215);
-    ctx.fillStyle = '#55625a'; ctx.font = '22px Inter, sans-serif';
-    ctx.fillText(d.sub || 'Your easypaisa payment has been made', c.width/2, 252);
+    ctx.fillStyle='#f6fcf8';ctx.beginPath();
+    if(ctx.roundRect)ctx.roundRect(48,225,624,790,34);else ctx.rect(48,225,624,790);
+    ctx.fill();
+    ctx.strokeStyle='#d9eee2';ctx.lineWidth=2;ctx.stroke();
 
-    var rows = [
-      ['Transaction ID', d.txid], ['Date & Time', d.date], ['Funding Source', d.source],
-      [d.partyLabel || 'Sent to', ''], [d.nameLabel || 'Name', d.name]
-    ];
-    if(d.number) rows.push([d.numLabel || 'Account Number', d.number]);
-    rows.push(['Paid by', ''], ['Name', ME_NAME], ['Account Number', ME_NUM],
-      ['Charges', ''], ['Amount', fmt(d.amount)], ['Fee', fmt(0.00)]);
+    ctx.fillStyle='#111312';ctx.textAlign='center';
+    ctx.font='700 34px Inter,system-ui,sans-serif';ctx.fillText('Transaction Successful',360,285);
+    ctx.fillStyle='#536159';ctx.font='400 22px Inter,system-ui,sans-serif';
+    ctx.fillText(d.sub||'Your easypaisa payment has been made',360,322);
 
-    var y = 315;
-    rows.forEach(function(r){
-      if(!r[1]){
-        ctx.fillStyle = '#111312'; ctx.font = 'bold 24px Inter, sans-serif'; ctx.textAlign = 'left';
-        ctx.fillText(r[0], 84, y); y += 38;
-      }else{
-        ctx.fillStyle = '#55625a'; ctx.font = '21px Inter, sans-serif'; ctx.textAlign = 'left';
-        ctx.fillText(r[0], 84, y);
-        ctx.fillStyle = '#111312'; ctx.font = 'bold 21px Inter, sans-serif'; ctx.textAlign = 'right';
-        ctx.fillText(String(r[1]), c.width - 84, y); y += 36;
-      }
-    });
+    var y=380;
+    function row(l,val,bold){
+      ctx.textAlign='left';ctx.fillStyle='#536159';
+      ctx.font=(bold?'700':'400')+' 22px Inter,system-ui,sans-serif';ctx.fillText(l,84,y);
+      ctx.textAlign='right';ctx.fillStyle='#111312';
+      ctx.font=(bold?'800':'600')+' 22px Inter,system-ui,sans-serif';ctx.fillText(String(val||'—'),636,y);
+      y+=42;
+    }
+    function sec(title){y+=10;ctx.textAlign='left';ctx.fillStyle='#111312';ctx.font='700 24px Inter,system-ui,sans-serif';ctx.fillText(title,84,y);y+=38;}
 
-    ctx.strokeStyle = '#e5ece8'; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(84, y + 4); ctx.lineTo(c.width - 84, y + 4); ctx.stroke();
-    y += 42;
-    ctx.fillStyle = '#111312'; ctx.font = 'bold 25px Inter, sans-serif'; ctx.textAlign = 'left';
-    ctx.fillText('Total Amount', 84, y);
-    ctx.font = 'bold 26px Inter, sans-serif'; ctx.textAlign = 'right';
-    ctx.fillText(fmt(d.amount), c.width - 84, y);
-    return c;
+    row('Transaction ID',d.txid||'#0000000000',false);
+    row('Date & Time',d.date||rcptDate(Date.now()),false);
+    row('Funding Source',d.source||'easypaisa Account',false);
+    sec(d.partyLabel||'Sent to');
+    row(d.nameLabel||'Name',d.name||'—',false);
+    if(d.number)row(d.numLabel||'Account Number',d.number,false);
+    sec('Paid by');
+    row('Name',ME_NAME,false);
+    row('Account Number',ME_NUM,false);
+    sec('Charges');
+    row('Amount',fmt(d.amount),false);
+    row('Fee',fmt(0),false);
+
+    ctx.strokeStyle='#e2efe7';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(84,y-10);ctx.lineTo(636,y-10);ctx.stroke();
+    y+=16;
+    ctx.textAlign='left';ctx.fillStyle='#111312';ctx.font='800 25px Inter,system-ui,sans-serif';ctx.fillText('Total Amount',84,y);
+    ctx.textAlign='right';ctx.fillStyle='#111312';ctx.font='800 26px Inter,system-ui,sans-serif';ctx.fillText(fmt(d.amount),636,y);
+
+    var viaBrand=isJazzCashContext(d.source)?'JazzCash':'easypaisa';
+    ctx.textAlign='center';ctx.fillStyle='#4f5e56';ctx.font='400 20px Inter,system-ui,sans-serif';
+    ctx.fillText('Paid via '+viaBrand,360,982);
+    return canvas;
   }
 
   function downloadReceiptPng(){
-    var canvas = buildReceiptCanvas();
-    if(!canvas){ toast('Receipt available nahi hai'); return; }
-    var link = document.createElement('a');
-    link.download = 'easypaisa-receipt-' + ((lastReceiptData && lastReceiptData.txid) || Date.now()).replace('#','') + '.png';
-    link.href = canvas.toDataURL('image/png');
-    link.click();
+    if(!lastReceiptData)return;
+    var canvas=buildReceiptCanvas(lastReceiptData);
+    var link=document.createElement('a');
+    link.download='easypaisa-receipt-'+(lastReceiptData.txid||'tx').replace(/[^0-9]/g,'')+'.png';
+    link.href=canvas.toDataURL('image/png');
+    document.body.appendChild(link);link.click();document.body.removeChild(link);
     toast('Receipt PNG download ho gayi');
   }
 
   function shareReceiptPng(){
-    var canvas = buildReceiptCanvas();
-    if(!canvas){ toast('Receipt available nahi hai'); return; }
-    canvas.toBlob(function(blob){
-      if(blob && navigator.share && navigator.canShare){
-        var file = new File([blob], 'easypaisa-receipt.png', {type: 'image/png'});
-        if(navigator.canShare({files: [file]})){
-          navigator.share({title: 'Easypaisa Receipt', files: [file]}).catch(function(){});
-          return;
+    if(!lastReceiptData)return;
+    var canvas=buildReceiptCanvas(lastReceiptData);
+    var summaryText='Easypaisa Receipt - '+fmt(lastReceiptData.amount)+' to '+lastReceiptData.name+' ('+lastReceiptData.txid+')';
+    if(navigator.share&&canvas.toBlob){
+      canvas.toBlob(function(blob){
+        if(!blob){toast('Share available nahi');return;}
+        var file=new File([blob],'easypaisa-receipt.png',{type:'image/png'});
+        if(navigator.canShare&&navigator.canShare({files:[file]})){
+          navigator.share({title:'Easypaisa Receipt',text:summaryText,files:[file]}).catch(function(){});
+        }else{
+          navigator.share({title:'Easypaisa Receipt',text:summaryText}).catch(function(){});
         }
-      }
-      downloadReceiptPng();
-    }, 'image/png');
-  }
-
-  function closeSuccess(){
-    document.getElementById('success').classList.remove('show');
-    document.getElementById('receipt').classList.remove('show');
-    go('home');
+      },'image/png');
+    }else if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(summaryText).then(function(){toast('Receipt details copy ho gayin');});
+    }else{toast('Receipt ready');}
   }
 
   var toastTimer;
-  function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.classList.remove('show');},2200);}
-
-  var bs=document.getElementById('bankSel');BANKS.forEach(function(b){var o=document.createElement('option');o.textContent=b;bs.appendChild(o);});
+  function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.classList.remove('show');},2400);}
 
   loadCustomPins();
   isSignedIn = false;
-  applyProfile();
-  updateAuthUI();
-  renderNotifBadge();
-  renderPackagesList();
+  balance = ACCOUNTS['03445488142'].balance;
+  seed();
   mountEpLogos();
-
-  if('serviceWorker' in navigator){
-    window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});
-  }
+  applyProfile();
+  refresh();
+  go('home');
 </script>
 </body>
 </html>
+
